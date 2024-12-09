@@ -2,6 +2,16 @@
 {
     public class ProcessoProducao
     {
+        public ProcessoProducao(DateTime data, int maquinaId, int formaId, int produtoId, int ciclos)
+        {
+            Data = data;
+            MaquinaId = maquinaId;
+            FormaId = formaId;
+            ProdutoId = produtoId;
+            Ciclos = ciclos;
+            Ativo = true;
+        }
+
         public int Id { get; set; }
         public DateTime Data { get; set; }
         public int MaquinaId { get; set; }

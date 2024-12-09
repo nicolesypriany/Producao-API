@@ -2,6 +2,15 @@
 {
     public class MateriaPrima
     {
+        public MateriaPrima(string nome, string fornecedor, string unidade, double preco)
+        {
+            Nome = nome;
+            Fornecedor = fornecedor;
+            Unidade = unidade;
+            Preco = preco;
+            Ativo = true;
+        }
+
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Fornecedor { get; set; }

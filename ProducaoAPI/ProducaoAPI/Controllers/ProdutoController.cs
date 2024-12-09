@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
+using ProducaoAPI.Services;
 
 namespace ProducaoAPI.Controllers
 {
@@ -19,9 +20,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Produto>>> ListarProdutos()
         {
-            var produtos = await _context.Produtos.ToListAsync();
+            var produtos = await _context.Produtos.Where(m => m.Ativo == true).ToListAsync();
             if (produtos == null) return NotFound();
-            return Ok(produtos);
+            return Ok(ProdutoServices.EntityListToResponseList(produtos));
         }
 
         [HttpGet("{id}")]
@@ -29,7 +30,7 @@ namespace ProducaoAPI.Controllers
         {
             var produto = await _context.Produtos.FindAsync(id);
             if (produto == null) return NotFound();
-            return Ok(produto);
+            return Ok(ProdutoServices.EntityToResponse(produto));
         }
 
         [HttpPost]
