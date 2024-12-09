@@ -5,12 +5,13 @@ using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
+using ProducaoAPI.Services;
 
 namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class MaquinaController : ControllerBase
+    public class MaquinaController : Controller
     {
         private readonly ProducaoContext _context;
 
@@ -24,8 +25,7 @@ namespace ProducaoAPI.Controllers
         {
             var maquinas = await _context.Maquinas.Where(m => m.Ativo == true).ToListAsync();
             if (maquinas == null) return NotFound();
-            var maquinasResponse = EntityListToResponseList(maquinas);
-            return Ok(maquinasResponse);
+            return Ok(MaquinaServices.EntityListToResponseList(maquinas));
         }
 
         [HttpGet("{id}")]
@@ -33,7 +33,7 @@ namespace ProducaoAPI.Controllers
         {
             var maquina = await _context.Maquinas.FindAsync(id);
             if(maquina == null) return NotFound();
-            return Ok(maquina);
+            return Ok(MaquinaServices.EntityToResponse(maquina));
         }
 
         [HttpPost]
@@ -79,15 +79,5 @@ namespace ProducaoAPI.Controllers
         //    await _context.SaveChangesAsync();
         //    return NoContent();
         //}
-        
-        private static ICollection<MaquinaResponse> EntityListToResponseList(IEnumerable<Maquina> maquinas)
-        {
-            return maquinas.Select(m => EntityToResponse(m)).ToList();
-        }
-
-        private static MaquinaResponse EntityToResponse(Maquina maquina)
-        {
-            return new MaquinaResponse(maquina.Id, maquina.Nome, maquina.Marca);
-        }
     }
 }

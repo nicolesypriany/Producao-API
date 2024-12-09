@@ -2,6 +2,14 @@
 {
     public class ProcessoProducaoMateriaPrima
     {
+        public ProcessoProducaoMateriaPrima(int producaoId, int materiaPrimaId, double quantidade)
+        {
+            ProducaoId = producaoId;
+            MateriaPrimaId = materiaPrimaId;
+            Quantidade = quantidade;
+            Ativo = true;
+        }
+
         public int ProducaoId { get; set; }
         public ProcessoProducao ProcessoProducao { get; set; }
 
