@@ -88,5 +88,12 @@ namespace ProducaoAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(producao);
         }
+
+        [HttpPost("CalcularProducao/{id}")]
+        public async Task<ActionResult<ProcessoProducao>> CalcularProducao(int id)
+        {
+            ProcessoProducaoServices.CalcularProducao(_context, id);
+            return Ok();
+        }
     }
 }

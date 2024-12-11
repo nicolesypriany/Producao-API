@@ -1,4 +1,6 @@
-﻿using ProducaoAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -26,6 +28,30 @@ namespace ProducaoAPI.Services
                 producoesMateriasPrimas.Add(producaoMateriaPrima);
             }
             return (producoesMateriasPrimas);
+        }
+        public static void CalcularProducao(ProducaoContext context, int producaoId)
+        {
+            var producao = context.Producoes
+                .Include(p => p.ProducaoMateriasPrimas)
+                .ThenInclude(p => p.MateriaPrima)
+                .FirstOrDefault(p => p.Id == producaoId);
+
+            var forma = context.Formas.FirstOrDefault(f => f.Id == producao.FormaId);
+            var produto = context.Produtos.FirstOrDefault(p => p.Id == producao.ProdutoId);
+
+            double quantidadeProduzida = (producao.Ciclos * forma.PecasPorCiclo) / produto.PecasPorUnidade;
+
+            double custoTotal = 0;
+            foreach (var producaoMateriaPrima in producao.ProducaoMateriasPrimas)
+            {
+                var total = producaoMateriaPrima.Quantidade * producaoMateriaPrima.MateriaPrima.Preco;
+                custoTotal =+ total;
+            }
+
+            producao.QuantidadeProduzida = quantidadeProduzida;
+            producao.CustoTotal = custoTotal;
+            producao.CustoUnitario = custoTotal / quantidadeProduzida;
+            context.SaveChanges();
         }
     }
 }
