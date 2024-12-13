@@ -41,6 +41,7 @@ const Machine = () => {
             errorText={errors.machineName?.message}
           >
             <Input
+              placeholder="Digite o nome da máquina"
               {...register("machineName", {
                 required: "Nome da máquina é obrigatório",
               })}
@@ -53,6 +54,7 @@ const Machine = () => {
             errorText={errors.mark?.message}
           >
             <Input
+              placeholder="Digite o nome da marca"
               {...register("mark", {
                 required: "Marca é obrigatório",
               })}
