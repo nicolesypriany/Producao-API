@@ -21,7 +21,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Maquina>>> ListarMaquinas()
+        public async Task<ActionResult<IEnumerable<MaquinaResponse>>> ListarMaquinas()
         {
             var maquinas = await _context.Maquinas.Where(m => m.Ativo == true).ToListAsync();
             if (maquinas == null) return NotFound();
@@ -29,7 +29,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Maquina>> BuscarMaquinaPorId(int id)
+        public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
             var maquina = await _context.Maquinas.FindAsync(id);
             if(maquina == null) return NotFound();
@@ -37,7 +37,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Maquina>> CadastrarMaquina(MaquinaRequest req)
+        public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest req)
         {
             var maquina = new Maquina(req.Nome, req.Marca);
             await _context.Maquinas.AddAsync(maquina);
@@ -46,7 +46,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Maquina>> AtualizarMaquina(int id, MaquinaRequest req)
+        public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest req)
         {
             var maquina = await _context.Maquinas.FindAsync(id);
             if (maquina == null) return NotFound();
@@ -59,7 +59,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Maquina>> InativarMaquina(int id)
+        public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {
             var maquina = await _context.Maquinas.FindAsync(id);
             if (maquina == null) return NotFound();
@@ -68,16 +68,5 @@ namespace ProducaoAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(maquina);
         }
-
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Maquina>> DeletarMaquina(int id)
-        //{
-        //    var maquina = await _context.Maquinas.FindAsync(id);
-        //    if (maquina == null) return NotFound();
-
-        //     _context.Maquinas.Remove(maquina);
-        //    await _context.SaveChangesAsync();
-        //    return NoContent();
-        //}
     }
 }

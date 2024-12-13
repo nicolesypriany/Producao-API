@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
+using ProducaoAPI.Responses;
 using ProducaoAPI.Services;
 
 namespace ProducaoAPI.Controllers
@@ -18,7 +19,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProcessoProducao>>> ListarProducoes()
+        public async Task<ActionResult<IEnumerable<ProcessoProducaoResponse>>> ListarProducoes()
         {
             var producoes = await _context.Producoes
                 .Include(p => p.ProducaoMateriasPrimas)
@@ -31,7 +32,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProcessoProducao>> BuscarProducaoPorId(int id)
+        public async Task<ActionResult<ProcessoProducaoResponse>> BuscarProducaoPorId(int id)
         {
             var producao = await _context.Producoes
                 .Include(p => p.ProducaoMateriasPrimas)
@@ -44,7 +45,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProcessoProducao>> CadastrarProducao(ProcessoProducaoRequest req)
+        public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest req)
         {
             var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
             var producao = new ProcessoProducao(req.Data, req.MaquinaId, req.FormaId, forma.ProdutoId, req.Ciclos);
@@ -62,7 +63,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProcessoProducao>> AtualizarProducao(int id, ProcessoProducaoRequest req)
+        public async Task<ActionResult<ProcessoProducaoResponse>> AtualizarProducao(int id, ProcessoProducaoRequest req)
         {
             var producao = await _context.Producoes.FindAsync(id);
             if (producao == null) return NotFound();
@@ -79,7 +80,7 @@ namespace ProducaoAPI.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ProcessoProducao>> InativarProducao(int id)
+        public async Task<ActionResult<ProcessoProducaoResponse>> InativarProducao(int id)
         {
             var producao = await _context.Producoes.FindAsync(id);
             if (producao == null) return NotFound();
