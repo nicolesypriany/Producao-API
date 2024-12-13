@@ -16,8 +16,6 @@ namespace ProducaoAPI.Services
             return producoesMateriasPrimas.Select(m => EntityToResponse(m)).ToList();
         }
 
-
-
         public static void VerificarProducoesMateriasPrimasExistentes(ProducaoContext context, int producaoId, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
         {
             var listaIdMateriasAtuais = new List<int>();

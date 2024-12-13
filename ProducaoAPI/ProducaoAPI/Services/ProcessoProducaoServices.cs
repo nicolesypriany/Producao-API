@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
@@ -45,7 +44,7 @@ namespace ProducaoAPI.Services
             foreach (var producaoMateriaPrima in producao.ProducaoMateriasPrimas)
             {
                 var total = producaoMateriaPrima.Quantidade * producaoMateriaPrima.MateriaPrima.Preco;
-                custoTotal =+ total;
+                custoTotal += total;
             }
 
             producao.QuantidadeProduzida = quantidadeProduzida;
