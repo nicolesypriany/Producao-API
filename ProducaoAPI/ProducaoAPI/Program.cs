@@ -1,5 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+
 //using ProducaoAPI.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,9 +14,40 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-// builder.Services.AddDbContext<ProducaoContext>();
-builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Produção API",
+        Description = $"Uma ASP.NET Core Web API para gerenciamento de produções.",
+        Contact = new OpenApiContact
+        {
+            Name = "Respositório",
+            Url = new Uri("https://github.com/nicolesypriany/Producao")
+        },
+    });
+
+    // Habilitando descrições por XML
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+builder.Services.AddDbContext<ProducaoContext>();
+//builder.Services.AddDbContext<ProducaoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // The URL of your frontend
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -29,8 +62,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseCors("AllowLocalhost");
 
-//app.MaquinaRoutes();
+app.MapControllers();
 
 app.Run();
