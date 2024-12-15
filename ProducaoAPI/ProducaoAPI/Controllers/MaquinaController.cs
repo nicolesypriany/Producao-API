@@ -20,6 +20,9 @@ namespace ProducaoAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Obter máquinas
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MaquinaResponse>>> ListarMaquinas()
         {
@@ -28,6 +31,9 @@ namespace ProducaoAPI.Controllers
             return Ok(MaquinaServices.EntityListToResponseList(maquinas));
         }
 
+        /// <summary>
+        /// Obter máquina por ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
@@ -36,6 +42,9 @@ namespace ProducaoAPI.Controllers
             return Ok(MaquinaServices.EntityToResponse(maquina));
         }
 
+        /// <summary>
+        /// Criar uma nova máquina
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest req)
         {
@@ -45,6 +54,9 @@ namespace ProducaoAPI.Controllers
             return Ok(maquina);
         }
 
+        /// <summary>
+        /// Atualizar uma máquina
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest req)
         {
@@ -58,7 +70,10 @@ namespace ProducaoAPI.Controllers
             return Ok(maquina);
         }
 
-        [HttpPatch("{id}")]
+        /// <summary>
+        /// Inativar uma máquina
+        /// </summary>
+        [HttpDelete("{id}")]
         public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {
             var maquina = await _context.Maquinas.FindAsync(id);

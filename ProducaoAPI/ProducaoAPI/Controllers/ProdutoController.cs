@@ -21,9 +21,9 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Obter produtos
         /// </summary>
-        /// <returns>A lista de produtos cadastrados</returns>
-        /// <response code="200">Sucesso</response>
-        /// <response code="404">Nenhum produto encontrado </response>
+        ///// <returns>A lista de produtos cadastrados</returns>
+        ///// <response code="200">Sucesso</response>
+        ///// <response code="404">Nenhum produto encontrado </response>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProdutoResponse>>> ListarProdutos()
         {
@@ -32,6 +32,9 @@ namespace ProducaoAPI.Controllers
             return Ok(ProdutoServices.EntityListToResponseList(produtos));
         }
 
+        /// <summary>
+        /// Obter produto por ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<ProdutoResponse>> BuscarProdutoPorId(int id)
         {
@@ -43,8 +46,6 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Criar um novo produto
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns>Um novo produto</returns>
         /// <response code="200">Produto cadastrado com sucesso</response>
         /// <response code="400">Request incorreto</response>
         [HttpPost]
@@ -56,6 +57,9 @@ namespace ProducaoAPI.Controllers
             return Ok(produto);
         }
 
+        /// <summary>
+        /// Atualizar um produto
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest req)
         {
@@ -71,6 +75,9 @@ namespace ProducaoAPI.Controllers
             return Ok(produto);
         }
 
+        /// <summary>
+        /// Inativar um produto
+        /// </summary>
         [HttpPatch("{id}")]
         public async Task<ActionResult<ProdutoResponse>> InativarProduto(int id)
         {
