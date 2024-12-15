@@ -18,6 +18,9 @@ namespace ProducaoAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Obter matérias-primas
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MateriaPrimaResponse>>> ListarMateriasPrimas()
         {
@@ -26,6 +29,9 @@ namespace ProducaoAPI.Controllers
             return Ok(MateriaPrimaServices.EntityListToResponseList(materiasPrimas));
         }
 
+        /// <summary>
+        /// Obter matéria-prima por ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> BuscarMateriaPrimaPorId(int id)
         {
@@ -34,6 +40,11 @@ namespace ProducaoAPI.Controllers
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
 
+        /// <summary>
+        /// Criar uma nova matéria-prima
+        /// </summary>
+        /// <response code="200">Produto cadastrado com sucesso</response>
+        /// <response code="400">Request incorreto</response>
         [HttpPost]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrima(MateriaPrimaRequest req)
         {
@@ -43,6 +54,9 @@ namespace ProducaoAPI.Controllers
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
 
+        /// <summary>
+        /// Atualizar uma matéria-prima
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> AtualizarMateriaPrima(int id, MateriaPrimaRequest req)
         {
@@ -58,7 +72,10 @@ namespace ProducaoAPI.Controllers
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
 
-        [HttpPatch("{id}")]
+        /// <summary>
+        /// Inativar uma matéria-prima
+        /// </summary>
+        [HttpDelete("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> InativarProduto(int id)
         {
             var materiaPrima = await _context.MateriasPrimas.FindAsync(id);
@@ -69,6 +86,9 @@ namespace ProducaoAPI.Controllers
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
 
+        /// <summary>
+        /// Cadastrar uma matéria-prima por importação do XML de uma nota fiscal
+        /// </summary>
         [HttpPost("ImportarXML")]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrimaPorXML(IFormFile arquivoXML)
         {
