@@ -18,6 +18,9 @@ namespace ProducaoAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Obter formas
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FormaResponse>>> ListarFormas()
         {
@@ -26,6 +29,9 @@ namespace ProducaoAPI.Controllers
             return Ok(FormaServices.EntityListToResponseList(formas));
         }
 
+        /// <summary>
+        /// Obter forma por ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<FormaResponse>> BuscarFormaPorId(int id)
         {
@@ -34,6 +40,9 @@ namespace ProducaoAPI.Controllers
             return Ok(FormaServices.EntityToResponse(forma));
         }
 
+        /// <summary>
+        /// Criar uma nova forma
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest req)
         {
@@ -43,6 +52,9 @@ namespace ProducaoAPI.Controllers
             return Ok(forma);
         }
 
+        /// <summary>
+        /// Atualizar uma forma
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest req)
         {
@@ -60,7 +72,10 @@ namespace ProducaoAPI.Controllers
             return Ok(forma);
         }
 
-        [HttpPatch("{id}")]
+        /// <summary>
+        /// Inativar uma forma
+        /// </summary>
+        [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {
             var forma = await _context.Formas.FindAsync(id);

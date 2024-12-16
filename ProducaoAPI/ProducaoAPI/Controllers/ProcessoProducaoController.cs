@@ -18,6 +18,9 @@ namespace ProducaoAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Obter produções
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProcessoProducaoResponse>>> ListarProducoes()
         {
@@ -31,6 +34,9 @@ namespace ProducaoAPI.Controllers
             return Ok(ProcessoProducaoServices.EntityListToResponseList(producoes));
         }
 
+        /// <summary>
+        /// Obter produção por ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> BuscarProducaoPorId(int id)
         {
@@ -44,6 +50,11 @@ namespace ProducaoAPI.Controllers
             return Ok(ProcessoProducaoServices.EntityToResponse(producao));
         }
 
+        /// <summary>
+        /// Criar uma nova produção
+        /// </summary>
+        /// <response code="200">Produto cadastrado com sucesso</response>
+        /// <response code="400">Request incorreto</response>
         [HttpPost]
         public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest req)
         {
@@ -62,6 +73,9 @@ namespace ProducaoAPI.Controllers
             return Ok(producao);
         }
 
+        /// <summary>
+        /// Atualizar uma produção
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> AtualizarProducao(int id, ProcessoProducaoRequest req)
         {
@@ -79,7 +93,10 @@ namespace ProducaoAPI.Controllers
             return Ok(producao);
         }
 
-        [HttpPatch("{id}")]
+        /// <summary>
+        /// Inativar uma produção
+        /// </summary>
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> InativarProducao(int id)
         {
             var producao = await _context.Producoes.FindAsync(id);
@@ -90,6 +107,9 @@ namespace ProducaoAPI.Controllers
             return Ok(producao);
         }
 
+        /// <summary>
+        /// Calcular uma produção
+        /// </summary>
         [HttpPost("CalcularProducao/{id}")]
         public async Task<ActionResult<ProcessoProducao>> CalcularProducao(int id)
         {
