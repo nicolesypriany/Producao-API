@@ -58,10 +58,7 @@ namespace ProducaoAPI.Controllers
             return Ok(produto);
         }
 
-        /// <summary>
-        /// Inativar um produto
-        /// </summary>
-        [HttpDelete("{id}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult<ProdutoResponse>> InativarProduto(int id)
         {
             var produto = await _context.Produtos.FindAsync(id);
