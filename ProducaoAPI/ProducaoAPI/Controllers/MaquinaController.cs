@@ -5,12 +5,13 @@ using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
+using ProducaoAPI.Services;
 
 namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class MaquinaController : ControllerBase
+    public class MaquinaController : Controller
     {
         private readonly ProducaoContext _context;
 
@@ -19,25 +20,33 @@ namespace ProducaoAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Obter máquinas
+        /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Maquina>>> ListarMaquinas()
+        public async Task<ActionResult<IEnumerable<MaquinaResponse>>> ListarMaquinas()
         {
             var maquinas = await _context.Maquinas.Where(m => m.Ativo == true).ToListAsync();
             if (maquinas == null) return NotFound();
-            var maquinasResponse = EntityListToResponseList(maquinas);
-            return Ok(maquinasResponse);
+            return Ok(MaquinaServices.EntityListToResponseList(maquinas));
         }
 
+        /// <summary>
+        /// Obter máquina por ID
+        /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Maquina>> BuscarMaquinaPorId(int id)
+        public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
             var maquina = await _context.Maquinas.FindAsync(id);
             if(maquina == null) return NotFound();
-            return Ok(maquina);
+            return Ok(MaquinaServices.EntityToResponse(maquina));
         }
 
+        /// <summary>
+        /// Criar uma nova máquina
+        /// </summary>
         [HttpPost]
-        public async Task<ActionResult<Maquina>> CadastrarMaquina(MaquinaRequest req)
+        public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest req)
         {
             var maquina = new Maquina(req.Nome, req.Marca);
             await _context.Maquinas.AddAsync(maquina);
@@ -45,8 +54,11 @@ namespace ProducaoAPI.Controllers
             return Ok(maquina);
         }
 
+        /// <summary>
+        /// Atualizar uma máquina
+        /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<Maquina>> AtualizarMaquina(int id, MaquinaRequest req)
+        public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest req)
         {
             var maquina = await _context.Maquinas.FindAsync(id);
             if (maquina == null) return NotFound();
@@ -58,8 +70,11 @@ namespace ProducaoAPI.Controllers
             return Ok(maquina);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<Maquina>> InativarMaquina(int id)
+        /// <summary>
+        /// Inativar uma máquina
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {
             var maquina = await _context.Maquinas.FindAsync(id);
             if (maquina == null) return NotFound();
@@ -67,27 +82,6 @@ namespace ProducaoAPI.Controllers
 
             await _context.SaveChangesAsync();
             return Ok(maquina);
-        }
-
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Maquina>> DeletarMaquina(int id)
-        //{
-        //    var maquina = await _context.Maquinas.FindAsync(id);
-        //    if (maquina == null) return NotFound();
-
-        //     _context.Maquinas.Remove(maquina);
-        //    await _context.SaveChangesAsync();
-        //    return NoContent();
-        //}
-        
-        private static ICollection<MaquinaResponse> EntityListToResponseList(IEnumerable<Maquina> maquinas)
-        {
-            return maquinas.Select(m => EntityToResponse(m)).ToList();
-        }
-
-        private static MaquinaResponse EntityToResponse(Maquina maquina)
-        {
-            return new MaquinaResponse(maquina.Id, maquina.Nome, maquina.Marca);
         }
     }
 }

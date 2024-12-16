@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
+using ProducaoAPI.Responses;
+using ProducaoAPI.Services;
 
 namespace ProducaoAPI.Controllers
 {
@@ -16,24 +18,38 @@ namespace ProducaoAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Obter produtos
+        /// </summary>
+        ///// <returns>A lista de produtos cadastrados</returns>
+        ///// <response code="200">Sucesso</response>
+        ///// <response code="404">Nenhum produto encontrado </response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Produto>>> ListarProdutos()
+        public async Task<ActionResult<IEnumerable<ProdutoResponse>>> ListarProdutos()
         {
-            var produtos = await _context.Produtos.ToListAsync();
+            var produtos = await _context.Produtos.Where(m => m.Ativo == true).ToListAsync();
             if (produtos == null) return NotFound();
-            return Ok(produtos);
+            return Ok(ProdutoServices.EntityListToResponseList(produtos));
         }
 
+        /// <summary>
+        /// Obter produto por ID
+        /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Produto>> BuscarProdutoPorId(int id)
+        public async Task<ActionResult<ProdutoResponse>> BuscarProdutoPorId(int id)
         {
             var produto = await _context.Produtos.FindAsync(id);
             if (produto == null) return NotFound();
-            return Ok(produto);
+            return Ok(ProdutoServices.EntityToResponse(produto));
         }
 
+        /// <summary>
+        /// Criar um novo produto
+        /// </summary>
+        /// <response code="200">Produto cadastrado com sucesso</response>
+        /// <response code="400">Request incorreto</response>
         [HttpPost]
-        public async Task<ActionResult<Produto>> CadastrarProduto(ProdutoRequest req)
+        public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest req)
         {
             var produto = new Produto(req.Nome, req.Medidas, req.Unidade, req.PecasPorUnidade);
             await _context.Produtos.AddAsync(produto);
@@ -41,8 +57,11 @@ namespace ProducaoAPI.Controllers
             return Ok(produto);
         }
 
+        /// <summary>
+        /// Atualizar um produto
+        /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<Produto>> AtualizarProduto(int id, ProdutoRequest req)
+        public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest req)
         {
             var produto = await _context.Produtos.FindAsync(id);
             if (produto == null) return NotFound();
@@ -56,8 +75,11 @@ namespace ProducaoAPI.Controllers
             return Ok(produto);
         }
 
+        /// <summary>
+        /// Inativar um produto
+        /// </summary>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Produto>> InativarProduto(int id)
+        public async Task<ActionResult<ProdutoResponse>> InativarProduto(int id)
         {
             var produto = await _context.Produtos.FindAsync(id);
             if (produto == null) return NotFound();
@@ -66,16 +88,5 @@ namespace ProducaoAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(produto);
         }
-
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Produto>> DeletarProduto(int id)
-        //{
-        //    var produto = await _context.Produtos.FindAsync(id);
-        //    if (produto == null) return NotFound();
-
-        //    _context.Produtos.Remove(produto);
-        //    await _context.SaveChangesAsync();
-        //    return NoContent();
-        //}
     }
 }

@@ -19,12 +19,12 @@ namespace ProducaoAPI.Data
         public DbSet<ProcessoProducao> Producoes { get; set; }
         public DbSet<ProcessoProducaoMateriaPrima> ProducoesMateriasPrimas { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql(@"Host=dbproducaoapi.cn8we8um0wsu.us-east-1.rds.amazonaws.com;Username=postgres;Password=postgre123;Database=dbproducaoapi");
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //=> optionsBuilder.UseNpgsql();
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-        //    optionsBuilder.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
+        //    optionsBuilder.UseSqlServer(connectionString);
         //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
