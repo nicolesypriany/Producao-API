@@ -2,6 +2,8 @@ using ProducaoAPI.Data;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using ProducaoAPI.Repositories.Interfaces;
+using ProducaoAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IMaquinaRepository, MaquinaRepository>();
+builder.Services.AddScoped<IFormaRepository, FormaRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -33,6 +40,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 // Add CORS services
 builder.Services.AddCors(options =>
