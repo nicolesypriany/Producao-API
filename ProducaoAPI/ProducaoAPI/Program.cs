@@ -15,6 +15,8 @@ builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IMaquinaRepository, MaquinaRepository>();
 builder.Services.AddScoped<IFormaRepository, FormaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IMateriaPrimaRepository, MateriaPrimaRepository>();
+builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoRepository>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
