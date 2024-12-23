@@ -15,9 +15,10 @@ namespace ProducaoAPI.Controllers
     {
         private readonly ProducaoContext _context;
         private readonly IFormaRepository _formaRepository;
-        public FormaController(IFormaRepository formaRepository)
+        public FormaController(IFormaRepository formaRepository, ProducaoContext context)
         {
             _formaRepository = formaRepository;
+            _context = context;
         }
 
         /// <summary>
