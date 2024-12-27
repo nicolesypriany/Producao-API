@@ -1,5 +1,5 @@
-﻿ using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
@@ -11,6 +11,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class FormaController : Controller
     {
         private readonly ProducaoContext _context;

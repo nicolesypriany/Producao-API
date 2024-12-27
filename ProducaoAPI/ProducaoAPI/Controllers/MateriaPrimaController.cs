@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
@@ -11,6 +12,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class MateriaPrimaController : Controller
     {
         private readonly ProducaoContext _context;
@@ -46,7 +48,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Criar uma nova matéria-prima
         /// </summary>
-        /// <response code="200">Produto cadastrado com sucesso</response>
+        /// <response code="200">Matéria-prima cadastrada com sucesso</response>
         /// <response code="400">Request incorreto</response>
         [HttpPost]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrima(MateriaPrimaRequest req)

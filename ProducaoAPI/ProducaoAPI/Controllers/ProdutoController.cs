@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
@@ -11,6 +12,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class ProdutoController : Controller
     {
         private readonly IProdutoRepository _produtoRepository;
@@ -49,6 +51,7 @@ namespace ProducaoAPI.Controllers
         /// </summary>
         /// <response code="200">Produto cadastrado com sucesso</response>
         /// <response code="400">Request incorreto</response>
+        /// <response code="401">Acesso negado</response>
         [HttpPost]
         public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest req)
         {
