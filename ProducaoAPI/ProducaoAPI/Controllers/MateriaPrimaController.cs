@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
+using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services;
@@ -10,11 +12,14 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class MateriaPrimaController : Controller
     {
         private readonly ProducaoContext _context;
-        public MateriaPrimaController(ProducaoContext context)
+        private readonly IMateriaPrimaRepository _materiaPrimaRepository;
+        public MateriaPrimaController(IMateriaPrimaRepository materiaPrimaRepository, ProducaoContext context)
         {
+            _materiaPrimaRepository = materiaPrimaRepository;
             _context = context;
         }
 
@@ -24,7 +29,7 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MateriaPrimaResponse>>> ListarMateriasPrimas()
         {
-            var materiasPrimas = await _context.MateriasPrimas.Where(m => m.Ativo == true).ToListAsync();
+            var materiasPrimas = _materiaPrimaRepository.ListarMateriasPrimas();
             if (materiasPrimas == null) return NotFound();
             return Ok(MateriaPrimaServices.EntityListToResponseList(materiasPrimas));
         }
@@ -35,7 +40,7 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> BuscarMateriaPrimaPorId(int id)
         {
-            var materiaPrima = await _context.MateriasPrimas.FindAsync(id);
+            var materiaPrima = _materiaPrimaRepository.BuscarPorID(id);
             if (materiaPrima == null) return NotFound();
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
@@ -43,14 +48,13 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Criar uma nova matéria-prima
         /// </summary>
-        /// <response code="200">Produto cadastrado com sucesso</response>
+        /// <response code="200">Matéria-prima cadastrada com sucesso</response>
         /// <response code="400">Request incorreto</response>
         [HttpPost]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrima(MateriaPrimaRequest req)
         {
             var materiaPrima = new MateriaPrima(req.Nome, req.Fornecedor, req.Unidade, req.Preco);
-            await _context.MateriasPrimas.AddAsync(materiaPrima);
-            await _context.SaveChangesAsync();
+            await _materiaPrimaRepository.Adicionar(materiaPrima);
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
 
@@ -60,7 +64,7 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> AtualizarMateriaPrima(int id, MateriaPrimaRequest req)
         {
-            var materiaPrima = await _context.MateriasPrimas.FindAsync(id);
+            var materiaPrima = _materiaPrimaRepository.BuscarPorID(id);
             if (materiaPrima == null) return NotFound();
 
             materiaPrima.Nome = req.Nome;
@@ -68,7 +72,8 @@ namespace ProducaoAPI.Controllers
             materiaPrima.Unidade = req.Unidade;
             materiaPrima.Preco = req.Preco;
 
-            await _context.SaveChangesAsync();
+
+            await _materiaPrimaRepository.Atualizar(materiaPrima);
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
 
@@ -78,11 +83,11 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> InativarProduto(int id)
         {
-            var materiaPrima = await _context.MateriasPrimas.FindAsync(id);
+            var materiaPrima = _materiaPrimaRepository.BuscarPorID(id);
             if (materiaPrima == null) return NotFound();
             materiaPrima.Ativo = false;
-
-            await _context.SaveChangesAsync();
+            
+            await _materiaPrimaRepository.Atualizar(materiaPrima);
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
 
@@ -93,7 +98,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrimaPorXML(IFormFile arquivoXML)
         {
             var novaMateriaPrima = MateriaPrimaServices.CriarMateriaPrimaPorXML(_context, arquivoXML);
-            var materiaPrima = await _context.MateriasPrimas.FindAsync(novaMateriaPrima.Id);
+            var materiaPrima = _materiaPrimaRepository.BuscarPorID(novaMateriaPrima.Id);
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
     }

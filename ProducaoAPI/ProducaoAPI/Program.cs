@@ -2,6 +2,11 @@ using ProducaoAPI.Data;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using ProducaoAPI.Repositories.Interfaces;
+using ProducaoAPI.Repositories;
+using ProducaoAPI.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,30 +14,40 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IMaquinaRepository, MaquinaRepository>();
+builder.Services.AddScoped<IFormaRepository, FormaRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IMateriaPrimaRepository, MateriaPrimaRepository>();
+builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-
 
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Produção API",
-        Description = $"Uma ASP.NET Core Web API para gerenciamento de produções.",
+        Title = "ProduÃ§Ã£o API",
+        Description = $"Uma ASP.NET Core Web API para gerenciamento de produÃ§Ãµes.",
         Contact = new OpenApiContact
         {
-            Name = "Respositório",
+            Name = "RespositÃ³rio",
             Url = new Uri("https://github.com/nicolesypriany/Producao")
         },
     });
 
-    // Habilitando descrições por XML
+    // Habilitando descriÃ§Ãµes por XML
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services
+    .AddIdentityApiEndpoints<PessoaComAcesso>()
+    .AddEntityFrameworkStores<ProducaoContext>();
 
 // Add CORS services
 builder.Services.AddCors(options =>
@@ -62,5 +77,13 @@ app.UseAuthorization();
 app.UseCors("AllowLocalhost");
 
 app.MapControllers();
+
+app.MapGroup("auth").MapIdentityApi<PessoaComAcesso>().WithTags("AutorizaÃ§Ã£o");
+
+app.MapPost("auth/logout", async ([FromServices] SignInManager<PessoaComAcesso> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.Ok();
+}).RequireAuthorization().WithTags("AutorizaÃ§Ã£o");
 
 app.Run();
