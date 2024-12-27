@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
@@ -55,6 +55,7 @@ namespace ProducaoAPI.Controllers
         {
             var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
             var producao = new ProcessoProducao(req.Data, req.MaquinaId, req.FormaId, forma.ProdutoId, req.Ciclos);
+
             await _processoProducaoRepository.Adicionar(producao);
             await _processoProducaoRepository.Atualizar(producao);
 

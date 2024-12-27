@@ -21,7 +21,6 @@ builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IMateriaPrimaRepository, MateriaPrimaRepository>();
 builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoRepository>();
 
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -30,16 +29,16 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Produção API",
-        Description = $"Uma ASP.NET Core Web API para gerenciamento de produções.",
+        Title = "ProduÃ§Ã£o API",
+        Description = $"Uma ASP.NET Core Web API para gerenciamento de produÃ§Ãµes.",
         Contact = new OpenApiContact
         {
-            Name = "Respositório",
+            Name = "RespositÃ³rio",
             Url = new Uri("https://github.com/nicolesypriany/Producao")
         },
     });
 
-    // Habilitando descrições por XML
+    // Habilitando descriÃ§Ãµes por XML
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
@@ -79,12 +78,12 @@ app.UseCors("AllowLocalhost");
 
 app.MapControllers();
 
-app.MapGroup("auth").MapIdentityApi<PessoaComAcesso>().WithTags("Autorização");
+app.MapGroup("auth").MapIdentityApi<PessoaComAcesso>().WithTags("AutorizaÃ§Ã£o");
 
 app.MapPost("auth/logout", async ([FromServices] SignInManager<PessoaComAcesso> signInManager) =>
 {
     await signInManager.SignOutAsync();
     return Results.Ok();
-}).RequireAuthorization().WithTags("Autorização");
+}).RequireAuthorization().WithTags("AutorizaÃ§Ã£o");
 
 app.Run();

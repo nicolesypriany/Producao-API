@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
@@ -72,6 +72,7 @@ namespace ProducaoAPI.Controllers
             materiaPrima.Unidade = req.Unidade;
             materiaPrima.Preco = req.Preco;
 
+
             await _materiaPrimaRepository.Atualizar(materiaPrima);
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }
@@ -85,7 +86,7 @@ namespace ProducaoAPI.Controllers
             var materiaPrima = _materiaPrimaRepository.BuscarPorID(id);
             if (materiaPrima == null) return NotFound();
             materiaPrima.Ativo = false;
-
+            
             await _materiaPrimaRepository.Atualizar(materiaPrima);
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }

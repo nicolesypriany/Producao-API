@@ -11,6 +11,7 @@ namespace ProducaoAPI.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+
     public class MaquinaController : Controller
     {
         private readonly IMaquinaRepository _maquinaRepository;
