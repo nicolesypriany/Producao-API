@@ -1,31 +1,10 @@
-import { Button, Flex, Heading, Input } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-import { Field } from "../../components/ui/field";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { useCreateMachine } from "@/machine/hooks/useCreateMachine";
+import { Flex, Heading, Input } from "@chakra-ui/react";
 
-const Machine = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: { machineName: "", mark: "" } });
-
-  const onSubmit = (data) => {
-    console.log(data);
-    fetch("http://example.com/api/machines", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("Success:", result);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+const CreateMachine = () => {
+  const { handleSubmit, onSubmit, errors, register } = useCreateMachine();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -61,13 +40,11 @@ const Machine = () => {
             />
           </Field>
 
-          <Button type="submit" w="15%">
-            Cadastrar
-          </Button>
+          <Button w="15%">Cadastrar</Button>
         </Flex>
       </Flex>
     </form>
   );
 };
 
-export default Machine;
+export default CreateMachine;

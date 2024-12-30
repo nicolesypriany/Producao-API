@@ -3,11 +3,13 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
+import { env } from "process";
 
 export default [
   { ignores: ["dist"] },
   {
     files: ["**/*.{js,jsx}"],
+    env: { node: true },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -17,7 +19,9 @@ export default [
         sourceType: "module",
       },
     },
-    settings: { react: { version: "18.3" } },
+    settings: {
+      react: { version: "18.3" },
+    },
     plugins: {
       react,
       "react-hooks": reactHooks,
