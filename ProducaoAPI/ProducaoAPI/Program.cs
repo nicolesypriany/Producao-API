@@ -18,16 +18,16 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Produção API",
-        Description = $"Uma ASP.NET Core Web API para gerenciamento de produções.",
+        Title = "ProduÃ§Ãµes API",
+        Description = $"Uma ASP.NET Core Web API para gerenciamento de produÃ§Ãµes.",
         Contact = new OpenApiContact
         {
-            Name = "Respositório",
+            Name = "RespositÃ³rio",
             Url = new Uri("https://github.com/nicolesypriany/Producao")
         },
     });
 
-    // Habilitando descrições por XML
+    // Habilitando descriÃ§Ãµes por XML
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
@@ -39,7 +39,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // The URL of your frontend
+        policy.WithOrigins("http://localhost:3001", "http://127.0.0.1:3001/") // The URL of your frontend
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

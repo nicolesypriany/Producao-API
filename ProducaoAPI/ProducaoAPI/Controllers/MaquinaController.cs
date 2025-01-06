@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
@@ -38,7 +37,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
             var maquina = await _context.Maquinas.FindAsync(id);
-            if(maquina == null) return NotFound();
+            if (maquina == null) return NotFound();
             return Ok(MaquinaServices.EntityToResponse(maquina));
         }
 
