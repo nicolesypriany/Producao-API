@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
+using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services;
@@ -10,12 +12,15 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class ProcessoProducaoController : Controller
     {
         private readonly ProducaoContext _context;
-        public ProcessoProducaoController(ProducaoContext context)
+        private readonly IProcessoProducaoRepository _processoProducaoRepository;
+        public ProcessoProducaoController(ProducaoContext context, IProcessoProducaoRepository processoProducaoRepository)
         {
             _context = context;
+            _processoProducaoRepository = processoProducaoRepository;
         }
 
         /// <summary>
@@ -24,12 +29,7 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProcessoProducaoResponse>>> ListarProducoes()
         {
-            var producoes = await _context.Producoes
-                .Include(p => p.ProducaoMateriasPrimas)
-                .ThenInclude(p => p.MateriaPrima)
-                .Where(m => m.Ativo == true)
-                .ToListAsync();
-
+            var producoes = _processoProducaoRepository.ListarProducoes();
             if (producoes == null) return NotFound();
             return Ok(ProcessoProducaoServices.EntityListToResponseList(producoes));
         }
@@ -40,12 +40,7 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> BuscarProducaoPorId(int id)
         {
-            var producao = await _context.Producoes
-                .Include(p => p.ProducaoMateriasPrimas)
-                .ThenInclude(p => p.MateriaPrima)
-                .Where(m => m.Ativo == true)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
+            var producao = _processoProducaoRepository.BuscarProducaoPorId(id);
             if (producao == null) return NotFound();
             return Ok(ProcessoProducaoServices.EntityToResponse(producao));
         }
@@ -60,8 +55,9 @@ namespace ProducaoAPI.Controllers
         {
             var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
             var producao = new ProcessoProducao(req.Data, req.MaquinaId, req.FormaId, forma.ProdutoId, req.Ciclos);
-            await _context.Producoes.AddAsync(producao);
-            await _context.SaveChangesAsync();
+
+            await _processoProducaoRepository.Adicionar(producao);
+            await _processoProducaoRepository.Atualizar(producao);
 
             var producaoMateriasPrimas = ProcessoProducaoServices.CriarProducoesMateriasPrimas(_context, req.MateriasPrimas, producao.Id);
             foreach (var producaMateriaPrima in producaoMateriasPrimas)

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
+using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services;
@@ -10,11 +11,14 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class FormaController : Controller
     {
         private readonly ProducaoContext _context;
-        public FormaController(ProducaoContext context)
+        private readonly IFormaRepository _formaRepository;
+        public FormaController(IFormaRepository formaRepository, ProducaoContext context)
         {
+            _formaRepository = formaRepository;
             _context = context;
         }
 
@@ -24,7 +28,7 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FormaResponse>>> ListarFormas()
         {
-            var formas = await _context.Formas.Where(m => m.Ativo == true).Include(f => f.Maquinas).Include(f => f.Produto).ToListAsync();
+            var formas = _formaRepository.ListarFormas();
             if (formas == null) return NotFound();
             return Ok(FormaServices.EntityListToResponseList(formas));
         }
@@ -35,7 +39,7 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FormaResponse>> BuscarFormaPorId(int id)
         {
-            var forma = await _context.Formas.Include(f => f.Maquinas).Include(f => f.Produto).FirstOrDefaultAsync(f => f.Id == id);
+            var forma = _formaRepository.BuscarFormaPorId(id);
             if (forma == null) return NotFound();
             return Ok(FormaServices.EntityToResponse(forma));
         }
@@ -47,8 +51,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest req)
         {
             var forma = new Forma(req.Nome, req.ProdutoId, req.PecasPorCiclo);
-            await _context.Formas.AddAsync(forma);
-            await _context.SaveChangesAsync();
+            await _formaRepository.Adicionar(forma);
             return Ok(forma);
         }
 
@@ -58,7 +61,7 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest req)
         {
-            var forma = await _context.Formas.Include(f => f.Maquinas).FirstOrDefaultAsync(f => f.Id == id);
+            var forma = _formaRepository.BuscarFormaPorId(id);
             if (forma == null) return NotFound();
 
             var maquinas = FormaServices.FormaMaquinaRequestToEntity(req.Maquinas, _context);
@@ -68,7 +71,7 @@ namespace ProducaoAPI.Controllers
             forma.PecasPorCiclo = req.PecasPorCiclo;
             forma.Maquinas = maquinas;
 
-            await _context.SaveChangesAsync();
+            await _formaRepository.Atualizar(forma);
             return Ok(forma);
         }
 
@@ -78,11 +81,11 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {
-            var forma = await _context.Formas.FindAsync(id);
+            var forma = _formaRepository.BuscarFormaPorId(id);
             if (forma == null) return NotFound();
             forma.Ativo = false;
 
-            await _context.SaveChangesAsync();
+            await _formaRepository.Atualizar(forma);
             return Ok(forma);
         }
     }
