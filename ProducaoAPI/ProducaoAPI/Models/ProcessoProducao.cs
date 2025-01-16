@@ -21,10 +21,10 @@
         public int ProdutoId { get; set; }
         public Produto Produto { get; set; }
         public int Ciclos { get; set; }
-        public double QuantidadeProduzida { get; set; }
+        public double? QuantidadeProduzida { get; set; }
         public ICollection<ProcessoProducaoMateriaPrima> ProducaoMateriasPrimas { get; set; }
-        public double CustoUnitario { get; set; }
-        public double CustoTotal { get; set; }
+        public double? CustoUnitario { get; set; }
+        public double? CustoTotal { get; set; }
         public bool Ativo { get; set; }
     }
 }

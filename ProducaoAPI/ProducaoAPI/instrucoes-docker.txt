@@ -1,0 +1,10 @@
+﻿Comandos Docker para rodar container com banco de dados:
+
+docker pull nicolesypriany/db-producao-api:1.0
+docker network create --driver bridge my-network
+docker run --name my-postgres --network=my-network -p 5432:5432 -e POSTGRES_PASSWORD=admin -d nicolesypriany/db-producao-api:1.0
+
+-----------------------------------------
+Comando Docker para rodar container do PgAdmin:
+
+docker run --name my-pgadmin --network=my-network -p 15432:80 -e PGADMIN_DEFAULT_EMAIL=nicolesypriany@gmail.com -e PGADMIN_DEFAULT_PASSWORD=admin -d dpage/pgadmin4

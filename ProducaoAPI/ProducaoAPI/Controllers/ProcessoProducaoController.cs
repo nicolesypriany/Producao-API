@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
@@ -12,7 +11,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProcessoProducaoController : Controller
     {
         private readonly ProducaoContext _context;
@@ -84,7 +83,7 @@ namespace ProducaoAPI.Controllers
             producao.MaquinaId = req.MaquinaId;
             producao.FormaId = req.FormaId;
             producao.Ciclos = req.Ciclos;
-            
+
             await _context.SaveChangesAsync();
             return Ok(producao);
         }

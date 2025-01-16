@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
@@ -12,7 +10,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class MateriaPrimaController : Controller
     {
         private readonly ProducaoContext _context;
@@ -86,7 +84,7 @@ namespace ProducaoAPI.Controllers
             var materiaPrima = _materiaPrimaRepository.BuscarPorID(id);
             if (materiaPrima == null) return NotFound();
             materiaPrima.Ativo = false;
-            
+
             await _materiaPrimaRepository.Atualizar(materiaPrima);
             return Ok(MateriaPrimaServices.EntityToResponse(materiaPrima));
         }

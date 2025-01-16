@@ -38,7 +38,9 @@ namespace ProducaoAPI.Services
             var forma = context.Formas.FirstOrDefault(f => f.Id == producao.FormaId);
             var produto = context.Produtos.FirstOrDefault(p => p.Id == producao.ProdutoId);
 
-            double quantidadeProduzida = (producao.Ciclos * forma.PecasPorCiclo) / produto.PecasPorUnidade;
+
+
+            double quantidadeProduzida = ((Convert.ToDouble(producao.Ciclos)) * forma.PecasPorCiclo) / produto.PecasPorUnidade;
 
             double custoTotal = 0;
             foreach (var producaoMateriaPrima in producao.ProducaoMateriasPrimas)
