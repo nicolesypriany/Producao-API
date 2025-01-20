@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProducaoAPI.Data;
+﻿using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 
