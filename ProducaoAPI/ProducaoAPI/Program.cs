@@ -7,6 +7,8 @@ using ProducaoAPI.Repositories;
 using ProducaoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using ProducaoAPI.Services.Interfaces;
+using ProducaoAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,7 @@ builder.Services.AddScoped<IFormaRepository, FormaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IMateriaPrimaRepository, MateriaPrimaRepository>();
 builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoRepository>();
+builder.Services.AddScoped<IFormaService, FormaServices>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
