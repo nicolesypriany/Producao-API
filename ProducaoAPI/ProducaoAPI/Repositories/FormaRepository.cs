@@ -5,20 +5,34 @@ using ProducaoAPI.Repositories.Interfaces;
 
 namespace ProducaoAPI.Repositories
 {
-    public class FormaRepository : BaseRepository<Forma>, IFormaRepository
+    public class FormaRepository : IFormaRepository
     {
         private readonly ProducaoContext _context;
-        public FormaRepository(ProducaoContext context) : base(context)
+        public FormaRepository(ProducaoContext context)
         {
             _context = context;
         }
-        public IEnumerable<Forma> ListarFormas()
+
+        public async Task<IEnumerable<Forma>> ListarFormasAsync()
         {
-            return _context.Formas.Where(m => m.Ativo == true).Include(f => f.Maquinas).Include(f => f.Produto).ToList();
+            return await _context.Formas.Where(m => m.Ativo == true).Include(f => f.Maquinas).Include(f => f.Produto).ToListAsync();
         }
-        public Forma BuscarFormaPorId(int id)
+
+        public async Task<Forma> BuscarFormaPorIdAsync(int id)
         {
-            return _context.Formas.Include(f => f.Maquinas).Include(f => f.Produto).FirstOrDefault(f => f.Id == id);
+            return await _context.Formas.Include(f => f.Maquinas).Include(f => f.Produto).FirstOrDefaultAsync(f => f.Id == id);
+        }
+
+        public async Task AdicionarAsync(Forma forma)
+        {
+            await _context.Formas.AddAsync(forma);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AtualizarAsync(Forma forma)
+        {
+            _context.Formas.Update(forma);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -2,9 +2,11 @@
 
 namespace ProducaoAPI.Repositories.Interfaces
 {
-    public interface IFormaRepository : IBaseRepository<Forma>
+    public interface IFormaRepository
     {
-        IEnumerable<Forma> ListarFormas();
-        Forma BuscarFormaPorId(int id);
+        Task<IEnumerable<Forma>> ListarFormasAsync();
+        Task<Forma> BuscarFormaPorIdAsync(int id);
+        Task AdicionarAsync(Forma forma);
+        Task AtualizarAsync(Forma forma);
     }
 }
