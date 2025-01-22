@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ProducaoAPI.Models;
-using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
-using ProducaoAPI.Services;
+using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Controllers
 {
@@ -13,11 +12,11 @@ namespace ProducaoAPI.Controllers
 
     public class MaquinaController : Controller
     {
-        private readonly IMaquinaRepository _maquinaRepository;
+        private readonly IMaquinaService _maquinaService;
 
-        public MaquinaController(IMaquinaRepository maquinaRepository)
+        public MaquinaController(IMaquinaService maquinaService)
         {
-            _maquinaRepository = maquinaRepository;
+            _maquinaService = maquinaService;
         }
 
         /// <summary>
@@ -26,9 +25,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MaquinaResponse>>> ListarMaquinas()
         {
-            var maquinas = _maquinaRepository.ListarMaquinas();
+            var maquinas = await _maquinaService.ListarMaquinasAsync();
             if (maquinas == null) return NotFound();
-            return Ok(MaquinaServices.EntityListToResponseList(maquinas));
+            return Ok(_maquinaService.EntityListToResponseList(maquinas));
         }
 
         /// <summary>
@@ -37,9 +36,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
-            var maquina = _maquinaRepository.BuscarPorID(id);
+            var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
             if (maquina == null) return NotFound();
-            return Ok(MaquinaServices.EntityToResponse(maquina));
+            return Ok(_maquinaService.EntityToResponse(maquina));
         }
 
         /// <summary>
@@ -49,7 +48,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest req)
         {
             var maquina = new Maquina(req.Nome, req.Marca);
-            await _maquinaRepository.Adicionar(maquina);
+            await _maquinaService.AdicionarAsync(maquina);
             return Ok(maquina);
         }
 
@@ -59,13 +58,13 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest req)
         {
-            var maquina = _maquinaRepository.BuscarPorID(id);
+            var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
             if (maquina == null) return NotFound();
 
             maquina.Nome = req.Nome;
             maquina.Marca = req.Marca;
 
-            await _maquinaRepository.Atualizar(maquina);
+            await _maquinaService.AtualizarAsync(maquina);
             return Ok(maquina);
         }
 
@@ -75,11 +74,11 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {
-            var maquina = _maquinaRepository.BuscarPorID(id);
+            var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
             if (maquina == null) return NotFound();
             maquina.Ativo = false;
 
-            await _maquinaRepository.Atualizar(maquina);
+            await _maquinaService.AtualizarAsync(maquina);
             return Ok(maquina);
         }
     }
