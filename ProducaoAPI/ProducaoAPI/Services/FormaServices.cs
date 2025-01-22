@@ -11,17 +11,19 @@ namespace ProducaoAPI.Services
         private readonly IFormaRepository _formaRepository;
         private readonly IMaquinaRepository _maquinaRepository;
         private readonly IMaquinaService _maquinaService;
+        private readonly IProdutoService _produtoService;
 
-        public FormaServices(IFormaRepository formaRepository, IMaquinaRepository maquinaRepository, IMaquinaService maquinaService)
+        public FormaServices(IFormaRepository formaRepository, IMaquinaRepository maquinaRepository, IMaquinaService maquinaService, IProdutoService produtoService)
         {
             _formaRepository = formaRepository;
             _maquinaRepository = maquinaRepository;
             _maquinaService = maquinaService;
+            _produtoService = produtoService;
         }
 
         public FormaResponse EntityToResponse(Forma forma)
         {
-            return new FormaResponse(forma.Id, forma.Nome, ProdutoServices.EntityToResponse(forma.Produto), forma.PecasPorCiclo, _maquinaService.EntityListToResponseList(forma.Maquinas), forma.Ativo);
+            return new FormaResponse(forma.Id, forma.Nome, _produtoService.EntityToResponse(forma.Produto), forma.PecasPorCiclo, _maquinaService.EntityListToResponseList(forma.Maquinas), forma.Ativo);
         }
 
         public ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma)
