@@ -22,10 +22,13 @@ builder.Services.AddScoped<IFormaRepository, FormaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IMateriaPrimaRepository, MateriaPrimaRepository>();
 builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoRepository>();
+builder.Services.AddScoped<IProducaoMateriaPrimaRepository, ProducaoMateriaPrimaRepository>();
 builder.Services.AddScoped<IFormaService, FormaServices>();
 builder.Services.AddScoped<IMaquinaService, MaquinaServices>();
 builder.Services.AddScoped<IMateriaPrimaService, MateriaPrimaServices>();
 builder.Services.AddScoped<IProdutoService, ProdutoServices>();
+builder.Services.AddScoped<IProcessoProducaoService, ProcessoProducaoServices>();
+builder.Services.AddScoped<IProducaoMateriaPrimaService, ProducaoMateriaPrimaServices>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -91,5 +94,7 @@ app.MapPost("auth/logout", async ([FromServices] SignInManager<PessoaComAcesso> 
     await signInManager.SignOutAsync();
     return Results.Ok();
 }).RequireAuthorization().WithTags("Autorização");
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 app.Run();
