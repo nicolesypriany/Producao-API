@@ -1,21 +1,31 @@
-﻿using ProducaoAPI.Data;
-using ProducaoAPI.Models;
+﻿using ProducaoAPI.Models;
+using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Responses;
+using ProducaoAPI.Services.Interfaces;
 using System.Xml;
 
 namespace ProducaoAPI.Services
 {
-    public static class MateriaPrimaServices
+    public class MateriaPrimaServices : IMateriaPrimaService
     {
-        public static MateriaPrimaResponse EntityToResponse(MateriaPrima materiaPrima)
+        private readonly IMateriaPrimaRepository _materiaPrimaRepository;
+
+        public MateriaPrimaServices(IMateriaPrimaRepository materiaPrimaRepository)
+        {
+            _materiaPrimaRepository = materiaPrimaRepository;
+        }
+
+        public MateriaPrimaResponse EntityToResponse(MateriaPrima materiaPrima)
         {
             return new MateriaPrimaResponse(materiaPrima.Id, materiaPrima.Nome, materiaPrima.Fornecedor, materiaPrima.Unidade, materiaPrima.Preco, materiaPrima.Ativo);
         }
-        public static ICollection<MateriaPrimaResponse> EntityListToResponseList(IEnumerable<MateriaPrima> materiaPrima)
+
+        public ICollection<MateriaPrimaResponse> EntityListToResponseList(IEnumerable<MateriaPrima> materiaPrima)
         {
             return materiaPrima.Select(m => EntityToResponse(m)).ToList();
         }
-        public static MateriaPrima CriarMateriaPrimaPorXML(ProducaoContext context, IFormFile arquivoXML)
+
+        public MateriaPrima CriarMateriaPrimaPorXML(IFormFile arquivoXML)
         {
             var documentoXML = SalvarXML(arquivoXML);
 
@@ -36,16 +46,14 @@ namespace ProducaoAPI.Services
             if (unidade == "KG") preco /= 1000;
 
             MateriaPrima materiaPrima = new MateriaPrima(produto, fornecedor, unidade, preco);
-            context.MateriasPrimas.Add(materiaPrima);
-            context.SaveChanges();
+            _materiaPrimaRepository.AdicionarAsync(materiaPrima);
 
             var filePatch = Path.Combine("Storage", arquivoXML.FileName);
-            File.Delete(filePatch);
 
             return materiaPrima;
         }
 
-        private static XmlDocument SalvarXML(IFormFile arquivoXML)
+        public XmlDocument SalvarXML(IFormFile arquivoXML)
         {
             var filePatch = Path.Combine("Storage", arquivoXML.FileName);
             using Stream fileStream = new FileStream(filePatch, FileMode.Create);
@@ -55,5 +63,13 @@ namespace ProducaoAPI.Services
             doc.Load(Path.Combine(filePatch));
             return doc;
         }
+
+        public Task<IEnumerable<MateriaPrima>> ListarMateriasAsync() => _materiaPrimaRepository.ListarMateriasAsync();
+
+        public Task<MateriaPrima> BuscarMateriaPorIdAsync(int id) => _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
+
+        public Task AdicionarAsync(MateriaPrima materiaPrima) => _materiaPrimaRepository.AdicionarAsync(materiaPrima);
+
+        public Task AtualizarAsync(MateriaPrima materiaPrima) => _materiaPrimaRepository.AtualizarAsync(materiaPrima);
     }
 }
