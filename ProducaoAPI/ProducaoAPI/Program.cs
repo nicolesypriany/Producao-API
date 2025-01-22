@@ -25,6 +25,7 @@ builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoReposito
 builder.Services.AddScoped<IFormaService, FormaServices>();
 builder.Services.AddScoped<IMaquinaService, MaquinaServices>();
 builder.Services.AddScoped<IMateriaPrimaService, MateriaPrimaServices>();
+builder.Services.AddScoped<IProdutoService, ProdutoServices>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
