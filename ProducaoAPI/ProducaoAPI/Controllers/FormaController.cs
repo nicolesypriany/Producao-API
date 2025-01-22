@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Data;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -61,7 +60,7 @@ namespace ProducaoAPI.Controllers
             var forma = await _formaServices.BuscarFormaPorIdAsync(id);
             if (forma == null) return NotFound();
 
-            var maquinas = _formaServices.FormaMaquinaRequestToEntity(req.Maquinas);
+            var maquinas = await _formaServices.FormaMaquinaRequestToEntity(req.Maquinas);
 
             forma.Nome = req.Nome;
             forma.ProdutoId = req.ProdutoId;

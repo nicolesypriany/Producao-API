@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProducaoAPI.Data;
-using ProducaoAPI.Models;
+﻿using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -12,16 +10,18 @@ namespace ProducaoAPI.Services
     {
         private readonly IFormaRepository _formaRepository;
         private readonly IMaquinaRepository _maquinaRepository;
+        private readonly IMaquinaService _maquinaService;
 
-        public FormaServices(IFormaRepository formaRepository, IMaquinaRepository maquinaRepository)
+        public FormaServices(IFormaRepository formaRepository, IMaquinaRepository maquinaRepository, IMaquinaService maquinaService)
         {
             _formaRepository = formaRepository;
             _maquinaRepository = maquinaRepository;
+            _maquinaService = maquinaService;
         }
 
         public FormaResponse EntityToResponse(Forma forma)
         {
-            return new FormaResponse(forma.Id, forma.Nome, ProdutoServices.EntityToResponse(forma.Produto), forma.PecasPorCiclo, MaquinaServices.EntityListToResponseList(forma.Maquinas), forma.Ativo);
+            return new FormaResponse(forma.Id, forma.Nome, ProdutoServices.EntityToResponse(forma.Produto), forma.PecasPorCiclo, _maquinaService.EntityListToResponseList(forma.Maquinas), forma.Ativo);
         }
 
         public ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma)
@@ -29,14 +29,15 @@ namespace ProducaoAPI.Services
             return forma.Select(f => EntityToResponse(f)).ToList();
         }
 
-        public List<Maquina> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas)
+        public async Task<List<Maquina>> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas)
         {
             var maquinasSelecionadas = new List<Maquina>();
 
             foreach (var maquina in maquinas)
             {
-                var maquinaSelecionada = _maquinaRepository.BuscarPorID(maquina.Id);
-                maquinasSelecionadas.Add(maquinaSelecionada);
+                var maquinaSelecionada = _maquinaRepository.BuscarMaquinaPorIdAsync(maquina.Id);
+                var maq = await maquinaSelecionada;
+                maquinasSelecionadas.Add(maq);
             }
 
             return maquinasSelecionadas;
