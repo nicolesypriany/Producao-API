@@ -2,8 +2,11 @@
 
 namespace ProducaoAPI.Repositories.Interfaces
 {
-    public interface IMateriaPrimaRepository : IBaseRepository<MateriaPrima>
+    public interface IMateriaPrimaRepository
     {
-        IEnumerable<MateriaPrima> ListarMateriasPrimas();
+        Task<IEnumerable<MateriaPrima>> ListarMateriasAsync();
+        Task<MateriaPrima> BuscarMateriaPorIdAsync(int id);
+        Task AdicionarAsync(MateriaPrima materiaPrima);
+        Task AtualizarAsync(MateriaPrima materiaPrima);
     }
 }
