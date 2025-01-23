@@ -1,5 +1,5 @@
 import { useMachines } from "@/machine/hooks/useMachines";
-import { Button, Flex, Input, Table } from "@chakra-ui/react";
+import { Button, Flex, Heading, Input, Table } from "@chakra-ui/react";
 import { useEffect } from "react";
 
 const TableMachines = () => {
@@ -20,16 +20,19 @@ const TableMachines = () => {
   }, []);
 
   return (
-    <Flex p={4} direction="column" gap={5}>
+    <Flex direction="column" gap={10}>
+      <Flex w="100%" justifyContent="center">
+        <Heading fontSize="4xl">Listagem de máquinas</Heading>
+      </Flex>
       <form>
         {machines && machines.length > 0 && (
           <Table.Root w="100%">
             <Table.Header>
               <Table.Row>
-                <Table.Cell>Id</Table.Cell>
-                <Table.Cell>Nome</Table.Cell>
-                <Table.Cell>Marca</Table.Cell>
-                <Table.Cell>Ação</Table.Cell>
+                <Table.ColumnHeader>Id</Table.ColumnHeader>
+                <Table.ColumnHeader>Nome</Table.ColumnHeader>
+                <Table.ColumnHeader>Marca</Table.ColumnHeader>
+                <Table.ColumnHeader textAlign="end">Ação</Table.ColumnHeader>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -61,7 +64,7 @@ const TableMachines = () => {
                       <Table.Cell>{machine.marca}</Table.Cell>
                     </>
                   )}
-                  <Table.Cell>
+                  <Table.Cell textAlign="end">
                     {isEditingMachine === machine.id ? (
                       <Button
                         onClick={handleSubmit((data) =>

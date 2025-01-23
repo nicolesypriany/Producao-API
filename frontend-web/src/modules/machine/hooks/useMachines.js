@@ -25,11 +25,10 @@ export const useMachines = () => {
 
   const handleSaveEditMachine = async (idMachine, data) => {
     try {
-      const result = await editMachineService(idMachine, {
+      await editMachineService(idMachine, {
         nome: data.machineName,
         marca: data.markName,
       });
-      console.log({ idMachine, data, result });
       setMachines((prevMachines) =>
         prevMachines.map((machine) =>
           machine.id === idMachine
