@@ -1,6 +1,11 @@
 import react from "@vitejs/plugin-react-swc";
 import { resolve } from "node:path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,26 +16,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@/": resolve(__dirname, "/src/"),
-      "@/components": resolve(__dirname, "/src/components"),
-      "@/routers": resolve(__dirname, "/src/routers"),
-      "@/pages": resolve(__dirname, "/src/modules/machine/pages/machine"),
-      "@/machine": resolve(__dirname, "/src/modules/machine"),
     },
-    // alias: [
-    //   { find: "@/", replacement: resolve(__dirname, "src") },
-    //   {
-    //     find: "@/components",
-    //     replacement: resolve(__dirname, "src/components"),
-    //   },
-    //   { find: "@/routers", replacement: resolve(__dirname, "src/routers") },
-    //   {
-    //     find: "@/pages",
-    //     replacement: resolve(__dirname, "src/modules/machine/pages"),
-    //   },
-    //   {
-    //     find: "@/machine",
-    //     replacement: resolve(__dirname, "src/modules/machine"),
-    //   },
-    // ],
   },
 });

@@ -1,6 +1,10 @@
-import { editMachine, getMachine, removeMachine } from "@/machine/services";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+  editMachine as editMachineService,
+  getMachine as getMachineService,
+  removeMachine as removeMachineService,
+} from "../services";
 
 export const useGetMachines = () => {
   const [machines, setMachines] = useState([]);
@@ -9,7 +13,7 @@ export const useGetMachines = () => {
   const { register, handleSubmit, reset } = useForm();
 
   const handleGetMachines = async () => {
-    const machines = await getMachine();
+    const machines = await getMachineService();
     setMachines(machines);
   };
 
@@ -21,7 +25,7 @@ export const useGetMachines = () => {
 
   const handleSaveEditMachine = async (idMachine, data) => {
     try {
-      const result = await editMachine(idMachine, {
+      const result = await editMachineService(idMachine, {
         nome: data.machineName,
         marca: data.markName,
       });
@@ -40,7 +44,7 @@ export const useGetMachines = () => {
   };
 
   const handleRemoveMachine = async (idMachine) => {
-    await removeMachine(idMachine);
+    await removeMachineService(idMachine);
     setMachines((prevMachines) =>
       prevMachines.filter((machine) => machine.id !== idMachine)
     );
