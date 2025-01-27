@@ -2,6 +2,10 @@
 {
     public class Produto
     {
+        public Produto()
+        {
+            
+        }
         public Produto(string nome, string medidas, string unidade, int pecasPorUnidade)
         {
             Nome = nome;

@@ -1,4 +1,5 @@
 ﻿using ProducaoAPI.Models;
+using ProducaoAPI.Responses;
 
 namespace ProducaoAPI.Repositories.Interfaces
 {
