@@ -1,6 +1,6 @@
-import { useMachines } from "@/machine/hooks/useMachines";
 import { Button, Flex, Heading, Input, Table } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { useMachines } from "../../hooks/useMachines";
 
 const TableMachines = () => {
   const {

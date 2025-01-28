@@ -1,4 +1,4 @@
-import CreateMachine from "@/pages/createMachine";
+import CreateMachine from "@/modules/machine/pages/machine/createMachine";
 
 const Create = () => <CreateMachine />;
 

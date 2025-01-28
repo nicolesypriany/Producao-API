@@ -1,4 +1,4 @@
-import TableMachines from "@/machine/components/Table";
+import TableMachines from "@/modules/machine/components/Table";
 import { Flex } from "@chakra-ui/react";
 
 const Home = () => (
