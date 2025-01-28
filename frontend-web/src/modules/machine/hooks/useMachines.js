@@ -1,10 +1,10 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   editMachine as editMachineService,
   getMachine as getMachineService,
   removeMachine as removeMachineService,
-} from "@/machine/services";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+} from "../services";
 
 export const useMachines = () => {
   const [machines, setMachines] = useState([]);

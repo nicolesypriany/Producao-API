@@ -1,5 +1,7 @@
-import { useCreateMachine } from "@/machine/hooks/useCreateMachine";
-import { Button, Field, Flex, Heading, Input } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { useCreateMachine } from "@/modules/machine/hooks/useCreateMachine";
+import { Flex, Heading, Input } from "@chakra-ui/react";
 
 const CreateMachine = () => {
   const { handleSubmit, onSubmit, errors, register } = useCreateMachine();
