@@ -1,31 +1,56 @@
-﻿using ProducaoAPI.Data;
-using ProducaoAPI.Models;
+﻿using ProducaoAPI.Models;
+using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
+using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Services
 {
-    public static class FormaServices
+    public class FormaServices : IFormaService
     {
-        public static FormaResponse EntityToResponse(Forma forma)
+        private readonly IFormaRepository _formaRepository;
+        private readonly IMaquinaRepository _maquinaRepository;
+        private readonly IMaquinaService _maquinaService;
+        private readonly IProdutoService _produtoService;
+
+        public FormaServices(IFormaRepository formaRepository, IMaquinaRepository maquinaRepository, IMaquinaService maquinaService, IProdutoService produtoService)
         {
-            return new FormaResponse(forma.Id, forma.Nome, ProdutoServices.EntityToResponse(forma.Produto), forma.PecasPorCiclo, MaquinaServices.EntityListToResponseList(forma.Maquinas), forma.Ativo);
+            _formaRepository = formaRepository;
+            _maquinaRepository = maquinaRepository;
+            _maquinaService = maquinaService;
+            _produtoService = produtoService;
         }
-        public static ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma)
+
+        public FormaResponse EntityToResponse(Forma forma)
+        {
+            return new FormaResponse(forma.Id, forma.Nome, _produtoService.EntityToResponse(forma.Produto), forma.PecasPorCiclo, _maquinaService.EntityListToResponseList(forma.Maquinas), forma.Ativo);
+        }
+
+        public ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma)
         {
             return forma.Select(f => EntityToResponse(f)).ToList();
         }
-        public static List<Maquina> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas, ProducaoContext context)
+
+        public async Task<List<Maquina>> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas)
         {
             var maquinasSelecionadas = new List<Maquina>();
 
-            foreach(var maquina in maquinas)
+            foreach (var maquina in maquinas)
             {
-                var maquinaSelecionada = context.Maquinas.FirstOrDefault(m => m.Id == maquina.Id);
-                maquinasSelecionadas.Add(maquinaSelecionada);
+                var maquinaSelecionada = _maquinaRepository.BuscarMaquinaPorIdAsync(maquina.Id);
+                var maq = await maquinaSelecionada;
+                maquinasSelecionadas.Add(maq);
             }
 
             return maquinasSelecionadas;
         }
+
+        public Task<IEnumerable<Forma>> ListarFormasAsync() => _formaRepository.ListarFormasAsync();
+
+        public Task<Forma> BuscarFormaPorIdAsync(int id) => _formaRepository.BuscarFormaPorIdAsync(id);
+
+        public Task AdicionarAsync(Forma forma) => _formaRepository.AdicionarAsync(forma);
+
+        public Task AtualizarAsync(Forma forma) => _formaRepository.AtualizarAsync(forma);
     }
 }

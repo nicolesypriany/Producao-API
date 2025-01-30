@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Data;
 using ProducaoAPI.Models;
-using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
-using ProducaoAPI.Services;
+using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Controllers
 {
@@ -13,12 +11,11 @@ namespace ProducaoAPI.Controllers
     //[Authorize]
     public class FormaController : Controller
     {
-        private readonly ProducaoContext _context;
-        private readonly IFormaRepository _formaRepository;
-        public FormaController(IFormaRepository formaRepository, ProducaoContext context)
+        private readonly IFormaService _formaServices;
+
+        public FormaController(IFormaService formaServices)
         {
-            _formaRepository = formaRepository;
-            _context = context;
+            _formaServices = formaServices;
         }
 
         /// <summary>
@@ -27,9 +24,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FormaResponse>>> ListarFormas()
         {
-            var formas = _formaRepository.ListarFormas();
+            var formas = await _formaServices.ListarFormasAsync();
             if (formas == null) return NotFound();
-            return Ok(FormaServices.EntityListToResponseList(formas));
+            return Ok(_formaServices.EntityListToResponseList(formas));
         }
 
         /// <summary>
@@ -38,9 +35,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FormaResponse>> BuscarFormaPorId(int id)
         {
-            var forma = _formaRepository.BuscarFormaPorId(id);
+            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
             if (forma == null) return NotFound();
-            return Ok(FormaServices.EntityToResponse(forma));
+            return Ok(_formaServices.EntityToResponse(forma));
         }
 
         /// <summary>
@@ -50,7 +47,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest req)
         {
             var forma = new Forma(req.Nome, req.ProdutoId, req.PecasPorCiclo);
-            await _formaRepository.Adicionar(forma);
+            await _formaServices.AdicionarAsync(forma);
             return Ok(forma);
         }
 
@@ -60,17 +57,17 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest req)
         {
-            var forma = _formaRepository.BuscarFormaPorId(id);
+            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
             if (forma == null) return NotFound();
 
-            var maquinas = FormaServices.FormaMaquinaRequestToEntity(req.Maquinas, _context);
+            var maquinas = await _formaServices.FormaMaquinaRequestToEntity(req.Maquinas);
 
             forma.Nome = req.Nome;
             forma.ProdutoId = req.ProdutoId;
             forma.PecasPorCiclo = req.PecasPorCiclo;
             forma.Maquinas = maquinas;
 
-            await _formaRepository.Atualizar(forma);
+            await _formaServices.AtualizarAsync(forma);
             return Ok(forma);
         }
 
@@ -80,11 +77,11 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {
-            var forma = _formaRepository.BuscarFormaPorId(id);
+            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
             if (forma == null) return NotFound();
             forma.Ativo = false;
 
-            await _formaRepository.Atualizar(forma);
+            await _formaServices.AtualizarAsync(forma);
             return Ok(forma);
         }
     }

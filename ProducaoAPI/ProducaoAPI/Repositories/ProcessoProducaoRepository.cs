@@ -5,30 +5,42 @@ using ProducaoAPI.Repositories.Interfaces;
 
 namespace ProducaoAPI.Repositories
 {
-    public class ProcessoProducaoRepository : BaseRepository<ProcessoProducao>, IProcessoProducaoRepository
+    public class ProcessoProducaoRepository : IProcessoProducaoRepository
     {
         private readonly ProducaoContext _context;
-        public ProcessoProducaoRepository(ProducaoContext context) : base(context)
+        public ProcessoProducaoRepository(ProducaoContext context)
         {
             _context = context;
         }
 
-        public ProcessoProducao BuscarProducaoPorId(int id)
+        public async Task AdicionarAsync(ProcessoProducao producao)
         {
-            return _context.Producoes
+            await _context.Producoes.AddAsync(producao);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AtualizarAsync(ProcessoProducao producao)
+        {
+            _context.Producoes.Update(producao);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<ProcessoProducao> BuscarProducaoPorIdAsync(int id)
+        {
+            return await _context.Producoes 
                .Include(p => p.ProducaoMateriasPrimas)
                .ThenInclude(p => p.MateriaPrima)
                .Where(m => m.Ativo == true)
-               .FirstOrDefault(p => p.Id == id);
+               .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public IEnumerable<ProcessoProducao> ListarProducoes()
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesAsync()
         {
-            return _context.Producoes
+            return await _context.Producoes
                 .Include(p => p.ProducaoMateriasPrimas)
                 .ThenInclude(p => p.MateriaPrima)
                 .Where(m => m.Ativo == true)
-                .ToList();
+                .ToListAsync();
         }
     }
 }

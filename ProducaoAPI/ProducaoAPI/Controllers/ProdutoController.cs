@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProducaoAPI.Models;
-using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
-using ProducaoAPI.Services;
+using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Controllers
 {
@@ -12,10 +11,10 @@ namespace ProducaoAPI.Controllers
     //[Authorize]
     public class ProdutoController : Controller
     {
-        private readonly IProdutoRepository _produtoRepository;
-        public ProdutoController(IProdutoRepository produtoRepository)
+        private readonly IProdutoService _produtoServices;
+        public ProdutoController(IProdutoService produtoServices)
         {
-            _produtoRepository = produtoRepository;
+            _produtoServices = produtoServices;
         }
 
         /// <summary>
@@ -27,9 +26,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProdutoResponse>>> ListarProdutos()
         {
-            var produtos = _produtoRepository.ListarProdutos();
+            var produtos = await _produtoServices.ListarProdutosAsync();
             if (produtos == null) return NotFound();
-            return Ok(ProdutoServices.EntityListToResponseList(produtos));
+            return Ok(_produtoServices.EntityListToResponseList(produtos));
         }
 
         /// <summary>
@@ -38,9 +37,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProdutoResponse>> BuscarProdutoPorId(int id)
         {
-            var produto = _produtoRepository.BuscarPorID(id);
+            var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
             if (produto == null) return NotFound();
-            return Ok(ProdutoServices.EntityToResponse(produto));
+            return Ok(_produtoServices.EntityToResponse(produto));
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest req)
         {
             var produto = new Produto(req.Nome, req.Medidas, req.Unidade, req.PecasPorUnidade);
-            _produtoRepository.Adicionar(produto);
+            await _produtoServices.AdicionarAsync(produto);
             return Ok(produto);
         }
 
@@ -63,7 +62,7 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest req)
         {
-            var produto = _produtoRepository.BuscarPorID(id);
+            var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
             if (produto == null) return NotFound();
 
             produto.Nome = req.Nome;
@@ -71,7 +70,7 @@ namespace ProducaoAPI.Controllers
             produto.Unidade = req.Unidade;
             produto.PecasPorUnidade = req.PecasPorUnidade;
 
-            await _produtoRepository.Atualizar(produto);
+            await _produtoServices.AtualizarAsync(produto);
             return Ok(produto);
         }
 
@@ -81,11 +80,11 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProdutoResponse>> InativarProduto(int id)
         {
-            var produto = _produtoRepository.BuscarPorID(id);
+            var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
             if (produto == null) return NotFound();
             produto.Ativo = false;
 
-            await _produtoRepository.Atualizar(produto);
+            await _produtoServices.AtualizarAsync(produto);
             return Ok(produto);
         }
     }

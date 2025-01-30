@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProducaoAPI.Data;
 using ProducaoAPI.Models;
-using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
-using ProducaoAPI.Services;
+using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Controllers
 {
@@ -14,12 +11,12 @@ namespace ProducaoAPI.Controllers
     //[Authorize]
     public class ProcessoProducaoController : Controller
     {
-        private readonly ProducaoContext _context;
-        private readonly IProcessoProducaoRepository _processoProducaoRepository;
-        public ProcessoProducaoController(ProducaoContext context, IProcessoProducaoRepository processoProducaoRepository)
+        private readonly IProcessoProducaoService _processoProducaoService;
+        private readonly IProducaoMateriaPrimaService _producaoMateriaPrimaService;
+        public ProcessoProducaoController(IProcessoProducaoService processoProducaoService, IProducaoMateriaPrimaService producaoMateriaPrimaService)
         {
-            _context = context;
-            _processoProducaoRepository = processoProducaoRepository;
+            _processoProducaoService = processoProducaoService;
+            _producaoMateriaPrimaService = producaoMateriaPrimaService;
         }
 
         /// <summary>
@@ -28,9 +25,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProcessoProducaoResponse>>> ListarProducoes()
         {
-            var producoes = _processoProducaoRepository.ListarProducoes();
+            var producoes = await _processoProducaoService.ListarProducoesAsync();
             if (producoes == null) return NotFound();
-            return Ok(ProcessoProducaoServices.EntityListToResponseList(producoes));
+            return Ok(_processoProducaoService.EntityListToResponseList(producoes));
         }
 
         /// <summary>
@@ -39,9 +36,9 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> BuscarProducaoPorId(int id)
         {
-            var producao = _processoProducaoRepository.BuscarProducaoPorId(id);
+            var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
             if (producao == null) return NotFound();
-            return Ok(ProcessoProducaoServices.EntityToResponse(producao));
+            return Ok(_processoProducaoService.EntityToResponse(producao));
         }
 
         /// <summary>
@@ -52,17 +49,17 @@ namespace ProducaoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest req)
         {
-            var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
-            var producao = new ProcessoProducao(req.Data, req.MaquinaId, req.FormaId, forma.ProdutoId, req.Ciclos);
+            var forma = await _processoProducaoService.BuscarFormaPorIdAsync(req.FormaId);
+            //var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
+            var producao = new ProcessoProducao(req.Data, req.MaquinaId, forma.Id, forma.ProdutoId, req.Ciclos);
 
-            await _processoProducaoRepository.Adicionar(producao);
-            await _processoProducaoRepository.Atualizar(producao);
+            await _processoProducaoService.AdicionarAsync(producao);
+            await _processoProducaoService.AtualizarAsync(producao);
 
-            var producaoMateriasPrimas = ProcessoProducaoServices.CriarProducoesMateriasPrimas(_context, req.MateriasPrimas, producao.Id);
+            var producaoMateriasPrimas = _processoProducaoService.CriarProducoesMateriasPrimas(req.MateriasPrimas, producao.Id);
             foreach (var producaMateriaPrima in producaoMateriasPrimas)
             {
-                await _context.ProducoesMateriasPrimas.AddAsync(producaMateriaPrima);
-                await _context.SaveChangesAsync();
+                await _producaoMateriaPrimaService.AdicionarAsync(producaMateriaPrima);
             }
 
             return Ok(producao);
@@ -74,17 +71,17 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> AtualizarProducao(int id, ProcessoProducaoRequest req)
         {
-            var producao = await _context.Producoes.FindAsync(id);
+            var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
             if (producao == null) return NotFound();
 
-            ProducaoMateriaPrimaServices.VerificarProducoesMateriasPrimasExistentes(_context, id, req.MateriasPrimas);
+            _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, req.MateriasPrimas);
 
             producao.Data = req.Data;
             producao.MaquinaId = req.MaquinaId;
             producao.FormaId = req.FormaId;
             producao.Ciclos = req.Ciclos;
 
-            await _context.SaveChangesAsync();
+            await _processoProducaoService.AtualizarAsync(producao);
             return Ok(producao);
         }
 
@@ -94,11 +91,11 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> InativarProducao(int id)
         {
-            var producao = await _context.Producoes.FindAsync(id);
+            var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
             if (producao == null) return NotFound();
             producao.Ativo = false;
 
-            await _context.SaveChangesAsync();
+            await _processoProducaoService.AtualizarAsync(producao);
             return Ok(producao);
         }
 
@@ -108,7 +105,7 @@ namespace ProducaoAPI.Controllers
         [HttpPost("CalcularProducao/{id}")]
         public async Task<ActionResult<ProcessoProducao>> CalcularProducao(int id)
         {
-            ProcessoProducaoServices.CalcularProducao(_context, id);
+            await _processoProducaoService.CalcularProducao(id);
             return Ok();
         }
     }

@@ -2,8 +2,11 @@
 
 namespace ProducaoAPI.Repositories.Interfaces
 {
-    public interface IMaquinaRepository : IBaseRepository<Maquina>
+    public interface IMaquinaRepository
     {
-        IEnumerable<Maquina> ListarMaquinas();
+        Task<IEnumerable<Maquina>> ListarMaquinasAsync();
+        Task<Maquina> BuscarMaquinaPorIdAsync(int id);
+        Task AdicionarAsync(Maquina maquina);
+        Task AtualizarAsync(Maquina maquina);
     }
 }

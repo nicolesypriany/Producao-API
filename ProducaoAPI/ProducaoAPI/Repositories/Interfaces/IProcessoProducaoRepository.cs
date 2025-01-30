@@ -2,9 +2,11 @@
 
 namespace ProducaoAPI.Repositories.Interfaces
 {
-    public interface IProcessoProducaoRepository : IBaseRepository<ProcessoProducao>
+    public interface IProcessoProducaoRepository
     {
-        IEnumerable<ProcessoProducao> ListarProducoes();
-        ProcessoProducao BuscarProducaoPorId(int id);
+        Task<IEnumerable<ProcessoProducao>> ListarProducoesAsync();
+        Task<ProcessoProducao> BuscarProducaoPorIdAsync(int id);
+        Task AdicionarAsync(ProcessoProducao producao);
+        Task AtualizarAsync(ProcessoProducao producao);
     }
 }
