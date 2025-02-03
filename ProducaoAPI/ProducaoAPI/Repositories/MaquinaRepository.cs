@@ -15,19 +15,44 @@ namespace ProducaoAPI.Repositories
 
         public async Task AdicionarAsync(Maquina maquina)
         {
-            await _context.Maquinas.AddAsync(maquina);
-            await _context.SaveChangesAsync();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(maquina.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio");
+
+                if (string.IsNullOrWhiteSpace(maquina.Marca)) throw new ArgumentException("O campo \"Marca\" não pode estar vazio");
+
+                await _context.Maquinas.AddAsync(maquina);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.InnerException.Message + ex.Message);
+            }
         }
 
         public async Task AtualizarAsync(Maquina maquina)
         {
-            _context.Maquinas.Update(maquina);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Maquinas.Update(maquina);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Houve um erro: {ex.Message}");
+            }
         }
 
         public async Task<Maquina> BuscarMaquinaPorIdAsync(int id)
         {
-            return await _context.Maquinas.FirstOrDefaultAsync(m => m.Id == id);
+            try
+            {
+                return await _context.Maquinas.FirstOrDefaultAsync(m => m.Id == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Houve um erro: {ex.Message}");
+            }
         }
 
         public async Task<IEnumerable<Maquina>> ListarMaquinasAsync()
