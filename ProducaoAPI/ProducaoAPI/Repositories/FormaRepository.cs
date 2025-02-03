@@ -18,14 +18,13 @@ namespace ProducaoAPI.Repositories
             try
             {
                 var formas = await _context.Formas.Where(m => m.Ativo == true).Include(f => f.Maquinas).Include(f => f.Produto).ToListAsync();
-                if (formas == null || formas.Count == 0) throw new NullReferenceException("Não !");
+                if (formas == null || formas.Count == 0) throw new NullReferenceException("Nenhuma forma encontrada.");
+                return formas;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw new Exception(ex.Message);
             }
-            return await _context.Formas.Where(m => m.Ativo == true).Include(f => f.Maquinas).Include(f => f.Produto).ToListAsync();
         }
 
         public async Task<Forma> BuscarFormaPorIdAsync(int id)
@@ -33,7 +32,7 @@ namespace ProducaoAPI.Repositories
             try
             {
                 var forma = await _context.Formas.Include(f => f.Maquinas).Include(f => f.Produto).FirstOrDefaultAsync(f => f.Id == id);
-                if (forma == null) throw new NullReferenceException("ID da forma não encontrado!");
+                if (forma == null) throw new NullReferenceException("ID da forma não encontrado.");
                 return forma;
             }
             catch (Exception ex)
