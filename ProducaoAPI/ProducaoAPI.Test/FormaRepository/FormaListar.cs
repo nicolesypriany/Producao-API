@@ -23,7 +23,6 @@ namespace ProducaoAPI.Test.FormaRepository
 
             //act & assert
             var exception = await Assert.ThrowsAsync<Exception>(() => formaRepository.ListarFormasAsync());
-
             Assert.Equal("ID da forma não encontrado!", exception.Message);
         }
 

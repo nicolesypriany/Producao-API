@@ -24,9 +24,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FormaResponse>>> ListarFormas()
         {
-            var formas = await _formaServices.ListarFormasAsync();
-            if (formas == null) return NotFound();
-            return Ok(_formaServices.EntityListToResponseList(formas));
+            try
+            {
+                var formas = await _formaServices.ListarFormasAsync();
+                if (formas == null) return NotFound();
+                return Ok(_formaServices.EntityListToResponseList(formas));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message); 
+            }
         }
 
         /// <summary>
@@ -35,9 +42,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FormaResponse>> BuscarFormaPorId(int id)
         {
-            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-            if (forma == null) return NotFound();
-            return Ok(_formaServices.EntityToResponse(forma));
+            try
+            {
+                var forma = await _formaServices.BuscarFormaPorIdAsync(id);
+                if (forma == null) return NotFound();
+                return Ok(_formaServices.EntityToResponse(forma));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -46,9 +60,16 @@ namespace ProducaoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest req)
         {
-            var forma = new Forma(req.Nome, req.ProdutoId, req.PecasPorCiclo);
-            await _formaServices.AdicionarAsync(forma);
-            return Ok(forma);
+            try
+            {
+                var forma = new Forma(req.Nome, req.ProdutoId, req.PecasPorCiclo);
+                await _formaServices.AdicionarAsync(forma);
+                return Ok(forma);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -57,18 +78,25 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest req)
         {
-            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-            if (forma == null) return NotFound();
+            try
+            {
+                var forma = await _formaServices.BuscarFormaPorIdAsync(id);
+                if (forma == null) return NotFound();
 
-            var maquinas = await _formaServices.FormaMaquinaRequestToEntity(req.Maquinas);
+                var maquinas = await _formaServices.FormaMaquinaRequestToEntity(req.Maquinas);
 
-            forma.Nome = req.Nome;
-            forma.ProdutoId = req.ProdutoId;
-            forma.PecasPorCiclo = req.PecasPorCiclo;
-            forma.Maquinas = maquinas;
+                forma.Nome = req.Nome;
+                forma.ProdutoId = req.ProdutoId;
+                forma.PecasPorCiclo = req.PecasPorCiclo;
+                forma.Maquinas = maquinas;
 
-            await _formaServices.AtualizarAsync(forma);
-            return Ok(forma);
+                await _formaServices.AtualizarAsync(forma);
+                return Ok(forma);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -77,12 +105,19 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {
-            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-            if (forma == null) return NotFound();
-            forma.Ativo = false;
+            try
+            {
+                var forma = await _formaServices.BuscarFormaPorIdAsync(id);
+                if (forma == null) return NotFound();
+                forma.Ativo = false;
 
-            await _formaServices.AtualizarAsync(forma);
-            return Ok(forma);
+                await _formaServices.AtualizarAsync(forma);
+                return Ok(forma);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

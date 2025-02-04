@@ -9,7 +9,6 @@ namespace ProducaoAPI.Controllers
     [Route("[controller]")]
     [ApiController]
     //[Authorize]
-
     public class MaquinaController : Controller
     {
         private readonly IMaquinaService _maquinaService;
@@ -25,9 +24,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MaquinaResponse>>> ListarMaquinas()
         {
-            var maquinas = await _maquinaService.ListarMaquinasAsync();
-            if (maquinas == null) return NotFound();
-            return Ok(_maquinaService.EntityListToResponseList(maquinas));
+            try
+            {
+                var maquinas = await _maquinaService.ListarMaquinasAsync();
+                if (maquinas == null) return NotFound();
+                return Ok(_maquinaService.EntityListToResponseList(maquinas));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -36,9 +42,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
-            var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-            if (maquina == null) return NotFound();
-            return Ok(_maquinaService.EntityToResponse(maquina));
+            try
+            {
+                var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
+                if (maquina == null) return NotFound();
+                return Ok(_maquinaService.EntityToResponse(maquina));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -47,9 +60,16 @@ namespace ProducaoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest req)
         {
-            var maquina = new Maquina(req.Nome, req.Marca);
-            await _maquinaService.AdicionarAsync(maquina);
-            return Ok(maquina);
+            try
+            {
+                var maquina = new Maquina(req.Nome, req.Marca);
+                await _maquinaService.AdicionarAsync(maquina);
+                return Ok(maquina);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception (ex.Message);
+            }
         }
 
         /// <summary>
@@ -58,14 +78,21 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest req)
         {
-            var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-            if (maquina == null) return NotFound();
+            try
+            {
+                var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
+                if (maquina == null) return NotFound();
 
-            maquina.Nome = req.Nome;
-            maquina.Marca = req.Marca;
+                maquina.Nome = req.Nome;
+                maquina.Marca = req.Marca;
 
-            await _maquinaService.AtualizarAsync(maquina);
-            return Ok(maquina);
+                await _maquinaService.AtualizarAsync(maquina);
+                return Ok(maquina);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -74,12 +101,19 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {
-            var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-            if (maquina == null) return NotFound();
-            maquina.Ativo = false;
+            try
+            {
+                var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
+                if (maquina == null) return NotFound();
+                maquina.Ativo = false;
 
-            await _maquinaService.AtualizarAsync(maquina);
-            return Ok(maquina);
+                await _maquinaService.AtualizarAsync(maquina);
+                return Ok(maquina);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
