@@ -25,9 +25,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProcessoProducaoResponse>>> ListarProducoes()
         {
-            var producoes = await _processoProducaoService.ListarProducoesAsync();
-            if (producoes == null) return NotFound();
-            return Ok(_processoProducaoService.EntityListToResponseList(producoes));
+            try
+            {
+                var producoes = await _processoProducaoService.ListarProducoesAsync();
+                if (producoes == null) return NotFound();
+                return Ok(_processoProducaoService.EntityListToResponseList(producoes));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -36,9 +43,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> BuscarProducaoPorId(int id)
         {
-            var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
-            if (producao == null) return NotFound();
-            return Ok(_processoProducaoService.EntityToResponse(producao));
+            try
+            {
+                var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
+                if (producao == null) return NotFound();
+                return Ok(_processoProducaoService.EntityToResponse(producao));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -49,20 +63,27 @@ namespace ProducaoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest req)
         {
-            var forma = await _processoProducaoService.BuscarFormaPorIdAsync(req.FormaId);
-            //var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
-            var producao = new ProcessoProducao(req.Data, req.MaquinaId, forma.Id, forma.ProdutoId, req.Ciclos);
-
-            await _processoProducaoService.AdicionarAsync(producao);
-            await _processoProducaoService.AtualizarAsync(producao);
-
-            var producaoMateriasPrimas = _processoProducaoService.CriarProducoesMateriasPrimas(req.MateriasPrimas, producao.Id);
-            foreach (var producaMateriaPrima in producaoMateriasPrimas)
+            try
             {
-                await _producaoMateriaPrimaService.AdicionarAsync(producaMateriaPrima);
-            }
+                var forma = await _processoProducaoService.BuscarFormaPorIdAsync(req.FormaId);
+                //var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
+                var producao = new ProcessoProducao(req.Data, req.MaquinaId, forma.Id, forma.ProdutoId, req.Ciclos);
 
-            return Ok(producao);
+                await _processoProducaoService.AdicionarAsync(producao);
+                await _processoProducaoService.AtualizarAsync(producao);
+
+                var producaoMateriasPrimas = _processoProducaoService.CriarProducoesMateriasPrimas(req.MateriasPrimas, producao.Id);
+                foreach (var producaMateriaPrima in producaoMateriasPrimas)
+                {
+                    await _producaoMateriaPrimaService.AdicionarAsync(producaMateriaPrima);
+                }
+
+                return Ok(producao);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -71,18 +92,25 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> AtualizarProducao(int id, ProcessoProducaoRequest req)
         {
-            var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
-            if (producao == null) return NotFound();
+            try
+            {
+                var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
+                if (producao == null) return NotFound();
 
-            _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, req.MateriasPrimas);
+                _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, req.MateriasPrimas);
 
-            producao.Data = req.Data;
-            producao.MaquinaId = req.MaquinaId;
-            producao.FormaId = req.FormaId;
-            producao.Ciclos = req.Ciclos;
+                producao.Data = req.Data;
+                producao.MaquinaId = req.MaquinaId;
+                producao.FormaId = req.FormaId;
+                producao.Ciclos = req.Ciclos;
 
-            await _processoProducaoService.AtualizarAsync(producao);
-            return Ok(producao);
+                await _processoProducaoService.AtualizarAsync(producao);
+                return Ok(producao);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message) ;
+            }
         }
 
         /// <summary>
@@ -91,12 +119,19 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProcessoProducaoResponse>> InativarProducao(int id)
         {
-            var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
-            if (producao == null) return NotFound();
-            producao.Ativo = false;
+            try
+            {
+                var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
+                if (producao == null) return NotFound();
+                producao.Ativo = false;
 
-            await _processoProducaoService.AtualizarAsync(producao);
-            return Ok(producao);
+                await _processoProducaoService.AtualizarAsync(producao);
+                return Ok(producao);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -105,8 +140,15 @@ namespace ProducaoAPI.Controllers
         [HttpPost("CalcularProducao/{id}")]
         public async Task<ActionResult<ProcessoProducao>> CalcularProducao(int id)
         {
-            await _processoProducaoService.CalcularProducao(id);
-            return Ok();
+            try
+            {
+                await _processoProducaoService.CalcularProducao(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

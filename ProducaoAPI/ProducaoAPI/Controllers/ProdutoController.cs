@@ -26,9 +26,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProdutoResponse>>> ListarProdutos()
         {
-            var produtos = await _produtoServices.ListarProdutosAsync();
-            if (produtos == null) return NotFound();
-            return Ok(_produtoServices.EntityListToResponseList(produtos));
+            try
+            {
+                var produtos = await _produtoServices.ListarProdutosAsync();
+                if (produtos == null) return NotFound();
+                return Ok(_produtoServices.EntityListToResponseList(produtos));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -37,9 +44,16 @@ namespace ProducaoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProdutoResponse>> BuscarProdutoPorId(int id)
         {
-            var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-            if (produto == null) return NotFound();
-            return Ok(_produtoServices.EntityToResponse(produto));
+            try
+            {
+                var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
+                if (produto == null) return NotFound();
+                return Ok(_produtoServices.EntityToResponse(produto));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -51,9 +65,16 @@ namespace ProducaoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest req)
         {
-            var produto = new Produto(req.Nome, req.Medidas, req.Unidade, req.PecasPorUnidade);
-            await _produtoServices.AdicionarAsync(produto);
-            return Ok(produto);
+            try
+            {
+                var produto = new Produto(req.Nome, req.Medidas, req.Unidade, req.PecasPorUnidade);
+                await _produtoServices.AdicionarAsync(produto);
+                return Ok(produto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -62,16 +83,23 @@ namespace ProducaoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest req)
         {
-            var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-            if (produto == null) return NotFound();
+            try
+            {
+                var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
+                if (produto == null) return NotFound();
 
-            produto.Nome = req.Nome;
-            produto.Medidas = req.Medidas;
-            produto.Unidade = req.Unidade;
-            produto.PecasPorUnidade = req.PecasPorUnidade;
+                produto.Nome = req.Nome;
+                produto.Medidas = req.Medidas;
+                produto.Unidade = req.Unidade;
+                produto.PecasPorUnidade = req.PecasPorUnidade;
 
-            await _produtoServices.AtualizarAsync(produto);
-            return Ok(produto);
+                await _produtoServices.AtualizarAsync(produto);
+                return Ok(produto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -80,12 +108,19 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProdutoResponse>> InativarProduto(int id)
         {
-            var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-            if (produto == null) return NotFound();
-            produto.Ativo = false;
+            try
+            {
+                var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
+                if (produto == null) return NotFound();
+                produto.Ativo = false;
 
-            await _produtoServices.AtualizarAsync(produto);
-            return Ok(produto);
+                await _produtoServices.AtualizarAsync(produto);
+                return Ok(produto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

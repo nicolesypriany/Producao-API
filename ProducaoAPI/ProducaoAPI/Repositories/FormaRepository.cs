@@ -49,8 +49,6 @@ namespace ProducaoAPI.Repositories
 
                 if (forma.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");
 
-                //OBS.: Alterar coluna de peças por ciclo no banco de dados para adicionar regra de que o número deve ser maior que 0.
-
                 await _context.Formas.AddAsync(forma);
                 await _context.SaveChangesAsync();
             }
@@ -62,8 +60,16 @@ namespace ProducaoAPI.Repositories
 
         public async Task AtualizarAsync(Forma forma)
         {
-            _context.Formas.Update(forma);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Formas.Update(forma);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }
