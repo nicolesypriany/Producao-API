@@ -15,5 +15,6 @@ namespace ProducaoAPI.Services.Interfaces
         List<ProcessoProducaoMateriaPrima> CriarProducoesMateriasPrimas(ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimas, int ProducaoId);
         Task CalcularProducao(int producaoId);
         Task<Forma> BuscarFormaPorIdAsync(int id);
+        Task ValidarDados(ProcessoProducaoRequest request);
     }
 }

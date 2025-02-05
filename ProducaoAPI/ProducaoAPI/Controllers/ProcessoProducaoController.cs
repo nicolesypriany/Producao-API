@@ -61,18 +61,19 @@ namespace ProducaoAPI.Controllers
         /// <response code="200">Produto cadastrado com sucesso</response>
         /// <response code="400">Request incorreto</response>
         [HttpPost]
-        public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest req)
+        public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest request)
         {
             try
             {
-                var forma = await _processoProducaoService.BuscarFormaPorIdAsync(req.FormaId);
+                await _processoProducaoService.ValidarDados(request);
+                var forma = await _processoProducaoService.BuscarFormaPorIdAsync(request.FormaId);
                 //var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
-                var producao = new ProcessoProducao(req.Data, req.MaquinaId, forma.Id, forma.ProdutoId, req.Ciclos);
+                var producao = new ProcessoProducao(request.Data, request.MaquinaId, forma.Id, forma.ProdutoId, request.Ciclos);
 
                 await _processoProducaoService.AdicionarAsync(producao);
                 await _processoProducaoService.AtualizarAsync(producao);
 
-                var producaoMateriasPrimas = _processoProducaoService.CriarProducoesMateriasPrimas(req.MateriasPrimas, producao.Id);
+                var producaoMateriasPrimas = _processoProducaoService.CriarProducoesMateriasPrimas(request.MateriasPrimas, producao.Id);
                 foreach (var producaMateriaPrima in producaoMateriasPrimas)
                 {
                     await _producaoMateriaPrimaService.AdicionarAsync(producaMateriaPrima);
@@ -90,19 +91,20 @@ namespace ProducaoAPI.Controllers
         /// Atualizar uma produção
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProcessoProducaoResponse>> AtualizarProducao(int id, ProcessoProducaoRequest req)
+        public async Task<ActionResult<ProcessoProducaoResponse>> AtualizarProducao(int id, ProcessoProducaoRequest request)
         {
             try
             {
+                await _processoProducaoService.ValidarDados(request);
                 var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
                 if (producao == null) return NotFound();
 
-                _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, req.MateriasPrimas);
+                _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
 
-                producao.Data = req.Data;
-                producao.MaquinaId = req.MaquinaId;
-                producao.FormaId = req.FormaId;
-                producao.Ciclos = req.Ciclos;
+                producao.Data = request.Data;
+                producao.MaquinaId = request.MaquinaId;
+                producao.FormaId = request.FormaId;
+                producao.Ciclos = request.Ciclos;
 
                 await _processoProducaoService.AtualizarAsync(producao);
                 return Ok(producao);

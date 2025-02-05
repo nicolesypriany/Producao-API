@@ -58,11 +58,12 @@ namespace ProducaoAPI.Controllers
         /// Criar uma nova forma
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest req)
+        public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
         {
             try
             {
-                var forma = new Forma(req.Nome, req.ProdutoId, req.PecasPorCiclo);
+                await _formaServices.ValidarDados(request);
+                var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo);
                 await _formaServices.AdicionarAsync(forma);
                 return Ok(forma);
             }
@@ -76,18 +77,19 @@ namespace ProducaoAPI.Controllers
         /// Atualizar uma forma
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest req)
+        public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest request)
         {
             try
             {
+                await _formaServices.ValidarDados(request);
                 var forma = await _formaServices.BuscarFormaPorIdAsync(id);
                 if (forma == null) return NotFound();
 
-                var maquinas = await _formaServices.FormaMaquinaRequestToEntity(req.Maquinas);
+                var maquinas = await _formaServices.FormaMaquinaRequestToEntity(request.Maquinas);
 
-                forma.Nome = req.Nome;
-                forma.ProdutoId = req.ProdutoId;
-                forma.PecasPorCiclo = req.PecasPorCiclo;
+                forma.Nome = request.Nome;
+                forma.ProdutoId = request.ProdutoId;
+                forma.PecasPorCiclo = request.PecasPorCiclo;
                 forma.Maquinas = maquinas;
 
                 await _formaServices.AtualizarAsync(forma);

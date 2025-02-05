@@ -63,11 +63,12 @@ namespace ProducaoAPI.Controllers
         /// <response code="400">Request incorreto</response>
         /// <response code="401">Acesso negado</response>
         [HttpPost]
-        public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest req)
+        public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest request)
         {
             try
             {
-                var produto = new Produto(req.Nome, req.Medidas, req.Unidade, req.PecasPorUnidade);
+                await _produtoServices.ValidarDados(request);
+                var produto = new Produto(request.Nome, request.Medidas, request.Unidade, request.PecasPorUnidade);
                 await _produtoServices.AdicionarAsync(produto);
                 return Ok(produto);
             }
@@ -81,17 +82,18 @@ namespace ProducaoAPI.Controllers
         /// Atualizar um produto
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest req)
+        public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest request)
         {
             try
             {
+                await _produtoServices.ValidarDados(request);
                 var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
                 if (produto == null) return NotFound();
 
-                produto.Nome = req.Nome;
-                produto.Medidas = req.Medidas;
-                produto.Unidade = req.Unidade;
-                produto.PecasPorUnidade = req.PecasPorUnidade;
+                produto.Nome = request.Nome;
+                produto.Medidas = request.Medidas;
+                produto.Unidade = request.Unidade;
+                produto.PecasPorUnidade = request.PecasPorUnidade;
 
                 await _produtoServices.AtualizarAsync(produto);
                 return Ok(produto);

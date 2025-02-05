@@ -58,11 +58,12 @@ namespace ProducaoAPI.Controllers
         /// Criar uma nova máquina
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest req)
+        public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest request)
         {
             try
             {
-                var maquina = new Maquina(req.Nome, req.Marca);
+                await _maquinaService.ValidarDados(request);
+                var maquina = new Maquina(request.Nome, request.Marca);
                 await _maquinaService.AdicionarAsync(maquina);
                 return Ok(maquina);
             }
@@ -76,15 +77,16 @@ namespace ProducaoAPI.Controllers
         /// Atualizar uma máquina
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest req)
+        public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest request)
         {
             try
             {
+                await _maquinaService.ValidarDados(request);
                 var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
                 if (maquina == null) return NotFound();
 
-                maquina.Nome = req.Nome;
-                maquina.Marca = req.Marca;
+                maquina.Nome = request.Nome;
+                maquina.Marca = request.Marca;
 
                 await _maquinaService.AtualizarAsync(maquina);
                 return Ok(maquina);

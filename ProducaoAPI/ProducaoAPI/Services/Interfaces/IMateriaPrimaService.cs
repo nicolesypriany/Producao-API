@@ -1,4 +1,5 @@
 ﻿using ProducaoAPI.Models;
+using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using System.Xml;
 
@@ -12,7 +13,8 @@ namespace ProducaoAPI.Services.Interfaces
         Task AtualizarAsync(MateriaPrima materiaPrima);
         MateriaPrimaResponse EntityToResponse(MateriaPrima materiaPrima);
         ICollection<MateriaPrimaResponse> EntityListToResponseList(IEnumerable<MateriaPrima> materiaPrima);
-        MateriaPrima CriarMateriaPrimaPorXML(IFormFile arquivoXML);
+        Task<MateriaPrima> CriarMateriaPrimaPorXML(IFormFile arquivoXML);
         XmlDocument SalvarXML(IFormFile arquivoXML);
+        Task ValidarDados(MateriaPrimaRequest request);
     }
 }
