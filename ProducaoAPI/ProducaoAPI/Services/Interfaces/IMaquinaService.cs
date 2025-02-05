@@ -1,4 +1,5 @@
 ﻿using ProducaoAPI.Models;
+using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 
 namespace ProducaoAPI.Services.Interfaces
@@ -11,5 +12,7 @@ namespace ProducaoAPI.Services.Interfaces
         Task AtualizarAsync(Maquina maquina);
         MaquinaResponse EntityToResponse(Maquina maquina);
         ICollection<MaquinaResponse> EntityListToResponseList(IEnumerable<Maquina> maquinas);
+        Task ValidarDados(MaquinaRequest request);
+
     }
 }

@@ -13,20 +13,42 @@ namespace ProducaoAPI.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<Maquina>> ListarMaquinasAsync()
+        {
+            var maquinas = await _context.Maquinas
+                .Where(m => m.Ativo == true)
+                .ToListAsync();
+
+            if (maquinas == null || maquinas.Count == 0) throw new NullReferenceException("Nenhuma máquina encontrada.");
+            return maquinas;
+        }
+
+        public async Task<Maquina> BuscarMaquinaPorIdAsync(int id)
+        {
+            try
+            {
+                var maquina = await _context.Maquinas
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                if (maquina == null) throw new NullReferenceException("ID da máquina não encontrado.");
+                return maquina;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task AdicionarAsync(Maquina maquina)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(maquina.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio");
-
-                if (string.IsNullOrWhiteSpace(maquina.Marca)) throw new ArgumentException("O campo \"Marca\" não pode estar vazio");
-
                 await _context.Maquinas.AddAsync(maquina);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.InnerException.Message + ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -39,25 +61,8 @@ namespace ProducaoAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Houve um erro: {ex.Message}");
+                throw new Exception(ex.Message);
             }
-        }
-
-        public async Task<Maquina> BuscarMaquinaPorIdAsync(int id)
-        {
-            try
-            {
-                return await _context.Maquinas.FirstOrDefaultAsync(m => m.Id == id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Houve um erro: {ex.Message}");
-            }
-        }
-
-        public async Task<IEnumerable<Maquina>> ListarMaquinasAsync()
-        {
-            return await _context.Maquinas.Where(m => m.Ativo == true).ToListAsync();
         }
     }
 }

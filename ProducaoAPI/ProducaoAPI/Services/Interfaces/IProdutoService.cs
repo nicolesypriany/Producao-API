@@ -1,4 +1,5 @@
 ﻿using ProducaoAPI.Models;
+using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 
 namespace ProducaoAPI.Services.Interfaces
@@ -11,5 +12,6 @@ namespace ProducaoAPI.Services.Interfaces
         Task AtualizarAsync(Produto produto);
         ProdutoResponse EntityToResponse(Produto produto);
         ICollection<ProdutoResponse> EntityListToResponseList(IEnumerable<Produto> produto);
+        Task ValidarDados(ProdutoRequest request);
     }
 }

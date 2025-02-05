@@ -14,8 +14,9 @@ namespace ProducaoAPI.Services
         private readonly IProdutoRepository _produtoRepository;
         private readonly IProducaoMateriaPrimaRepository _producaoMateriaPrimaRepository;
         private readonly IProducaoMateriaPrimaService _producaoService;
+        private readonly IMaquinaRepository _maquinaRepository;
 
-        public ProcessoProducaoServices(IProcessoProducaoRepository producaoRepository, IMateriaPrimaRepository materiaPrimaRepository, IFormaRepository formaRepository, IProdutoRepository produtoRepository, IProducaoMateriaPrimaRepository producaoMateriaPrimaRepository, IProducaoMateriaPrimaService producaoService)
+        public ProcessoProducaoServices(IProcessoProducaoRepository producaoRepository, IMateriaPrimaRepository materiaPrimaRepository, IFormaRepository formaRepository, IProdutoRepository produtoRepository, IProducaoMateriaPrimaRepository producaoMateriaPrimaRepository, IProducaoMateriaPrimaService producaoService, IMaquinaRepository maquinaRepository)
         {
             _producaoRepository = producaoRepository;
             _materiaPrimaRepository = materiaPrimaRepository;
@@ -23,6 +24,7 @@ namespace ProducaoAPI.Services
             _produtoRepository = produtoRepository;
             _producaoMateriaPrimaRepository = producaoMateriaPrimaRepository;
             _producaoService = producaoService;
+            _maquinaRepository = maquinaRepository;
         }
 
         public ProcessoProducaoResponse EntityToResponse(ProcessoProducao producao)
@@ -92,5 +94,18 @@ namespace ProducaoAPI.Services
         public Task<Forma> BuscarFormaPorIdAsync(int id) => _formaRepository.BuscarFormaPorIdAsync(id);
 
         public Task AdicionarProducaoMateriaAsync(ProcessoProducaoMateriaPrima producaoMateriaPrima) => _producaoMateriaPrimaRepository.AdicionarAsync(producaoMateriaPrima);
+
+        public async Task ValidarDados(ProcessoProducaoRequest request)
+        {
+            if (request.Ciclos <= 0) throw new ArgumentException("O número de ciclos deve ser maior que 0.");
+
+            await _maquinaRepository.BuscarMaquinaPorIdAsync(request.MaquinaId);
+            await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
+
+            foreach (var materiaPrima in request.MateriasPrimas)
+            {
+                await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+            }
+        }
     }
 }

@@ -13,34 +13,68 @@ namespace ProducaoAPI.Repositories
             _context = context;
         }
 
-        public async Task AdicionarAsync(ProcessoProducao producao)
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesAsync()
         {
-            await _context.Producoes.AddAsync(producao);
-            await _context.SaveChangesAsync();
-        }
+            try
+            {
+                var producoes = await _context.Producoes
+               .Include(p => p.ProducaoMateriasPrimas)
+               .ThenInclude(p => p.MateriaPrima)
+               .Where(m => m.Ativo == true)
+               .ToListAsync();
 
-        public async Task AtualizarAsync(ProcessoProducao producao)
-        {
-            _context.Producoes.Update(producao);
-            await _context.SaveChangesAsync();
+                if (producoes == null || producoes.Count == 0) throw new NullReferenceException("Nenhuma produção encontrada.");
+                return producoes;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<ProcessoProducao> BuscarProducaoPorIdAsync(int id)
         {
-            return await _context.Producoes 
+            try
+            {
+                var producao = await _context.Producoes
                .Include(p => p.ProducaoMateriasPrimas)
                .ThenInclude(p => p.MateriaPrima)
                .Where(m => m.Ativo == true)
                .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (producao == null) throw new NullReferenceException("ID da produção não encontrado");
+                return producao;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesAsync()
+        public async Task AdicionarAsync(ProcessoProducao producao)
         {
-            return await _context.Producoes
-                .Include(p => p.ProducaoMateriasPrimas)
-                .ThenInclude(p => p.MateriaPrima)
-                .Where(m => m.Ativo == true)
-                .ToListAsync();
+            try
+            {
+                await _context.Producoes.AddAsync(producao);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task AtualizarAsync(ProcessoProducao producao)
+        {
+            try
+            {
+                _context.Producoes.Update(producao);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

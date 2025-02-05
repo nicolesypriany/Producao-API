@@ -13,26 +13,63 @@ namespace ProducaoAPI.Repositories
             _context = context;
         }
 
-        public async Task AdicionarAsync(MateriaPrima materiaPrima)
+        public async Task<IEnumerable<MateriaPrima>> ListarMateriasAsync()
         {
-            await _context.MateriasPrimas.AddAsync(materiaPrima);
-            await _context.SaveChangesAsync();
-        }
+            try
+            {
+                var materiasPrimas = await _context.MateriasPrimas
+                    .Where(m => m.Ativo == true)
+                    .ToListAsync();
 
-        public async Task AtualizarAsync(MateriaPrima materiaPrima)
-        {
-            _context.MateriasPrimas.Update(materiaPrima);
-            await _context.SaveChangesAsync();
+                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NullReferenceException("Nenhuma matéria-prima encontrada.");
+                return materiasPrimas;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<MateriaPrima> BuscarMateriaPorIdAsync(int id)
         {
-            return await _context.MateriasPrimas.FirstOrDefaultAsync(m => m.Id == id);
+            try
+            {
+                var materiaPrima = await _context.MateriasPrimas
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                if (materiaPrima == null) throw new NullReferenceException("ID da matéria-prima não encontrado.");
+                return materiaPrima;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public async Task<IEnumerable<MateriaPrima>> ListarMateriasAsync()
+        public async Task AdicionarAsync(MateriaPrima materiaPrima)
         {
-            return await _context.MateriasPrimas.Where(m => m.Ativo == true).ToListAsync();
+            try
+            {
+                await _context.MateriasPrimas.AddAsync(materiaPrima);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task AtualizarAsync(MateriaPrima materiaPrima)
+        {
+            try
+            {
+                _context.MateriasPrimas.Update(materiaPrima);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

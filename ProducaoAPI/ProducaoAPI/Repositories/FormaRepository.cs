@@ -8,16 +8,23 @@ namespace ProducaoAPI.Repositories
     public class FormaRepository : IFormaRepository
     {
         private readonly ProducaoContext _context;
-        public FormaRepository(ProducaoContext context)
+        private readonly IProdutoRepository _produtoRepository;
+        public FormaRepository(ProducaoContext context, IProdutoRepository produtoRepository)
         {
             _context = context;
+            _produtoRepository = produtoRepository;
         }
 
         public async Task<IEnumerable<Forma>> ListarFormasAsync()
         {
             try
             {
-                var formas = await _context.Formas.Where(m => m.Ativo == true).Include(f => f.Maquinas).Include(f => f.Produto).ToListAsync();
+                var formas = await _context.Formas
+                    .Where(m => m.Ativo == true)
+                    .Include(f => f.Maquinas)
+                    .Include(f => f.Produto)
+                    .ToListAsync();
+
                 if (formas == null || formas.Count == 0) throw new NullReferenceException("Nenhuma forma encontrada.");
                 return formas;
             }
@@ -31,7 +38,11 @@ namespace ProducaoAPI.Repositories
         {
             try
             {
-                var forma = await _context.Formas.Include(f => f.Maquinas).Include(f => f.Produto).FirstOrDefaultAsync(f => f.Id == id);
+                var forma = await _context.Formas
+                    .Include(f => f.Maquinas)
+                    .Include(f => f.Produto)
+                    .FirstOrDefaultAsync(f => f.Id == id);
+
                 if (forma == null) throw new NullReferenceException("ID da forma não encontrado.");
                 return forma;
             }
@@ -45,9 +56,7 @@ namespace ProducaoAPI.Repositories
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(forma.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
-
-                if (forma.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");
+                await ValidarDados(forma);
 
                 await _context.Formas.AddAsync(forma);
                 await _context.SaveChangesAsync();
@@ -62,6 +71,7 @@ namespace ProducaoAPI.Repositories
         {
             try
             {
+                await ValidarDados(forma);
                 _context.Formas.Update(forma);
                 await _context.SaveChangesAsync();
             }
@@ -70,6 +80,15 @@ namespace ProducaoAPI.Repositories
                 throw new Exception(ex.Message);
             }
 
+        }
+
+        public async Task ValidarDados(Forma forma)
+        {
+            if (string.IsNullOrWhiteSpace(forma.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
+            if (forma.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");
+
+            var produtos = await _produtoRepository.ListarProdutosAsync();
+            if (!produtos.Contains(forma.Produto)) throw new NullReferenceException("ID do produto não encontrado.");
         }
     }
 }
