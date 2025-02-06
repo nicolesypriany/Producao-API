@@ -105,6 +105,7 @@ namespace ProducaoAPI.Services
             foreach (var materiaPrima in request.MateriasPrimas)
             {
                 await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+                if (materiaPrima.Quantidade <= 0) throw new ArgumentException("A quantidade de matéria-prima deve ser maior que 0.");
             }
         }
     }

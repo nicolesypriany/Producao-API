@@ -27,7 +27,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var formas = await _formaServices.ListarFormasAsync();
-                if (formas == null) return NotFound();
                 return Ok(_formaServices.EntityListToResponseList(formas));
             }
             catch (Exception ex)
@@ -45,7 +44,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-                if (forma == null) return NotFound();
                 return Ok(_formaServices.EntityToResponse(forma));
             }
             catch (Exception ex)
@@ -83,7 +81,6 @@ namespace ProducaoAPI.Controllers
             {
                 await _formaServices.ValidarDados(request);
                 var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-                if (forma == null) return NotFound();
 
                 var maquinas = await _formaServices.FormaMaquinaRequestToEntity(request.Maquinas);
 
@@ -110,7 +107,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-                if (forma == null) return NotFound();
                 forma.Ativo = false;
 
                 await _formaServices.AtualizarAsync(forma);
