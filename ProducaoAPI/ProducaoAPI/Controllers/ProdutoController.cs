@@ -47,7 +47,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-                if (produto == null) return NotFound();
                 return Ok(_produtoServices.EntityToResponse(produto));
             }
             catch (Exception ex)
@@ -88,7 +87,6 @@ namespace ProducaoAPI.Controllers
             {
                 await _produtoServices.ValidarDados(request);
                 var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-                if (produto == null) return NotFound();
 
                 produto.Nome = request.Nome;
                 produto.Medidas = request.Medidas;
@@ -113,7 +111,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-                if (produto == null) return NotFound();
                 produto.Ativo = false;
 
                 await _produtoServices.AtualizarAsync(produto);

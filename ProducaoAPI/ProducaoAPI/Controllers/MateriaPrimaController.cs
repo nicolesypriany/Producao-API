@@ -26,7 +26,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var materiasPrimas = await _materiaPrimaService.ListarMateriasAsync();
-                if (materiasPrimas == null) return NotFound();
                 return Ok(_materiaPrimaService.EntityListToResponseList(materiasPrimas));
             }
             catch (Exception ex)
@@ -44,7 +43,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
-                if (materiaPrima == null) return NotFound();
                 return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
             }
             catch (Exception ex)
@@ -84,7 +82,6 @@ namespace ProducaoAPI.Controllers
             {
                 await _materiaPrimaService.ValidarDados(request);
                 var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
-                if (materiaPrima == null) return NotFound();
 
                 materiaPrima.Nome = request.Nome;
                 materiaPrima.Fornecedor = request.Fornecedor;
@@ -109,7 +106,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
-                if (materiaPrima == null) return NotFound();
                 materiaPrima.Ativo = false;
 
                 await _materiaPrimaService.AtualizarAsync(materiaPrima);

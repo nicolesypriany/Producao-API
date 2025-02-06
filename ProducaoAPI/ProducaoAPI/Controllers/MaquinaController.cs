@@ -27,7 +27,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var maquinas = await _maquinaService.ListarMaquinasAsync();
-                if (maquinas == null) return NotFound();
                 return Ok(_maquinaService.EntityListToResponseList(maquinas));
             }
             catch (Exception ex)
@@ -45,7 +44,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-                if (maquina == null) return NotFound();
                 return Ok(_maquinaService.EntityToResponse(maquina));
             }
             catch (Exception ex)
@@ -83,7 +81,6 @@ namespace ProducaoAPI.Controllers
             {
                 await _maquinaService.ValidarDados(request);
                 var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-                if (maquina == null) return NotFound();
 
                 maquina.Nome = request.Nome;
                 maquina.Marca = request.Marca;
@@ -106,7 +103,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-                if (maquina == null) return NotFound();
                 maquina.Ativo = false;
 
                 await _maquinaService.AtualizarAsync(maquina);

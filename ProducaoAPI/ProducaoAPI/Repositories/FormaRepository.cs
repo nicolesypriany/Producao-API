@@ -56,8 +56,6 @@ namespace ProducaoAPI.Repositories
         {
             try
             {
-                await ValidarDados(forma);
-
                 await _context.Formas.AddAsync(forma);
                 await _context.SaveChangesAsync();
             }
@@ -79,7 +77,6 @@ namespace ProducaoAPI.Repositories
             {
                 throw new Exception(ex.Message);
             }
-
         }
 
         public async Task ValidarDados(Forma forma)

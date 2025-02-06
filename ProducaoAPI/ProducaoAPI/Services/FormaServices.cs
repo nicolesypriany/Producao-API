@@ -9,18 +9,14 @@ namespace ProducaoAPI.Services
     public class FormaServices : IFormaService
     {
         private readonly IFormaRepository _formaRepository;
-        private readonly IMaquinaRepository _maquinaRepository;
         private readonly IMaquinaService _maquinaService;
         private readonly IProdutoService _produtoService;
-        private readonly IProdutoRepository _produtoRepository;
 
-        public FormaServices(IFormaRepository formaRepository, IMaquinaRepository maquinaRepository, IMaquinaService maquinaService, IProdutoService produtoService, IProdutoRepository produtoRepository)
+        public FormaServices(IFormaRepository formaRepository, IMaquinaService maquinaService, IProdutoService produtoService)
         {
             _formaRepository = formaRepository;
-            _maquinaRepository = maquinaRepository;
             _maquinaService = maquinaService;
             _produtoService = produtoService;
-            _produtoRepository = produtoRepository;
         }
 
         public FormaResponse EntityToResponse(Forma forma)
@@ -39,7 +35,7 @@ namespace ProducaoAPI.Services
 
             foreach (var maquina in maquinas)
             {
-                var maquinaSelecionada = _maquinaRepository.BuscarMaquinaPorIdAsync(maquina.Id);
+                var maquinaSelecionada = _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
                 var maq = await maquinaSelecionada;
                 maquinasSelecionadas.Add(maq);
             }
@@ -69,11 +65,11 @@ namespace ProducaoAPI.Services
             if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
             if (request.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");
 
-            var produto = await _produtoRepository.BuscarProdutoPorIdAsync(request.ProdutoId);
+            await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
 
             foreach (var maquina in request.Maquinas)
             {
-                await _maquinaRepository.BuscarMaquinaPorIdAsync(maquina.Id);
+                await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
             }
         }
     }

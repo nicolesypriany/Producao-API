@@ -71,7 +71,6 @@ namespace ProducaoAPI.Controllers
                 var producao = new ProcessoProducao(request.Data, request.MaquinaId, forma.Id, forma.ProdutoId, request.Ciclos);
 
                 await _processoProducaoService.AdicionarAsync(producao);
-                await _processoProducaoService.AtualizarAsync(producao);
 
                 var producaoMateriasPrimas = _processoProducaoService.CriarProducoesMateriasPrimas(request.MateriasPrimas, producao.Id);
                 foreach (var producaMateriaPrima in producaoMateriasPrimas)
