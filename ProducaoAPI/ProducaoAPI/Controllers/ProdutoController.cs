@@ -28,7 +28,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                var produtos = await _produtoServices.ListarProdutosAsync();
+                var produtos = await _produtoServices.ListarProdutosAtivos();
                 if (produtos == null) return NotFound();
                 return Ok(_produtoServices.EntityListToResponseList(produtos));
             }

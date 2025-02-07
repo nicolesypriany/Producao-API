@@ -8,6 +8,7 @@
             Medidas = medidas;
             Unidade = unidade;
             PecasPorUnidade = pecasPorUnidade;
+            Ativo = true;
         }
 
         public int Id { get; set; }

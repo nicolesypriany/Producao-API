@@ -71,7 +71,9 @@ namespace ProducaoAPI.Services
             return doc;
         }
 
-        public Task<IEnumerable<MateriaPrima>> ListarMateriasAsync() => _materiaPrimaRepository.ListarMateriasAsync();
+        public Task<IEnumerable<MateriaPrima>> ListarMateriasPrimasAtivas() => _materiaPrimaRepository.ListarMateriasPrimasAtivas();
+
+        public Task<IEnumerable<MateriaPrima>> ListarTodasMateriasPrimas() => _materiaPrimaRepository.ListarTodasMateriasPrimas();
 
         public Task<MateriaPrima> BuscarMateriaPorIdAsync(int id) => _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
 
@@ -81,7 +83,7 @@ namespace ProducaoAPI.Services
 
         public async Task ValidarDados(MateriaPrimaRequest request)
         {
-            var materiasPrimas = await _materiaPrimaRepository.ListarMateriasAsync();
+            var materiasPrimas = await _materiaPrimaRepository.ListarTodasMateriasPrimas();
             var nomeMateriasPrimas = new List<string>();
             foreach (var materia in materiasPrimas)
             {

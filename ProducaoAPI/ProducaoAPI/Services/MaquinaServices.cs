@@ -22,7 +22,8 @@ namespace ProducaoAPI.Services
             return maquinas.Select(m => EntityToResponse(m)).ToList();
         }
 
-        public Task<IEnumerable<Maquina>> ListarMaquinasAsync() => _maquinaRepository.ListarMaquinasAsync();
+        public Task<IEnumerable<Maquina>> ListarMaquinasAtivas() => _maquinaRepository.ListarMaquinasAtivas();
+        public Task<IEnumerable<Maquina>> ListarTodasMaquinas() => _maquinaRepository.ListarTodasMaquinas();
 
         public Task<Maquina> BuscarMaquinaPorIdAsync(int id) => _maquinaRepository.BuscarMaquinaPorIdAsync(id);
 
@@ -32,7 +33,7 @@ namespace ProducaoAPI.Services
 
         public async Task ValidarDados(MaquinaRequest request)
         {
-            var maquinas = await _maquinaRepository.ListarMaquinasAsync();
+            var maquinas = await _maquinaRepository.ListarTodasMaquinas();
             var nomeMaquinas = new List<string>();
             foreach (var maquina in maquinas)
             {

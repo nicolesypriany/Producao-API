@@ -13,12 +13,28 @@ namespace ProducaoAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Produto>> ListarProdutosAsync()
+        public async Task<IEnumerable<Produto>> ListarProdutosAtivos()
         {
             try
             {
                 var produtos = await _context.Produtos
                     .Where(m => m.Ativo == true)
+                    .ToListAsync();
+
+                if (produtos == null || produtos.Count == 0) throw new NullReferenceException("Nenhum produto ativo.");
+                return produtos;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<Produto>> ListarTodosProdutos()
+        {
+            try
+            {
+                var produtos = await _context.Produtos
                     .ToListAsync();
 
                 if (produtos == null || produtos.Count == 0) throw new NullReferenceException("Nenhum produto encontrado.");

@@ -15,12 +15,30 @@ namespace ProducaoAPI.Repositories
             _produtoRepository = produtoRepository;
         }
 
-        public async Task<IEnumerable<Forma>> ListarFormasAsync()
+        public async Task<IEnumerable<Forma>> ListarFormasAtivas()
         {
             try
             {
                 var formas = await _context.Formas
                     .Where(m => m.Ativo == true)
+                    .Include(f => f.Maquinas)
+                    .Include(f => f.Produto)
+                    .ToListAsync();
+
+                if (formas == null || formas.Count == 0) throw new NullReferenceException("Nenhuma forma ativa encontrada.");
+                return formas;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<Forma>> ListarTodasFormas()
+        {
+            try
+            {
+                var formas = await _context.Formas
                     .Include(f => f.Maquinas)
                     .Include(f => f.Produto)
                     .ToListAsync();
@@ -84,7 +102,7 @@ namespace ProducaoAPI.Repositories
             if (string.IsNullOrWhiteSpace(forma.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
             if (forma.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");
 
-            var produtos = await _produtoRepository.ListarProdutosAsync();
+            var produtos = await _produtoRepository.ListarProdutosAtivos();
             if (!produtos.Contains(forma.Produto)) throw new NullReferenceException("ID do produto não encontrado.");
         }
     }

@@ -6,7 +6,8 @@ namespace ProducaoAPI.Services.Interfaces
 {
     public interface IMaquinaService
     {
-        Task<IEnumerable<Maquina>> ListarMaquinasAsync();
+        Task<IEnumerable<Maquina>> ListarMaquinasAtivas();
+        Task<IEnumerable<Maquina>> ListarTodasMaquinas();
         Task<Maquina> BuscarMaquinaPorIdAsync(int id);
         Task AdicionarAsync(Maquina maquina);
         Task AtualizarAsync(Maquina maquina);

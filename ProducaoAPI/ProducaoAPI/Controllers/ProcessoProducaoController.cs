@@ -27,7 +27,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                var producoes = await _processoProducaoService.ListarProducoesAsync();
+                var producoes = await _processoProducaoService.ListarProducoesAtivas();
                 if (producoes == null) return NotFound();
                 return Ok(_processoProducaoService.EntityListToResponseList(producoes));
             }
@@ -67,12 +67,11 @@ namespace ProducaoAPI.Controllers
             {
                 await _processoProducaoService.ValidarDados(request);
                 var forma = await _processoProducaoService.BuscarFormaPorIdAsync(request.FormaId);
-                //var forma = await _context.Formas.FirstOrDefaultAsync(f => f.Id == req.FormaId);
                 var producao = new ProcessoProducao(request.Data, request.MaquinaId, forma.Id, forma.ProdutoId, request.Ciclos);
 
                 await _processoProducaoService.AdicionarAsync(producao);
 
-                var producaoMateriasPrimas = _processoProducaoService.CriarProducoesMateriasPrimas(request.MateriasPrimas, producao.Id);
+                var producaoMateriasPrimas = await _processoProducaoService.CriarProducoesMateriasPrimas(request.MateriasPrimas, producao.Id);
                 foreach (var producaMateriaPrima in producaoMateriasPrimas)
                 {
                     await _producaoMateriaPrimaService.AdicionarAsync(producaMateriaPrima);

@@ -13,7 +13,7 @@ namespace ProducaoAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<MateriaPrima>> ListarMateriasAsync()
+        public async Task<IEnumerable<MateriaPrima>> ListarMateriasPrimasAtivas()
         {
             try
             {
@@ -21,7 +21,23 @@ namespace ProducaoAPI.Repositories
                     .Where(m => m.Ativo == true)
                     .ToListAsync();
 
-                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NullReferenceException("Nenhuma matéria-prima encontrada.");
+                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NullReferenceException("Nenhuma matéria-prima ativa encontrada.");
+                return materiasPrimas;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<MateriaPrima>> ListarTodasMateriasPrimas()
+        {
+            try
+            {
+                var materiasPrimas = await _context.MateriasPrimas
+                    .ToListAsync();
+
+                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NullReferenceException("Nenhuma matéria-prima ativa encontrada.");
                 return materiasPrimas;
             }
             catch (Exception ex)

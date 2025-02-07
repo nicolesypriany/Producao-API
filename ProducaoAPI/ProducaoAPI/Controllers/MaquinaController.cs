@@ -26,7 +26,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                var maquinas = await _maquinaService.ListarMaquinasAsync();
+                var maquinas = await _maquinaService.ListarMaquinasAtivas();
                 return Ok(_maquinaService.EntityListToResponseList(maquinas));
             }
             catch (Exception ex)

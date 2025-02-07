@@ -26,7 +26,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                var formas = await _formaServices.ListarFormasAsync();
+                var formas = await _formaServices.ListarFormasAtivas();
                 return Ok(_formaServices.EntityListToResponseList(formas));
             }
             catch (Exception ex)

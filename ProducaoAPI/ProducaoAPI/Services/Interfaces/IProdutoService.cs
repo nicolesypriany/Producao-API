@@ -6,7 +6,8 @@ namespace ProducaoAPI.Services.Interfaces
 {
     public interface IProdutoService
     {
-        Task<IEnumerable<Produto>> ListarProdutosAsync();
+        Task<IEnumerable<Produto>> ListarProdutosAtivos();
+        Task<IEnumerable<Produto>> ListarTodosProdutos();
         Task<Produto> BuscarProdutoPorIdAsync(int id);
         Task AdicionarAsync(Produto produto);
         Task AtualizarAsync(Produto produto);

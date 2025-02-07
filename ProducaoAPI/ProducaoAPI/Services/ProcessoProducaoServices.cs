@@ -39,13 +39,13 @@ namespace ProducaoAPI.Services
             return producoes.Select(m => EntityToResponse(m)).ToList();
         }
 
-        public List<ProcessoProducaoMateriaPrima> CriarProducoesMateriasPrimas(ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimas, int ProducaoId)
+        public async Task<List<ProcessoProducaoMateriaPrima>> CriarProducoesMateriasPrimas(ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimas, int ProducaoId)
         {
             var producoesMateriasPrimas = new List<ProcessoProducaoMateriaPrima>();
 
             foreach (var materiaPrima in materiasPrimas)
             {
-                var materiaPrimaSelecionada = _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+                var materiaPrimaSelecionada = await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
                 var producaoMateriaPrima = new ProcessoProducaoMateriaPrima(ProducaoId, materiaPrimaSelecionada.Id, materiaPrima.Quantidade);
                 producoesMateriasPrimas.Add(producaoMateriaPrima);
             }
@@ -83,7 +83,8 @@ namespace ProducaoAPI.Services
             await _producaoRepository.AtualizarAsync(producao);
         }
 
-        public Task<IEnumerable<ProcessoProducao>> ListarProducoesAsync() => _producaoRepository.ListarProducoesAsync();
+        public Task<IEnumerable<ProcessoProducao>> ListarProducoesAtivas() => _producaoRepository.ListarProducoesAtivas();
+        public Task<IEnumerable<ProcessoProducao>> ListarTodasProducoes() => _producaoRepository.ListarTodasProducoes();
 
         public Task<ProcessoProducao> BuscarProducaoPorIdAsync(int id) => _producaoRepository.BuscarProducaoPorIdAsync(id);
 
