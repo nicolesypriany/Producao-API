@@ -13,7 +13,7 @@ namespace ProducaoAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesAsync()
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesAtivas()
         {
             try
             {
@@ -24,6 +24,24 @@ namespace ProducaoAPI.Repositories
                .ToListAsync();
 
                 if (producoes == null || producoes.Count == 0) throw new NullReferenceException("Nenhuma produção encontrada.");
+                return producoes;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<ProcessoProducao>> ListarTodasProducoes()
+        {
+            try
+            {
+                var producoes = await _context.Producoes
+               .Include(p => p.ProducaoMateriasPrimas)
+               .ThenInclude(p => p.MateriaPrima)
+               .ToListAsync();
+
+                if (producoes == null || producoes.Count == 0) throw new NullReferenceException("Nenhuma produção ativa encontrada.");
                 return producoes;
             }
             catch (Exception ex)

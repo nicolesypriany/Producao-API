@@ -24,7 +24,9 @@ namespace ProducaoAPI.Services
             return produto.Select(f => EntityToResponse(f)).ToList();
         }
 
-        public Task<IEnumerable<Produto>> ListarProdutosAsync() => _produtoRepository.ListarProdutosAsync();
+        public Task<IEnumerable<Produto>> ListarProdutosAtivos() => _produtoRepository.ListarProdutosAtivos();
+
+        public Task<IEnumerable<Produto>> ListarTodosProdutos() => _produtoRepository.ListarTodosProdutos();
 
         public Task<Produto> BuscarProdutoPorIdAsync(int id) => _produtoRepository.BuscarProdutoPorIdAsync(id);
 
@@ -36,7 +38,7 @@ namespace ProducaoAPI.Services
         {
             if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
 
-            var produtos = await _produtoRepository.ListarProdutosAsync();
+            var produtos = await _produtoRepository.ListarTodosProdutos();
             var nomeProdutos = new List<string>();
             foreach (var produto in produtos)
             {

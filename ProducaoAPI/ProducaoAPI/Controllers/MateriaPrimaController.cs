@@ -25,7 +25,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                var materiasPrimas = await _materiaPrimaService.ListarMateriasAsync();
+                var materiasPrimas = await _materiaPrimaService.ListarMateriasPrimasAtivas();
                 return Ok(_materiaPrimaService.EntityListToResponseList(materiasPrimas));
             }
             catch (Exception ex)

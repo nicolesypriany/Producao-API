@@ -13,10 +13,19 @@ namespace ProducaoAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Maquina>> ListarMaquinasAsync()
+        public async Task<IEnumerable<Maquina>> ListarMaquinasAtivas()
         {
             var maquinas = await _context.Maquinas
                 .Where(m => m.Ativo == true)
+                .ToListAsync();
+
+            if (maquinas == null || maquinas.Count == 0) throw new NullReferenceException("Nenhuma máquina ativa encontrada.");
+            return maquinas;
+        }
+
+        public async Task<IEnumerable<Maquina>> ListarTodasMaquinas()
+        {
+            var maquinas = await _context.Maquinas
                 .ToListAsync();
 
             if (maquinas == null || maquinas.Count == 0) throw new NullReferenceException("Nenhuma máquina encontrada.");

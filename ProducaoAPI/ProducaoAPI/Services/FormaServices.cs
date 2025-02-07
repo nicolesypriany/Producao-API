@@ -43,7 +43,9 @@ namespace ProducaoAPI.Services
             return maquinasSelecionadas;
         }
 
-        public Task<IEnumerable<Forma>> ListarFormasAsync() => _formaRepository.ListarFormasAsync();
+        public Task<IEnumerable<Forma>> ListarFormasAtivas() => _formaRepository.ListarFormasAtivas();
+
+        public Task<IEnumerable<Forma>> ListarTodasFormas() => _formaRepository.ListarTodasFormas();
 
         public Task<Forma> BuscarFormaPorIdAsync(int id) => _formaRepository.BuscarFormaPorIdAsync(id);
 
@@ -53,7 +55,7 @@ namespace ProducaoAPI.Services
 
         public async Task ValidarDados(FormaRequest request)
         {
-            var formas = await _formaRepository.ListarFormasAsync();
+            var formas = await _formaRepository.ListarTodasFormas();
             var nomeFormas = new List<string>();
             foreach (var forma in formas)
             {
