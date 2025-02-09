@@ -87,7 +87,6 @@ namespace ProducaoAPI.Repositories
         {
             try
             {
-                await ValidarDados(forma);
                 _context.Formas.Update(forma);
                 await _context.SaveChangesAsync();
             }

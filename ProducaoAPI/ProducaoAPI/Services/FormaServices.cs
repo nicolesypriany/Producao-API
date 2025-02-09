@@ -1,4 +1,5 @@
-﻿using ProducaoAPI.Models;
+﻿using Azure.Core;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -53,7 +54,7 @@ namespace ProducaoAPI.Services
 
         public Task AtualizarAsync(Forma forma) => _formaRepository.AtualizarAsync(forma);
 
-        public async Task ValidarDados(FormaRequest request)
+        public async Task ValidarDadosParaCadastrar(FormaRequest request)
         {
             var formas = await _formaRepository.ListarTodasFormas();
             var nomeFormas = new List<string>();
@@ -61,8 +62,30 @@ namespace ProducaoAPI.Services
             {
                 nomeFormas.Add(forma.Nome);
             }
-
             if (nomeFormas.Contains(request.Nome)) throw new ArgumentException("Já existe uma forma com este nome!");
+
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
+            if (request.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");
+
+            await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
+
+            foreach (var maquina in request.Maquinas)
+            {
+                await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
+            }
+        }
+
+        public async Task ValidarDadosParaAtualizar(FormaRequest request, int id)
+        {
+            var formaAtualizada = await _formaRepository.BuscarFormaPorIdAsync(id);
+
+            var formas = await _formaRepository.ListarTodasFormas();
+            var nomeFormas = new List<string>();
+            foreach (var forma in formas)
+            {
+                nomeFormas.Add(forma.Nome);
+            }
+            if (nomeFormas.Contains(request.Nome) && formaAtualizada.Nome != request.Nome) throw new ArgumentException("Já existe uma forma com este nome!");
 
             if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
             if (request.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");

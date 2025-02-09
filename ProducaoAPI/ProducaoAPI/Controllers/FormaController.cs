@@ -60,10 +60,10 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _formaServices.ValidarDados(request);
+                await _formaServices.ValidarDadosParaCadastrar(request);
                 var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo);
                 await _formaServices.AdicionarAsync(forma);
-                return Ok(forma);
+                return Ok(_formaServices.EntityToResponse(forma));
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _formaServices.ValidarDados(request);
+                await _formaServices.ValidarDadosParaAtualizar(request, id);
                 var forma = await _formaServices.BuscarFormaPorIdAsync(id);
 
                 var maquinas = await _formaServices.FormaMaquinaRequestToEntity(request.Maquinas);
@@ -90,7 +90,7 @@ namespace ProducaoAPI.Controllers
                 forma.Maquinas = maquinas;
 
                 await _formaServices.AtualizarAsync(forma);
-                return Ok(forma);
+                return Ok(_formaServices.EntityToResponse(forma));
             }
             catch (Exception ex)
             {
@@ -110,7 +110,7 @@ namespace ProducaoAPI.Controllers
                 forma.Ativo = false;
 
                 await _formaServices.AtualizarAsync(forma);
-                return Ok(forma);
+                return Ok(_formaServices.EntityToResponse(forma));
             }
             catch (Exception ex)
             {

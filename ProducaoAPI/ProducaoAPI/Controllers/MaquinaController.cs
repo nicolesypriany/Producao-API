@@ -60,7 +60,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _maquinaService.ValidarDados(request);
+                await _maquinaService.ValidarDadosParaCadastrar(request);
                 var maquina = new Maquina(request.Nome, request.Marca);
                 await _maquinaService.AdicionarAsync(maquina);
                 return Ok(maquina);
@@ -79,7 +79,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _maquinaService.ValidarDados(request);
+                await _maquinaService.ValidarDadosParaAtualizar(request, id);
                 var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
 
                 maquina.Nome = request.Nome;

@@ -14,6 +14,7 @@ namespace ProducaoAPI.Services.Interfaces
         FormaResponse EntityToResponse(Forma forma);
         ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma);
         Task<List<Maquina>> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas);
-        Task ValidarDados(FormaRequest request);
+        Task ValidarDadosParaCadastrar(FormaRequest request);
+        Task ValidarDadosParaAtualizar(FormaRequest request, int id);
     }
 }

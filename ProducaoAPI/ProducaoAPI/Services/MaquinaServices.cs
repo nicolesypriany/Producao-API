@@ -31,7 +31,7 @@ namespace ProducaoAPI.Services
 
         public Task AtualizarAsync(Maquina maquina) => _maquinaRepository.AtualizarAsync(maquina);
 
-        public async Task ValidarDados(MaquinaRequest request)
+        public async Task ValidarDadosParaCadastrar(MaquinaRequest request)
         {
             var maquinas = await _maquinaRepository.ListarTodasMaquinas();
             var nomeMaquinas = new List<string>();
@@ -41,6 +41,22 @@ namespace ProducaoAPI.Services
             }
 
             if (nomeMaquinas.Contains(request.Nome)) throw new ArgumentException("Já existe uma máquina com este nome!");
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio");
+            if (string.IsNullOrWhiteSpace(request.Marca)) throw new ArgumentException("O campo \"Marca\" não pode estar vazio");
+        }
+        public async Task ValidarDadosParaAtualizar(MaquinaRequest request, int id)
+        {
+            var maquinaAtualizada = await _maquinaRepository.BuscarMaquinaPorIdAsync(id);
+
+            var maquinas = await _maquinaRepository.ListarTodasMaquinas();
+            var nomeMaquinas = new List<string>();
+            foreach (var maquina in maquinas)
+            {
+                nomeMaquinas.Add(maquina.Nome);
+            }
+
+            if (nomeMaquinas.Contains(request.Nome) && maquinaAtualizada.Nome != request.Nome) throw new ArgumentException("Já existe uma máquina com este nome!");
+
             if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio");
             if (string.IsNullOrWhiteSpace(request.Marca)) throw new ArgumentException("O campo \"Marca\" não pode estar vazio");
         }
