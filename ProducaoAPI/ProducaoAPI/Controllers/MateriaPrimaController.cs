@@ -61,7 +61,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _materiaPrimaService.ValidarDados(request);
+                await _materiaPrimaService.ValidarDadosParaCadastrar(request);
                 var materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
                 await _materiaPrimaService.AdicionarAsync(materiaPrima);
                 return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
@@ -80,7 +80,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _materiaPrimaService.ValidarDados(request);
+                await _materiaPrimaService.ValidarDadosParaAtualizar(request, id);
                 var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
 
                 materiaPrima.Nome = request.Nome;

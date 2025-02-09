@@ -51,7 +51,7 @@ namespace ProducaoAPI.Services
             if (unidade == "KG") preco /= 1000;
 
             MateriaPrimaRequest request = new MateriaPrimaRequest(produto, fornecedor, unidade, preco);
-            await ValidarDados(request);
+            await ValidarDadosParaCadastrar(request);
             MateriaPrima materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
             await _materiaPrimaRepository.AdicionarAsync(materiaPrima);
 
@@ -81,7 +81,7 @@ namespace ProducaoAPI.Services
 
         public Task AtualizarAsync(MateriaPrima materiaPrima) => _materiaPrimaRepository.AtualizarAsync(materiaPrima);
 
-        public async Task ValidarDados(MateriaPrimaRequest request)
+        public async Task ValidarDadosParaCadastrar(MateriaPrimaRequest request)
         {
             var materiasPrimas = await _materiaPrimaRepository.ListarTodasMateriasPrimas();
             var nomeMateriasPrimas = new List<string>();
@@ -91,6 +91,26 @@ namespace ProducaoAPI.Services
             }
 
             if (nomeMateriasPrimas.Contains(request.Nome)) throw new ArgumentException("Já existe uma matéria-prima com este nome!");
+
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
+            if (string.IsNullOrWhiteSpace(request.Fornecedor)) throw new ArgumentException("O campo \"Fornecedor\" não pode estar vazio.");
+            if (string.IsNullOrWhiteSpace(request.Unidade)) throw new ArgumentException("O campo \"Unidade\" não pode estar vazio.");
+            if (request.Unidade.Length > 5) throw new ArgumentException("A sigla da unidade não pode ter mais de 5 caracteres.");
+            if (request.Preco <= 0) throw new ArgumentException("O preço não pode ser igual ou menor que 0.");
+        }
+
+        public async Task ValidarDadosParaAtualizar(MateriaPrimaRequest request, int id)
+        {
+            var materiaAtualizada = await _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
+
+            var materiasPrimas = await _materiaPrimaRepository.ListarTodasMateriasPrimas();
+            var nomeMateriasPrimas = new List<string>();
+            foreach (var materia in materiasPrimas)
+            {
+                nomeMateriasPrimas.Add(materia.Nome);
+            }
+
+            if (nomeMateriasPrimas.Contains(request.Nome) && materiaAtualizada.Nome != request.Nome) throw new ArgumentException("Já existe uma matéria-prima com este nome!");
 
             if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
             if (string.IsNullOrWhiteSpace(request.Fornecedor)) throw new ArgumentException("O campo \"Fornecedor\" não pode estar vazio.");

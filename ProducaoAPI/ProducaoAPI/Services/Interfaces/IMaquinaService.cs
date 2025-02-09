@@ -13,7 +13,8 @@ namespace ProducaoAPI.Services.Interfaces
         Task AtualizarAsync(Maquina maquina);
         MaquinaResponse EntityToResponse(Maquina maquina);
         ICollection<MaquinaResponse> EntityListToResponseList(IEnumerable<Maquina> maquinas);
-        Task ValidarDados(MaquinaRequest request);
+        Task ValidarDadosParaCadastrar(MaquinaRequest request);
+        Task ValidarDadosParaAtualizar(MaquinaRequest request, int id);
 
     }
 }

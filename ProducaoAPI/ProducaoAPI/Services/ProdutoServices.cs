@@ -34,7 +34,7 @@ namespace ProducaoAPI.Services
 
         public Task AtualizarAsync(Produto produto) => _produtoRepository.AtualizarAsync(produto);
 
-        public async Task ValidarDados(ProdutoRequest request)
+        public async Task ValidarDadosParaCadastrar(ProdutoRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
 
@@ -46,6 +46,27 @@ namespace ProducaoAPI.Services
             }
 
             if (nomeProdutos.Contains(request.Nome)) throw new ArgumentException("Já existe um produto com este nome!");
+            if (string.IsNullOrWhiteSpace(request.Medidas)) throw new ArgumentException("O campo \"Medidas\" não pode estar vazio.");
+            if (string.IsNullOrWhiteSpace(request.Unidade)) throw new ArgumentException("O campo \"Unidade\" não pode estar vazio.");
+            if (request.Unidade.Length > 5) throw new ArgumentException("A sigla da unidade não pode ter mais de 5 caracteres.");
+            if (request.PecasPorUnidade < 1) throw new ArgumentException("O número de peças por unidade deve ser maior do que 0.");
+        }
+
+        public async Task ValidarDadosParaAtualizar(ProdutoRequest request, int id)
+        {
+            var produtoAtualizado = await _produtoRepository.BuscarProdutoPorIdAsync(id);
+
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
+
+            var produtos = await _produtoRepository.ListarTodosProdutos();
+            var nomeProdutos = new List<string>();
+            foreach (var produto in produtos)
+            {
+                nomeProdutos.Add(produto.Nome);
+            }
+
+            if (nomeProdutos.Contains(request.Nome) && produtoAtualizado.Nome != request.Nome) throw new ArgumentException("Já existe um produto com este nome!");
+
             if (string.IsNullOrWhiteSpace(request.Medidas)) throw new ArgumentException("O campo \"Medidas\" não pode estar vazio.");
             if (string.IsNullOrWhiteSpace(request.Unidade)) throw new ArgumentException("O campo \"Unidade\" não pode estar vazio.");
             if (request.Unidade.Length > 5) throw new ArgumentException("A sigla da unidade não pode ter mais de 5 caracteres.");

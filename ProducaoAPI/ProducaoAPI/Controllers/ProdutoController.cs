@@ -66,7 +66,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _produtoServices.ValidarDados(request);
+                await _produtoServices.ValidarDadosParaCadastrar(request);
                 var produto = new Produto(request.Nome, request.Medidas, request.Unidade, request.PecasPorUnidade);
                 await _produtoServices.AdicionarAsync(produto);
                 return Ok(produto);
@@ -85,7 +85,7 @@ namespace ProducaoAPI.Controllers
         {
             try
             {
-                await _produtoServices.ValidarDados(request);
+                await _produtoServices.ValidarDadosParaAtualizar(request, id);
                 var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
 
                 produto.Nome = request.Nome;
