@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ProducaoAPI.Services.Interfaces;
 using ProducaoAPI.Services;
+using ProducaoAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -84,6 +87,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.UseCors("AllowLocalhost");
+
+
 
 app.MapControllers();
 

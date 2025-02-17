@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -31,25 +30,20 @@ namespace ProducaoAPI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message); 
+                throw new Exception(ex.Message);
             }
         }
 
         /// <summary>
         /// Obter forma por ID
         /// </summary>
+        /// <response code="200">Sucesso</response>
+        /// <response code="404">Nenhuma forma encontrada</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<FormaResponse>> BuscarFormaPorId(int id)
         {
-            try
-            {
-                var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-                return Ok(_formaServices.EntityToResponse(forma));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
+            return Ok(_formaServices.EntityToResponse(forma));
         }
 
         /// <summary>
@@ -58,17 +52,8 @@ namespace ProducaoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
         {
-            try
-            {
-                await _formaServices.ValidarDadosParaCadastrar(request);
-                var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo);
-                await _formaServices.AdicionarAsync(forma);
-                return Ok(_formaServices.EntityToResponse(forma));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var forma = await _formaServices.AdicionarAsync(request);
+            return Ok(_formaServices.EntityToResponse(forma));
         }
 
         /// <summary>

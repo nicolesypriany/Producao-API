@@ -61,8 +61,12 @@ namespace ProducaoAPI.Repositories
                     .Include(f => f.Produto)
                     .FirstOrDefaultAsync(f => f.Id == id);
 
-                if (forma == null) throw new NullReferenceException("ID da forma não encontrado.");
+                if (forma is null) throw new HttpStatusCodeException(404, "ID da forma não encontrado.");
                 return forma;
+            }
+            catch (HttpStatusCodeException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
