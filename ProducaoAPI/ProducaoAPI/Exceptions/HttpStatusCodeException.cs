@@ -1,4 +1,4 @@
-﻿namespace ProducaoAPI
+﻿namespace ProducaoAPI.Exceptions
 {
     public class HttpStatusCodeException : Exception
     {

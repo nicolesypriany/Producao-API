@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ProducaoAPI.Services.Interfaces;
 using ProducaoAPI.Services;
-using ProducaoAPI;
+using ProducaoAPI.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 

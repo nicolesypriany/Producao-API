@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
@@ -58,7 +59,36 @@ namespace ProducaoAPI.Services
             return forma;
         }
 
-        public Task AtualizarAsync(Forma forma) => _formaRepository.AtualizarAsync(forma);
+        public async Task<Forma> AtualizarAsync(int id, FormaRequest request)
+        {
+            try
+            {
+                await ValidarDadosParaAtualizar(request, id);
+                var forma = await BuscarFormaPorIdAsync(id);
+
+                var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
+
+                forma.Nome = request.Nome;
+                forma.ProdutoId = request.ProdutoId;
+                forma.PecasPorCiclo = request.PecasPorCiclo;
+                forma.Maquinas = maquinas;
+
+                await _formaRepository.AtualizarAsync(forma);
+                return forma;
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Forma> InativarForma(int id)
+        {
+            var forma = await BuscarFormaPorIdAsync(id);
+            forma.Ativo = false;
+            await _formaRepository.AtualizarAsync(forma);
+            return forma;
+        }
 
         public async Task ValidarDadosParaCadastrar(FormaRequest request)
         {
@@ -71,9 +101,9 @@ namespace ProducaoAPI.Services
                     nomeFormas.Add(forma.Nome);
                 }
 
-                if (nomeFormas.Contains(request.Nome)) throw new HttpStatusCodeException(400, "Já existe uma forma com este nome!");
-                if (string.IsNullOrWhiteSpace(request.Nome)) throw new HttpStatusCodeException(400, "O campo \"Nome\" não pode estar vazio.");
-                if (request.PecasPorCiclo < 1) throw new HttpStatusCodeException(400, "O número de peças por ciclo deve ser maior do que 0.");
+                if (nomeFormas.Contains(request.Nome)) throw new BadRequestException("Já existe uma forma com este nome!");
+                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+                if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
 
                 await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
 
@@ -82,7 +112,7 @@ namespace ProducaoAPI.Services
                     await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
                 }
             }
-            catch (HttpStatusCodeException)
+            catch (BadRequestException)
             {
                 throw;
             }
@@ -101,9 +131,9 @@ namespace ProducaoAPI.Services
                     nomeFormas.Add(forma.Nome);
                 }
 
-                if (nomeFormas.Contains(request.Nome) && formaAtualizada.Nome != request.Nome) throw new HttpStatusCodeException(400, "Já existe uma forma com este nome!");
-                if (string.IsNullOrWhiteSpace(request.Nome)) throw new HttpStatusCodeException(400, "O campo \"Nome\" não pode estar vazio.");
-                if (request.PecasPorCiclo < 1) throw new HttpStatusCodeException(400, "O número de peças por ciclo deve ser maior do que 0.");
+                if (nomeFormas.Contains(request.Nome) && formaAtualizada.Nome != request.Nome) throw new BadRequestException("Já existe uma forma com este nome!");
+                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+                if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
 
                 await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
 
@@ -112,7 +142,7 @@ namespace ProducaoAPI.Services
                     await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
                 }
             }
-            catch (HttpStatusCodeException)
+            catch (BadRequestException)
             {
                 throw;
             }

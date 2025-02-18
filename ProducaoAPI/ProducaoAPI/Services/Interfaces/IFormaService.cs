@@ -10,7 +10,8 @@ namespace ProducaoAPI.Services.Interfaces
         Task<IEnumerable<Forma>> ListarTodasFormas();
         Task<Forma> BuscarFormaPorIdAsync(int id);
         Task<Forma> AdicionarAsync(FormaRequest request);
-        Task AtualizarAsync(Forma forma);
+        Task<Forma> AtualizarAsync(int id, FormaRequest request);
+        Task<Forma> InativarForma(int id);
         FormaResponse EntityToResponse(Forma forma);
         ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma);
         Task<List<Maquina>> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas);
