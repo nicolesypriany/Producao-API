@@ -7,21 +7,18 @@ using ProducaoAPI.Repositories.Interfaces;
 
 namespace ProducaoAPI.Test.FormaTestes.Repository
 {
-    public class Formas_Listar
+    public class FormasListar
     {
         public ProducaoContext Context { get; }
         public IFormaRepository FormaRepository { get; }
-        public IProdutoRepository ProdutoRepository { get; }
-
-        public Formas_Listar()
+        public FormasListar()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                .UseInMemoryDatabase("Teste")
                .Options;
 
             Context = new ProducaoContext(options);
-            ProdutoRepository = new ProdutoRepository(Context);
-            FormaRepository = new FormaRepository(Context, ProdutoRepository);
+            FormaRepository = new FormaRepository(Context);
             Context.Produtos.Add(new Produto("Produto", "teste", "un", 10));
         }
 

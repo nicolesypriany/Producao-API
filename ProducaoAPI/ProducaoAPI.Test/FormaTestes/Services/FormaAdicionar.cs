@@ -30,7 +30,7 @@ namespace ProducaoAPI.Test.FormaTestes.Services
 
             Context = new ProducaoContext(options);
             ProdutoRepository = new ProdutoRepository(Context);
-            FormaRepository = new FormaRepository(Context, ProdutoRepository);
+            FormaRepository = new FormaRepository(Context);
             MaquinaRepository = new MaquinaRepository(Context);
             ProdutoService = new ProdutoServices(ProdutoRepository);
             MaquinaService = new MaquinaServices(MaquinaRepository);

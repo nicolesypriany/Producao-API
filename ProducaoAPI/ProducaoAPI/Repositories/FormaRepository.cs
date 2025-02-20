@@ -9,11 +9,9 @@ namespace ProducaoAPI.Repositories
     public class FormaRepository : IFormaRepository
     {
         private readonly ProducaoContext _context;
-        private readonly IProdutoRepository _produtoRepository;
-        public FormaRepository(ProducaoContext context, IProdutoRepository produtoRepository)
+        public FormaRepository(ProducaoContext context)
         {
             _context = context;
-            _produtoRepository = produtoRepository;
         }
 
         public async Task<IEnumerable<Forma>> ListarFormasAtivas()

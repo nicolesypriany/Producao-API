@@ -10,8 +10,6 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
     {
         public ProducaoContext Context { get; }
         public IFormaRepository FormaRepository { get; }
-        public IProdutoRepository ProdutoRepository { get; }
-
         public FormasAdicionar()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
@@ -19,8 +17,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
                .Options;
 
             Context = new ProducaoContext(options);
-            ProdutoRepository = new ProdutoRepository(Context);
-            FormaRepository = new FormaRepository(Context, ProdutoRepository);
+            FormaRepository = new FormaRepository(Context);
             Context.Produtos.Add(new Produto("Produto", "teste", "un", 10));
         }
 
