@@ -25,6 +25,8 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void AtualizarForma()
         {
             //arrange
+            await Context.Database.EnsureDeletedAsync();
+
             var forma = new Forma("teste", 1, 10);
             await Context.Formas.AddAsync(forma);
             await Context.SaveChangesAsync();

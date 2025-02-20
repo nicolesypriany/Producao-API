@@ -22,7 +22,9 @@ namespace ProducaoAPI.Services
 
         public FormaResponse EntityToResponse(Forma forma)
         {
-            return new FormaResponse(forma.Id, forma.Nome, _produtoService.EntityToResponse(forma.Produto), forma.PecasPorCiclo, _maquinaService.EntityListToResponseList(forma.Maquinas), forma.Ativo);
+            var produto = _produtoService.EntityToResponse(forma.Produto);
+            var maquinas = _maquinaService.EntityListToResponseList(forma.Maquinas);
+            return new FormaResponse(forma.Id, forma.Nome, produto, forma.PecasPorCiclo, maquinas, forma.Ativo);
         }
 
         public ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma)

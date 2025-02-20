@@ -25,7 +25,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void AdicionarForma()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
             var forma = new Forma("teste", 1, 10);
 
             //act

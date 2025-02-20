@@ -1,19 +1,17 @@
-﻿using Bogus.DataSets;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
 using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
+using ProducaoAPI.Responses;
 using ProducaoAPI.Services;
 using ProducaoAPI.Services.Interfaces;
-using System.Runtime.Intrinsics.X86;
-using Xunit.Sdk;
 
 namespace ProducaoAPI.Test.FormaTestes.Services
 {
-    public class FormaAdicionar
+    public class Forma_Services
     {
         public ProducaoContext Context { get; }
         public IFormaService FormaService { get; }
@@ -22,7 +20,7 @@ namespace ProducaoAPI.Test.FormaTestes.Services
         public IMaquinaRepository MaquinaRepository { get; }
         public IFormaRepository FormaRepository { get; }
         public IProdutoRepository ProdutoRepository { get; }
-        public FormaAdicionar()
+        public Forma_Services()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                            .UseInMemoryDatabase("Teste")
@@ -44,11 +42,12 @@ namespace ProducaoAPI.Test.FormaTestes.Services
         public async Task ValidarDadosComNomeVazioOuEmBrancoOuDuplicado(string name, string errorMessage)
         {
             //arrange
-            Context.Produtos.Add(new Produto("Produto", "teste", "un", 10));
-            Context.SaveChanges();
+            await Context.Database.EnsureDeletedAsync();
+            await Context.Produtos.AddAsync(new Produto("Produto", "teste", "un", 10));
+            await Context.SaveChangesAsync();
 
-            Context.Formas.Add(new Forma("Teste", 1, 100));
-            Context.SaveChanges();
+            await Context.Formas.AddAsync(new Forma("Teste", 1, 100));
+            await Context.SaveChangesAsync();
             var formaRequest = new FormaRequest(name, 1, 100, new List<FormaMaquinaRequest>(1));
 
             //act & assert
@@ -60,16 +59,36 @@ namespace ProducaoAPI.Test.FormaTestes.Services
         public async Task ValidarDadosComNumeroDePecasNegativo()
         {
             //arrange
-            Context.Produtos.Add(new Produto("Produto", "teste", "un", 10));
-            Context.SaveChanges();
+            await Context.Database.EnsureDeletedAsync();
+            await Context.Produtos.AddAsync(new Produto("Produto", "teste", "un", 10));
+            await Context.SaveChangesAsync();
 
-            Context.Formas.Add(new Forma("Teste", 1, 100));
-            Context.SaveChanges();
+            await Context.Formas.AddAsync(new Forma("Teste", 1, 100));
+            await Context.SaveChangesAsync();
             var formaRequest = new FormaRequest("Forma", 1, -1, new List<FormaMaquinaRequest>(1));
 
             //act & assert
             var exception = await Assert.ThrowsAsync<BadRequestException>(() => FormaService.ValidarDadosParaCadastrar(formaRequest));
             Assert.Equal("O número de peças por ciclo deve ser maior do que 0.", exception.Message);
+        }
+
+        [Fact]
+        public async Task InativarForma()
+        {
+            //arrange
+            await Context.Database.EnsureDeletedAsync();
+            await Context.Produtos.AddAsync(new Produto("Produto", "teste", "un", 10));
+            await Context.SaveChangesAsync();
+
+            var forma = new Forma("Teste", 1, 100);
+            await Context.Formas.AddAsync(forma);
+            await Context.SaveChangesAsync();
+
+            //act
+            await FormaService.InativarForma(forma.Id);
+
+            //assert
+            Assert.False(forma.Ativo);
         }
     }
 }

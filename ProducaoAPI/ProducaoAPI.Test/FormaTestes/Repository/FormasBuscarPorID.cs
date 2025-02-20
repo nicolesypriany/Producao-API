@@ -26,7 +26,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void RetornaErro404AoBuscarFormaPorIDInexistente()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
 
             //act & assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => FormaRepository.BuscarFormaPorIdAsync(1));
@@ -38,7 +38,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void SucessoAoBuscarFormaPorIDExistente()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
 
             var forma = new Forma("Forma", 1, 10);
             await Context.Formas.AddAsync(forma);
