@@ -20,7 +20,6 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Obter produtos
         /// </summary>
-        ///// <returns>A lista de produtos cadastrados</returns>
         ///// <response code="200">Sucesso</response>
         ///// <response code="404">Nenhum produto encontrado </response>
         [HttpGet]

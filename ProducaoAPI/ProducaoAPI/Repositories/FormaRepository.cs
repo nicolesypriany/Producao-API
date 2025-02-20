@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 
@@ -25,12 +26,12 @@ namespace ProducaoAPI.Repositories
                     .Include(f => f.Produto)
                     .ToListAsync();
 
-                if (formas == null || formas.Count == 0) throw new NullReferenceException("Nenhuma forma ativa encontrada.");
+                if (formas == null || formas.Count == 0) throw new NotFoundException("Nenhuma forma ativa encontrada.");
                 return formas;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -43,12 +44,12 @@ namespace ProducaoAPI.Repositories
                     .Include(f => f.Produto)
                     .ToListAsync();
 
-                if (formas == null || formas.Count == 0) throw new NullReferenceException("Nenhuma forma encontrada.");
+                if (formas == null || formas.Count == 0) throw new NotFoundException("Nenhuma forma encontrada.");
                 return formas;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -61,12 +62,12 @@ namespace ProducaoAPI.Repositories
                     .Include(f => f.Produto)
                     .FirstOrDefaultAsync(f => f.Id == id);
 
-                if (forma == null) throw new NullReferenceException("ID da forma não encontrado.");
+                if (forma == null) throw new NotFoundException("ID da forma não encontrado.");
                 return forma;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -94,15 +95,6 @@ namespace ProducaoAPI.Repositories
             {
                 throw new Exception(ex.Message);
             }
-        }
-
-        public async Task ValidarDados(Forma forma)
-        {
-            if (string.IsNullOrWhiteSpace(forma.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
-            if (forma.PecasPorCiclo < 1) throw new ArgumentException("O número de peças por ciclo deve ser maior do que 0.");
-
-            var produtos = await _produtoRepository.ListarProdutosAtivos();
-            if (!produtos.Contains(forma.Produto)) throw new NullReferenceException("ID do produto não encontrado.");
         }
     }
 }
