@@ -21,97 +21,67 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Obter máquinas
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma máquina encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MaquinaResponse>>> ListarMaquinas()
         {
-            try
-            {
-                var maquinas = await _maquinaService.ListarMaquinasAtivas();
-                return Ok(_maquinaService.EntityListToResponseList(maquinas));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var maquinas = await _maquinaService.ListarMaquinasAtivas();
+            return Ok(_maquinaService.EntityListToResponseList(maquinas));
         }
 
         /// <summary>
         /// Obter máquina por ID
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma máquina encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
-            try
-            {
-                var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-                return Ok(_maquinaService.EntityToResponse(maquina));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
+            return Ok(_maquinaService.EntityToResponse(maquina));
         }
 
         /// <summary>
         /// Criar uma nova máquina
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpPost]
         public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest request)
         {
-            try
-            {
-                await _maquinaService.ValidarDadosParaCadastrar(request);
-                var maquina = new Maquina(request.Nome, request.Marca);
-                await _maquinaService.AdicionarAsync(maquina);
-                return Ok(maquina);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception (ex.Message);
-            }
+            var maquina = await _maquinaService.AdicionarAsync(request);
+            return Ok(_maquinaService.EntityToResponse(maquina));
         }
 
         /// <summary>
         /// Atualizar uma máquina
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="404">Nenhuma máquina encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpPut("{id}")]
         public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest request)
         {
-            try
-            {
-                await _maquinaService.ValidarDadosParaAtualizar(request, id);
-                var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-
-                maquina.Nome = request.Nome;
-                maquina.Marca = request.Marca;
-
-                await _maquinaService.AtualizarAsync(maquina);
-                return Ok(maquina);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var maquina = await _maquinaService.AtualizarAsync(id, request);
+            return Ok(_maquinaService.EntityToResponse(maquina));
         }
 
         /// <summary>
         /// Inativar uma máquina
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma máquina encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {
-            try
-            {
-                var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-                maquina.Ativo = false;
-
-                await _maquinaService.AtualizarAsync(maquina);
-                return Ok(maquina);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var maquina = await _maquinaService.InativarMaquina(id);
+            return Ok(_maquinaService.EntityToResponse(maquina));
         }
     }
 }

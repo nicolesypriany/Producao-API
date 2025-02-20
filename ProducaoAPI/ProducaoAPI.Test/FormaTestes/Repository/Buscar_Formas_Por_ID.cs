@@ -7,11 +7,11 @@ using ProducaoAPI.Repositories.Interfaces;
 
 namespace ProducaoAPI.Test.FormaTestes.Repository
 {
-    public class FormasBuscarPorID
+    public class Buscar_Formas_Por_ID
     {
         public ProducaoContext Context { get; }
         public IFormaRepository FormaRepository { get; }
-        public FormasBuscarPorID()
+        public Buscar_Formas_Por_ID()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                .UseInMemoryDatabase("Teste")

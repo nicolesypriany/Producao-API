@@ -7,11 +7,11 @@ using ProducaoAPI.Repositories.Interfaces;
 
 namespace ProducaoAPI.Test.FormaTestes.Repository
 {
-    public class FormasListar
+    public class Listar_Formas
     {
         public ProducaoContext Context { get; }
         public IFormaRepository FormaRepository { get; }
-        public FormasListar()
+        public Listar_Formas()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                .UseInMemoryDatabase("Teste")
