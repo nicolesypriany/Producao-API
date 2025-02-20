@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using ProducaoAPI.Exceptions;
+﻿using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;

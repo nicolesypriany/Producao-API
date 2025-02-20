@@ -79,7 +79,7 @@ namespace ProducaoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {
-            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
+            var forma = await _formaServices.InativarForma(id);
             return Ok(_formaServices.EntityToResponse(forma));
         }
     }

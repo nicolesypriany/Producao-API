@@ -4,7 +4,7 @@ using ProducaoAPI.Models;
 using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 
-namespace ProducaoAPI.Test.FormaTestes
+namespace ProducaoAPI.Test.FormaTestes.Repository
 {
     public class FormasAdicionar
     {
@@ -17,7 +17,7 @@ namespace ProducaoAPI.Test.FormaTestes
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                .UseInMemoryDatabase("Teste")
                .Options;
-                
+
             Context = new ProducaoContext(options);
             ProdutoRepository = new ProdutoRepository(Context);
             FormaRepository = new FormaRepository(Context, ProdutoRepository);

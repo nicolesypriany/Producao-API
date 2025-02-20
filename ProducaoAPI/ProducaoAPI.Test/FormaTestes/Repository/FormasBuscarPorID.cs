@@ -1,18 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 
-namespace ProducaoAPI.Test.FormaTestes
+namespace ProducaoAPI.Test.FormaTestes.Repository
 {
-    public class FormaAtualizar
+    public class FormasBuscarPorID
     {
         public ProducaoContext Context { get; }
         public IFormaRepository FormaRepository { get; }
         public IProdutoRepository ProdutoRepository { get; }
 
-        public FormaAtualizar()
+        public FormasBuscarPorID()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                .UseInMemoryDatabase("Teste")
@@ -25,27 +26,33 @@ namespace ProducaoAPI.Test.FormaTestes
         }
 
         [Fact]
-        public async void AtualizarForma()
+        public async void RetornaErro404AoBuscarFormaPorIDInexistente()
         {
             //arrange
-            var forma = new Forma("teste", 1, 10);
+            Context.Database.EnsureDeleted();
+
+            //act & assert
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() => FormaRepository.BuscarFormaPorIdAsync(1));
+            Assert.Equal("ID da forma não encontrado.", exception.Message);
+            Assert.Equal(404, exception.StatusCode);
+        }
+
+        [Fact]
+        public async void SucessoAoBuscarFormaPorIDExistente()
+        {
+            //arrange
+            Context.Database.EnsureDeleted();
+
+            var forma = new Forma("Forma", 1, 10);
             await Context.Formas.AddAsync(forma);
             await Context.SaveChangesAsync();
 
             //act
-            forma.Nome = "forma";
-            forma.ProdutoId = 2;
-            forma.PecasPorCiclo = 15;
-            forma.Ativo = false;
-
-            await FormaRepository.AtualizarAsync(forma);
-            var formaAtualizada = await Context.Formas.FindAsync(forma.Id);
+            var formaBuscada = await FormaRepository.BuscarFormaPorIdAsync(forma.Id);
 
             //assert
-            Assert.Equal("forma", formaAtualizada.Nome);
-            Assert.Equal(2, formaAtualizada.ProdutoId);
-            Assert.Equal(15, formaAtualizada.PecasPorCiclo);
-            Assert.False(forma.Ativo);
+            Assert.Equal(forma, formaBuscada);
+            Assert.NotNull(formaBuscada);
         }
     }
 }

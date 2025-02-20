@@ -5,7 +5,7 @@ using ProducaoAPI.Models;
 using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 
-namespace ProducaoAPI.Test.FormaTestes
+namespace ProducaoAPI.Test.FormaTestes.Repository
 {
     public class Formas_Listar
     {
