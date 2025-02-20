@@ -6,11 +6,11 @@ using ProducaoAPI.Repositories.Interfaces;
 
 namespace ProducaoAPI.Test.FormaTestes.Repository
 {
-    public class FormasAdicionar
+    public class FormaAtualizar
     {
         public ProducaoContext Context { get; }
         public IFormaRepository FormaRepository { get; }
-        public FormasAdicionar()
+        public FormaAtualizar()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                .UseInMemoryDatabase("Teste")
@@ -22,18 +22,29 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         }
 
         [Fact]
-        public async void AdicionarForma()
+        public async void AtualizarForma()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
+
             var forma = new Forma("teste", 1, 10);
+            await Context.Formas.AddAsync(forma);
+            await Context.SaveChangesAsync();
 
             //act
-            await FormaRepository.AdicionarAsync(forma);
-            var formaAdicionada = await Context.Formas.FirstOrDefaultAsync(f => f.Id == forma.Id);
+            forma.Nome = "forma";
+            forma.ProdutoId = 2;
+            forma.PecasPorCiclo = 15;
+            forma.Ativo = false;
+
+            await FormaRepository.AtualizarAsync(forma);
+            var formaAtualizada = await Context.Formas.FindAsync(forma.Id);
 
             //assert
-            Assert.Equal(forma, formaAdicionada);
+            Assert.Equal("forma", formaAtualizada.Nome);
+            Assert.Equal(2, formaAtualizada.ProdutoId);
+            Assert.Equal(15, formaAtualizada.PecasPorCiclo);
+            Assert.False(forma.Ativo);
         }
     }
 }

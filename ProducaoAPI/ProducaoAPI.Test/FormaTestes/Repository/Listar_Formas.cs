@@ -7,11 +7,11 @@ using ProducaoAPI.Repositories.Interfaces;
 
 namespace ProducaoAPI.Test.FormaTestes.Repository
 {
-    public class FormasListar
+    public class Listar_Formas
     {
         public ProducaoContext Context { get; }
         public IFormaRepository FormaRepository { get; }
-        public FormasListar()
+        public Listar_Formas()
         {
             var options = new DbContextOptionsBuilder<ProducaoContext>()
                .UseInMemoryDatabase("Teste")
@@ -26,7 +26,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void RetornaErro404AoListarFormasSemFormasCadastradas()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
 
             //act & assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => FormaRepository.ListarTodasFormas());
@@ -38,7 +38,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void RetornaErro404AoListarFormasAtivasSemFormasCadastradas()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
 
             //act & assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => FormaRepository.ListarFormasAtivas());
@@ -50,7 +50,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void RetornaErro404AoListarFormasAtivasSemFormasAtivasCadastradas()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
 
             var forma = new Forma("Forma", 1, 1);
             await Context.Formas.AddAsync(forma);
@@ -67,7 +67,7 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void RetornaFormasAoListarTodasFormas()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
 
             var forma = new Forma("Forma 1", 1, 1);
             await Context.Formas.AddAsync(forma);
@@ -85,13 +85,15 @@ namespace ProducaoAPI.Test.FormaTestes.Repository
         public async void RetornaFormasAtivasAoListarFormasAtivas()
         {
             //arrange
-            Context.Database.EnsureDeleted();
+            await Context.Database.EnsureDeletedAsync();
 
             var forma = new Forma("Forma 3", 1, 1);
             await Context.Formas.AddAsync(forma);
+            await Context.SaveChangesAsync();
 
             var forma2 = new Forma("Forma 4", 1, 1);
             await Context.Formas.AddAsync(forma2);
+            await Context.SaveChangesAsync();
 
             forma.Ativo = false;
             await Context.SaveChangesAsync();

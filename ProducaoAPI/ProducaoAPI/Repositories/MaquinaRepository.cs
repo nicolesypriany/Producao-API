@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 
@@ -15,21 +16,36 @@ namespace ProducaoAPI.Repositories
 
         public async Task<IEnumerable<Maquina>> ListarMaquinasAtivas()
         {
-            var maquinas = await _context.Maquinas
+            try
+            {
+                var maquinas = await _context.Maquinas
                 .Where(m => m.Ativo == true)
                 .ToListAsync();
 
-            if (maquinas == null || maquinas.Count == 0) throw new NullReferenceException("Nenhuma máquina ativa encontrada.");
-            return maquinas;
+                if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina ativa encontrada.");
+                return maquinas;
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
+            
         }
 
         public async Task<IEnumerable<Maquina>> ListarTodasMaquinas()
         {
-            var maquinas = await _context.Maquinas
+            try
+            {
+                var maquinas = await _context.Maquinas
                 .ToListAsync();
 
-            if (maquinas == null || maquinas.Count == 0) throw new NullReferenceException("Nenhuma máquina encontrada.");
-            return maquinas;
+                if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina encontrada.");
+                return maquinas;
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
         }
 
         public async Task<Maquina> BuscarMaquinaPorIdAsync(int id)
@@ -39,12 +55,12 @@ namespace ProducaoAPI.Repositories
                 var maquina = await _context.Maquinas
                     .FirstOrDefaultAsync(m => m.Id == id);
 
-                if (maquina == null) throw new NullReferenceException("ID da máquina não encontrado.");
+                if (maquina == null) throw new NotFoundException("ID da máquina não encontrado.");
                 return maquina;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
