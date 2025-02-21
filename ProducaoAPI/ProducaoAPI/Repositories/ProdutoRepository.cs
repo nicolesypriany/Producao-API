@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 
@@ -21,12 +22,12 @@ namespace ProducaoAPI.Repositories
                     .Where(m => m.Ativo == true)
                     .ToListAsync();
 
-                if (produtos == null || produtos.Count == 0) throw new NullReferenceException("Nenhum produto ativo.");
+                if (produtos == null || produtos.Count == 0) throw new NotFoundException("Nenhum produto ativo.");
                 return produtos;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -37,12 +38,12 @@ namespace ProducaoAPI.Repositories
                 var produtos = await _context.Produtos
                     .ToListAsync();
 
-                if (produtos == null || produtos.Count == 0) throw new NullReferenceException("Nenhum produto encontrado.");
+                if (produtos == null || produtos.Count == 0) throw new NotFoundException("Nenhum produto encontrado.");
                 return produtos;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -53,12 +54,12 @@ namespace ProducaoAPI.Repositories
                 var produto = await _context.Produtos
                     .FirstOrDefaultAsync(m => m.Id == id);
 
-                if (produto == null) throw new NullReferenceException("ID do produto não encontrado.");
+                if (produto == null) throw new NotFoundException("ID do produto não encontrado.");
                 return produto;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 

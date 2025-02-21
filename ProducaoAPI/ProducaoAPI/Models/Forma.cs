@@ -10,6 +10,15 @@
             Ativo = true;
         }
 
+        public Forma(string nome, int produtoId, int pecasPorCiclo, List<Maquina> maquinas)
+        {
+            Nome = nome;
+            ProdutoId = produtoId;
+            PecasPorCiclo = pecasPorCiclo;
+            Ativo = true;
+            Maquinas = maquinas;
+        }
+
         public int Id { get; set; }
         public string Nome { get; set; }
         public Produto Produto { get; set; }

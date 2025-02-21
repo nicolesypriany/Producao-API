@@ -55,7 +55,8 @@ namespace ProducaoAPI.Services
         public async Task<Forma> AdicionarAsync(FormaRequest request)
         {
             await ValidarDadosParaCadastrar(request);
-            var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo);
+            var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
+            var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo, maquinas);
             await _formaRepository.AdicionarAsync(forma);
             return forma;
         }

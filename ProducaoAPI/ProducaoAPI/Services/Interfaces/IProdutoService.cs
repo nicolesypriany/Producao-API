@@ -9,8 +9,9 @@ namespace ProducaoAPI.Services.Interfaces
         Task<IEnumerable<Produto>> ListarProdutosAtivos();
         Task<IEnumerable<Produto>> ListarTodosProdutos();
         Task<Produto> BuscarProdutoPorIdAsync(int id);
-        Task AdicionarAsync(Produto produto);
-        Task AtualizarAsync(Produto produto);
+        Task<Produto> AdicionarAsync(ProdutoRequest request);
+        Task<Produto> AtualizarAsync(int id, ProdutoRequest request);
+        Task<Produto> InativarProduto(int id);
         ProdutoResponse EntityToResponse(Produto produto);
         ICollection<ProdutoResponse> EntityListToResponseList(IEnumerable<Produto> produto);
         Task ValidarDadosParaCadastrar(ProdutoRequest request);
