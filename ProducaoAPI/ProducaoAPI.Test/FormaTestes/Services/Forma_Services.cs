@@ -5,7 +5,6 @@ using ProducaoAPI.Models;
 using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
-using ProducaoAPI.Responses;
 using ProducaoAPI.Services;
 using ProducaoAPI.Services.Interfaces;
 
