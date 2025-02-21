@@ -7,8 +7,6 @@ using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Services;
 using ProducaoAPI.Services.Interfaces;
-using ProducaoAPI.Test.FormaTestes.Services;
-using System;
 
 namespace ProducaoAPI.Test.MaquinaTests.Services
 {
