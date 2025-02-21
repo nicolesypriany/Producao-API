@@ -1,4 +1,5 @@
-﻿using ProducaoAPI.Models;
+﻿using ProducaoAPI.Exceptions;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -77,46 +78,93 @@ namespace ProducaoAPI.Services
 
         public Task<MateriaPrima> BuscarMateriaPorIdAsync(int id) => _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
 
-        public Task AdicionarAsync(MateriaPrima materiaPrima) => _materiaPrimaRepository.AdicionarAsync(materiaPrima);
+        public async Task<MateriaPrima> AdicionarAsync(MateriaPrimaRequest request)
+        {
+            await ValidarDadosParaCadastrar(request);
+            var materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
+            await _materiaPrimaRepository.AdicionarAsync(materiaPrima);
+            return materiaPrima;
+        }
 
-        public Task AtualizarAsync(MateriaPrima materiaPrima) => _materiaPrimaRepository.AtualizarAsync(materiaPrima);
+        public async Task<MateriaPrima> AtualizarAsync(int id, MateriaPrimaRequest request)
+        {
+            try
+            {
+                await ValidarDadosParaAtualizar(request, id);
+                var materiaPrima = await _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
+
+                materiaPrima.Nome = request.Nome;
+                materiaPrima.Fornecedor = request.Fornecedor;
+                materiaPrima.Unidade = request.Unidade;
+                materiaPrima.Preco = request.Preco;
+
+                await _materiaPrimaRepository.AtualizarAsync(materiaPrima);
+                return materiaPrima;
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+        }
+
+        public async Task<MateriaPrima> InativarMateriaPrima(int id)
+        {
+            var materiaPrima = await BuscarMateriaPorIdAsync(id);
+            materiaPrima.Ativo = false;
+            await _materiaPrimaRepository.AtualizarAsync(materiaPrima);
+            return materiaPrima;
+        }
 
         public async Task ValidarDadosParaCadastrar(MateriaPrimaRequest request)
         {
-            var materiasPrimas = await _materiaPrimaRepository.ListarTodasMateriasPrimas();
-            var nomeMateriasPrimas = new List<string>();
-            foreach (var materia in materiasPrimas)
+            try
             {
-                nomeMateriasPrimas.Add(materia.Nome);
+                var materiasPrimas = await _materiaPrimaRepository.ListarTodasMateriasPrimas();
+                var nomeMateriasPrimas = new List<string>();
+                foreach (var materia in materiasPrimas)
+                {
+                    nomeMateriasPrimas.Add(materia.Nome);
+                }
+
+                if (nomeMateriasPrimas.Contains(request.Nome)) throw new BadRequestException("Já existe uma matéria-prima com este nome!");
+
+                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+                if (string.IsNullOrWhiteSpace(request.Fornecedor)) throw new BadRequestException("O campo \"Fornecedor\" não pode estar vazio.");
+                if (string.IsNullOrWhiteSpace(request.Unidade)) throw new BadRequestException("O campo \"Unidade\" não pode estar vazio.");
+                if (request.Unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
+                if (request.Preco <= 0) throw new BadRequestException("O preço não pode ser igual ou menor que 0.");
             }
-
-            if (nomeMateriasPrimas.Contains(request.Nome)) throw new ArgumentException("Já existe uma matéria-prima com este nome!");
-
-            if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
-            if (string.IsNullOrWhiteSpace(request.Fornecedor)) throw new ArgumentException("O campo \"Fornecedor\" não pode estar vazio.");
-            if (string.IsNullOrWhiteSpace(request.Unidade)) throw new ArgumentException("O campo \"Unidade\" não pode estar vazio.");
-            if (request.Unidade.Length > 5) throw new ArgumentException("A sigla da unidade não pode ter mais de 5 caracteres.");
-            if (request.Preco <= 0) throw new ArgumentException("O preço não pode ser igual ou menor que 0.");
+            catch (BadRequestException)
+            {
+                throw;
+            }
         }
 
         public async Task ValidarDadosParaAtualizar(MateriaPrimaRequest request, int id)
         {
-            var materiaAtualizada = await _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
-
-            var materiasPrimas = await _materiaPrimaRepository.ListarTodasMateriasPrimas();
-            var nomeMateriasPrimas = new List<string>();
-            foreach (var materia in materiasPrimas)
+            try
             {
-                nomeMateriasPrimas.Add(materia.Nome);
+                var materiaAtualizada = await _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
+
+                var materiasPrimas = await _materiaPrimaRepository.ListarTodasMateriasPrimas();
+                var nomeMateriasPrimas = new List<string>();
+                foreach (var materia in materiasPrimas)
+                {
+                    nomeMateriasPrimas.Add(materia.Nome);
+                }
+
+                if (nomeMateriasPrimas.Contains(request.Nome) && materiaAtualizada.Nome != request.Nome) throw new BadRequestException("Já existe uma matéria-prima com este nome!");
+
+                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+                if (string.IsNullOrWhiteSpace(request.Fornecedor)) throw new BadRequestException("O campo \"Fornecedor\" não pode estar vazio.");
+                if (string.IsNullOrWhiteSpace(request.Unidade)) throw new ArgumentException("O campo \"Unidade\" não pode estar vazio.");
+                if (request.Unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
+                if (request.Preco <= 0) throw new BadRequestException("O preço não pode ser igual ou menor que 0.");
             }
-
-            if (nomeMateriasPrimas.Contains(request.Nome) && materiaAtualizada.Nome != request.Nome) throw new ArgumentException("Já existe uma matéria-prima com este nome!");
-
-            if (string.IsNullOrWhiteSpace(request.Nome)) throw new ArgumentException("O campo \"Nome\" não pode estar vazio.");
-            if (string.IsNullOrWhiteSpace(request.Fornecedor)) throw new ArgumentException("O campo \"Fornecedor\" não pode estar vazio.");
-            if (string.IsNullOrWhiteSpace(request.Unidade)) throw new ArgumentException("O campo \"Unidade\" não pode estar vazio.");
-            if (request.Unidade.Length > 5) throw new ArgumentException("A sigla da unidade não pode ter mais de 5 caracteres.");
-            if (request.Preco <= 0) throw new ArgumentException("O preço não pode ser igual ou menor que 0.");
+            catch (BadRequestException)
+            {
+                throw;
+            }
         }
     }
 }

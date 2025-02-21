@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 
@@ -21,12 +22,12 @@ namespace ProducaoAPI.Repositories
                     .Where(m => m.Ativo == true)
                     .ToListAsync();
 
-                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NullReferenceException("Nenhuma matéria-prima ativa encontrada.");
+                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");
                 return materiasPrimas;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -37,12 +38,12 @@ namespace ProducaoAPI.Repositories
                 var materiasPrimas = await _context.MateriasPrimas
                     .ToListAsync();
 
-                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NullReferenceException("Nenhuma matéria-prima ativa encontrada.");
+                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");
                 return materiasPrimas;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -53,12 +54,12 @@ namespace ProducaoAPI.Repositories
                 var materiaPrima = await _context.MateriasPrimas
                     .FirstOrDefaultAsync(m => m.Id == id);
 
-                if (materiaPrima == null) throw new NullReferenceException("ID da matéria-prima não encontrado.");
+                if (materiaPrima == null) throw new NotFoundException("ID da matéria-prima não encontrado.");
                 return materiaPrima;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 

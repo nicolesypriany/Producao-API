@@ -20,101 +20,67 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Obter matérias-primas
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma matéria-prima encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MateriaPrimaResponse>>> ListarMateriasPrimas()
         {
-            try
-            {
-                var materiasPrimas = await _materiaPrimaService.ListarMateriasPrimasAtivas();
-                return Ok(_materiaPrimaService.EntityListToResponseList(materiasPrimas));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var materiasPrimas = await _materiaPrimaService.ListarMateriasPrimasAtivas();
+            return Ok(_materiaPrimaService.EntityListToResponseList(materiasPrimas));
         }
 
         /// <summary>
         /// Obter matéria-prima por ID
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma matéria-prima encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> BuscarMateriaPrimaPorId(int id)
         {
-            try
-            {
-                var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
-                return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
+            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
         }
 
         /// <summary>
         /// Criar uma nova matéria-prima
         /// </summary>
-        /// <response code="200">Matéria-prima cadastrada com sucesso</response>
-        /// <response code="400">Request incorreto</response>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpPost]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrima(MateriaPrimaRequest request)
         {
-            try
-            {
-                await _materiaPrimaService.ValidarDadosParaCadastrar(request);
-                var materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
-                await _materiaPrimaService.AdicionarAsync(materiaPrima);
-                return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var materiaPrima = await _materiaPrimaService.AdicionarAsync(request);
+            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
         }
 
         /// <summary>
         /// Atualizar uma matéria-prima
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="404">Nenhuma matéria-prima encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpPut("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> AtualizarMateriaPrima(int id, MateriaPrimaRequest request)
         {
-            try
-            {
-                await _materiaPrimaService.ValidarDadosParaAtualizar(request, id);
-                var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
-
-                materiaPrima.Nome = request.Nome;
-                materiaPrima.Fornecedor = request.Fornecedor;
-                materiaPrima.Unidade = request.Unidade;
-                materiaPrima.Preco = request.Preco;
-
-                await _materiaPrimaService.AtualizarAsync(materiaPrima);
-                return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var materiaPrima = await _materiaPrimaService.AtualizarAsync(id, request);
+            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
         }
 
         /// <summary>
         /// Inativar uma matéria-prima
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma matéria-prima encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> InativarProduto(int id)
         {
-            try
-            {
-                var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
-                materiaPrima.Ativo = false;
-
-                await _materiaPrimaService.AtualizarAsync(materiaPrima);
-                return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var materiaPrima = await _materiaPrimaService.InativarMateriaPrima(id);
+            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
         }
 
         /// <summary>
