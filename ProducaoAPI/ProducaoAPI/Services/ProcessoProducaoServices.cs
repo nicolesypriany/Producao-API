@@ -1,4 +1,6 @@
-﻿using ProducaoAPI.Models;
+﻿using Azure.Core;
+using ProducaoAPI.Exceptions;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -55,18 +57,10 @@ namespace ProducaoAPI.Services
         public async Task CalcularProducao(int producaoId)
         {
             var producao = await _producaoRepository.BuscarProducaoPorIdAsync(producaoId);
-            //var producao = context.Producoes
-            //    .Include(p => p.ProducaoMateriasPrimas)
-            //    .ThenInclude(p => p.MateriaPrima)
-            //    .FirstOrDefault(p => p.Id == producaoId);
 
             var forma = await _formaRepository.BuscarFormaPorIdAsync(producao.FormaId);
 
-            //var forma = context.Formas.FirstOrDefault(f => f.Id == producao.FormaId);
-
             var produto = await _produtoRepository.BuscarProdutoPorIdAsync(producao.ProdutoId);
-
-            //var produto = context.Produtos.FirstOrDefault(p => p.Id == producao.ProdutoId);
 
             double quantidadeProduzida = ((Convert.ToDouble(producao.Ciclos)) * forma.PecasPorCiclo) / produto.PecasPorUnidade;
 
@@ -88,9 +82,56 @@ namespace ProducaoAPI.Services
 
         public Task<ProcessoProducao> BuscarProducaoPorIdAsync(int id) => _producaoRepository.BuscarProducaoPorIdAsync(id);
 
-        public Task AdicionarAsync(ProcessoProducao producao) => _producaoRepository.AdicionarAsync(producao);
+        public async Task<ProcessoProducao> AdicionarAsync(ProcessoProducaoRequest request)
+        {
 
-        public Task AtualizarAsync(ProcessoProducao producao) => _producaoRepository.AtualizarAsync(producao);
+            await ValidarDados(request);
+            var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
+            var producao = new ProcessoProducao(request.Data, request.MaquinaId, request.FormaId, forma.ProdutoId, request.Ciclos);
+            await _producaoRepository.AdicionarAsync(producao);
+
+            var producaoMateriasPrimas = await CriarProducoesMateriasPrimas(request.MateriasPrimas, producao.Id);
+            foreach (var producaMateriaPrima in producaoMateriasPrimas)
+            {
+                await _producaoMateriaPrimaRepository.AdicionarAsync(producaMateriaPrima);
+            }
+
+            return producao;
+        }
+
+        public async Task<ProcessoProducao> AtualizarAsync(int id, ProcessoProducaoRequest request)
+        {
+            try
+            {
+                await ValidarDados(request);
+                var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
+
+                var producao = await BuscarProducaoPorIdAsync(id);
+
+                _producaoService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
+
+                producao.Data = request.Data;
+                producao.MaquinaId = request.MaquinaId;
+                producao.FormaId = request.FormaId;
+                producao.ProdutoId = forma.ProdutoId;
+                producao.Ciclos = producao.Ciclos;
+
+                await _producaoRepository.AtualizarAsync(producao);
+                return producao;
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ProcessoProducao> InativarProducao(int id)
+        {
+            var producao = await BuscarProducaoPorIdAsync(id);
+            producao.Ativo = false;
+            await _producaoRepository.AtualizarAsync(producao);
+            return producao;
+        }
 
         public Task<Forma> BuscarFormaPorIdAsync(int id) => _formaRepository.BuscarFormaPorIdAsync(id);
 
@@ -98,15 +139,22 @@ namespace ProducaoAPI.Services
 
         public async Task ValidarDados(ProcessoProducaoRequest request)
         {
-            if (request.Ciclos <= 0) throw new ArgumentException("O número de ciclos deve ser maior que 0.");
-
-            await _maquinaRepository.BuscarMaquinaPorIdAsync(request.MaquinaId);
-            await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
-
-            foreach (var materiaPrima in request.MateriasPrimas)
+            try
             {
-                await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
-                if (materiaPrima.Quantidade <= 0) throw new ArgumentException("A quantidade de matéria-prima deve ser maior que 0.");
+                if (request.Ciclos <= 0) throw new BadRequestException("O número de ciclos deve ser maior que 0.");
+
+                await _maquinaRepository.BuscarMaquinaPorIdAsync(request.MaquinaId);
+                await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
+
+                foreach (var materiaPrima in request.MateriasPrimas)
+                {
+                    await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+                    if (materiaPrima.Quantidade <= 0) throw new BadRequestException("A quantidade de matéria-prima deve ser maior que 0.");
+                }
+            }
+            catch (BadRequestException)
+            {
+                throw;
             }
         }
     }

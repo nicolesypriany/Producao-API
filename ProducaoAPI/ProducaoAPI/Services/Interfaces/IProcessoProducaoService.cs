@@ -9,8 +9,9 @@ namespace ProducaoAPI.Services.Interfaces
         Task<IEnumerable<ProcessoProducao>> ListarProducoesAtivas();
         Task<IEnumerable<ProcessoProducao>> ListarTodasProducoes();
         Task<ProcessoProducao> BuscarProducaoPorIdAsync(int id);
-        Task AdicionarAsync(ProcessoProducao producao);
-        Task AtualizarAsync(ProcessoProducao producao);
+        Task<ProcessoProducao> AdicionarAsync(ProcessoProducaoRequest request);
+        Task<ProcessoProducao> AtualizarAsync(int id, ProcessoProducaoRequest request);
+        Task<ProcessoProducao> InativarProducao(int id);
         ProcessoProducaoResponse EntityToResponse(ProcessoProducao producao);
         ICollection<ProcessoProducaoResponse> EntityListToResponseList(IEnumerable<ProcessoProducao> producoes);
         Task<List<ProcessoProducaoMateriaPrima>> CriarProducoesMateriasPrimas(ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimas, int ProducaoId);

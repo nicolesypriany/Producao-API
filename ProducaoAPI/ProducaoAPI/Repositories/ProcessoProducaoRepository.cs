@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Data;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 
@@ -23,12 +24,12 @@ namespace ProducaoAPI.Repositories
                .Where(m => m.Ativo == true)
                .ToListAsync();
 
-                if (producoes == null || producoes.Count == 0) throw new NullReferenceException("Nenhuma produção encontrada.");
+                if (producoes == null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção encontrada.");
                 return producoes;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -41,12 +42,12 @@ namespace ProducaoAPI.Repositories
                .ThenInclude(p => p.MateriaPrima)
                .ToListAsync();
 
-                if (producoes == null || producoes.Count == 0) throw new NullReferenceException("Nenhuma produção ativa encontrada.");
+                if (producoes == null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção ativa encontrada.");
                 return producoes;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -60,12 +61,12 @@ namespace ProducaoAPI.Repositories
                .Where(m => m.Ativo == true)
                .FirstOrDefaultAsync(p => p.Id == id);
 
-                if (producao == null) throw new NullReferenceException("ID da produção não encontrado");
+                if (producao == null) throw new NotFoundException("ID da produção não encontrado");
                 return producao;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
