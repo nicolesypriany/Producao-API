@@ -43,8 +43,6 @@ namespace ProducaoAPI.Test.FormaTestes.Services
             //arrange
             await Context.Database.EnsureDeletedAsync();
             await Context.Produtos.AddAsync(new Produto("Produto", "teste", "un", 10));
-            await Context.SaveChangesAsync();
-
             await Context.Formas.AddAsync(new Forma("Teste", 1, 100));
             await Context.SaveChangesAsync();
             var formaRequest = new FormaRequest(name, 1, 100, new List<FormaMaquinaRequest>(1));
@@ -60,8 +58,6 @@ namespace ProducaoAPI.Test.FormaTestes.Services
             //arrange
             await Context.Database.EnsureDeletedAsync();
             await Context.Produtos.AddAsync(new Produto("Produto", "teste", "un", 10));
-            await Context.SaveChangesAsync();
-
             await Context.Formas.AddAsync(new Forma("Teste", 1, 100));
             await Context.SaveChangesAsync();
             var formaRequest = new FormaRequest("Forma", 1, -1, new List<FormaMaquinaRequest>(1));
@@ -77,8 +73,6 @@ namespace ProducaoAPI.Test.FormaTestes.Services
             //arrange
             await Context.Database.EnsureDeletedAsync();
             await Context.Produtos.AddAsync(new Produto("Produto", "teste", "un", 10));
-            await Context.SaveChangesAsync();
-
             var forma = new Forma("Teste", 1, 100);
             await Context.Formas.AddAsync(forma);
             await Context.SaveChangesAsync();

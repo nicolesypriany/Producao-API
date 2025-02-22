@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using ProducaoAPI.Exceptions;
+﻿using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
@@ -51,7 +50,7 @@ namespace ProducaoAPI.Services
                 var producaoMateriaPrima = new ProcessoProducaoMateriaPrima(ProducaoId, materiaPrimaSelecionada.Id, materiaPrima.Quantidade);
                 producoesMateriasPrimas.Add(producaoMateriaPrima);
             }
-            return (producoesMateriasPrimas);
+            return producoesMateriasPrimas;
         }
 
         public async Task CalcularProducao(int producaoId)
