@@ -63,25 +63,18 @@ namespace ProducaoAPI.Services
 
         public async Task<Forma> AtualizarAsync(int id, FormaRequest request)
         {
-            try
-            {
-                await ValidarDadosParaAtualizar(request, id);
-                var forma = await BuscarFormaPorIdAsync(id);
+            await ValidarDadosParaAtualizar(request, id);
+            var forma = await BuscarFormaPorIdAsync(id);
 
-                var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
+            var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
 
-                forma.Nome = request.Nome;
-                forma.ProdutoId = request.ProdutoId;
-                forma.PecasPorCiclo = request.PecasPorCiclo;
-                forma.Maquinas = maquinas;
+            forma.Nome = request.Nome;
+            forma.ProdutoId = request.ProdutoId;
+            forma.PecasPorCiclo = request.PecasPorCiclo;
+            forma.Maquinas = maquinas;
 
-                await _formaRepository.AtualizarAsync(forma);
-                return forma;
-            }
-            catch (BadRequestException)
-            {
-                throw;
-            }
+            await _formaRepository.AtualizarAsync(forma);
+            return forma;
         }
 
         public async Task<Forma> InativarForma(int id)
@@ -94,59 +87,45 @@ namespace ProducaoAPI.Services
 
         public async Task ValidarDadosParaCadastrar(FormaRequest request)
         {
-            try
+            var formas = await _formaRepository.ListarTodasFormas();
+            var nomeFormas = new List<string>();
+            foreach (var forma in formas)
             {
-                var formas = await _formaRepository.ListarTodasFormas();
-                var nomeFormas = new List<string>();
-                foreach (var forma in formas)
-                {
-                    nomeFormas.Add(forma.Nome);
-                }
-
-                if (nomeFormas.Contains(request.Nome)) throw new BadRequestException("Já existe uma forma com este nome!");
-                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
-                if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
-
-                await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
-
-                foreach (var maquina in request.Maquinas)
-                {
-                    await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
-                }
+                nomeFormas.Add(forma.Nome);
             }
-            catch (BadRequestException)
+
+            if (nomeFormas.Contains(request.Nome)) throw new BadRequestException("Já existe uma forma com este nome!");
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+            if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
+
+            await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
+
+            foreach (var maquina in request.Maquinas)
             {
-                throw;
+                await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
             }
         }
 
         public async Task ValidarDadosParaAtualizar(FormaRequest request, int id)
         {
-            try
+            var formaAtualizada = await _formaRepository.BuscarFormaPorIdAsync(id);
+
+            var formas = await _formaRepository.ListarTodasFormas();
+            var nomeFormas = new List<string>();
+            foreach (var forma in formas)
             {
-                var formaAtualizada = await _formaRepository.BuscarFormaPorIdAsync(id);
-
-                var formas = await _formaRepository.ListarTodasFormas();
-                var nomeFormas = new List<string>();
-                foreach (var forma in formas)
-                {
-                    nomeFormas.Add(forma.Nome);
-                }
-
-                if (nomeFormas.Contains(request.Nome) && formaAtualizada.Nome != request.Nome) throw new BadRequestException("Já existe uma forma com este nome!");
-                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
-                if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
-
-                await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
-
-                foreach (var maquina in request.Maquinas)
-                {
-                    await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
-                }
+                nomeFormas.Add(forma.Nome);
             }
-            catch (BadRequestException)
+
+            if (nomeFormas.Contains(request.Nome) && formaAtualizada.Nome != request.Nome) throw new BadRequestException("Já existe uma forma com este nome!");
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+            if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
+
+            await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
+
+            foreach (var maquina in request.Maquinas)
             {
-                throw;
+                await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
             }
         }
     }

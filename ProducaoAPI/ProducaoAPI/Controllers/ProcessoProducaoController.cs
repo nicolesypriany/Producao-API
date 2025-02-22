@@ -91,15 +91,9 @@ namespace ProducaoAPI.Controllers
         [HttpPost("CalcularProducao/{id}")]
         public async Task<ActionResult<ProcessoProducao>> CalcularProducao(int id)
         {
-            try
-            {
-                await _processoProducaoService.CalcularProducao(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _processoProducaoService.CalcularProducao(id);
+            var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
+            return Ok(_processoProducaoService.EntityToResponse(producao));
         }
     }
 }

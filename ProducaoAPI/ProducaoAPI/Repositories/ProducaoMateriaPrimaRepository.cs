@@ -13,15 +13,8 @@ namespace ProducaoAPI.Repositories
         }
         public async Task AdicionarAsync(ProcessoProducaoMateriaPrima producaoMateriaPrima)
         {
-            try
-            {
-                await _context.ProducoesMateriasPrimas.AddAsync(producaoMateriaPrima);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _context.ProducoesMateriasPrimas.AddAsync(producaoMateriaPrima);
+            await _context.SaveChangesAsync();
         }
     }
 }

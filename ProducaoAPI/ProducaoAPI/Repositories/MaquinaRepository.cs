@@ -16,78 +16,42 @@ namespace ProducaoAPI.Repositories
 
         public async Task<IEnumerable<Maquina>> ListarMaquinasAtivas()
         {
-            try
-            {
-                var maquinas = await _context.Maquinas
-                .Where(m => m.Ativo == true)
-                .ToListAsync();
+            var maquinas = await _context.Maquinas
+            .Where(m => m.Ativo == true)
+            .ToListAsync();
 
-                if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina ativa encontrada.");
-                return maquinas;
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
-
+            if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina ativa encontrada.");
+            return maquinas;
         }
 
         public async Task<IEnumerable<Maquina>> ListarTodasMaquinas()
         {
-            try
-            {
-                var maquinas = await _context.Maquinas
-                .ToListAsync();
+            var maquinas = await _context.Maquinas
+            .ToListAsync();
 
-                if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina encontrada.");
-                return maquinas;
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
+            if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina encontrada.");
+            return maquinas;
         }
 
         public async Task<Maquina> BuscarMaquinaPorIdAsync(int id)
         {
-            try
-            {
-                var maquina = await _context.Maquinas
-                    .FirstOrDefaultAsync(m => m.Id == id);
+            var maquina = await _context.Maquinas
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-                if (maquina == null) throw new NotFoundException("ID da máquina não encontrado.");
-                return maquina;
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
+            if (maquina == null) throw new NotFoundException("ID da máquina não encontrado.");
+            return maquina;
         }
 
         public async Task AdicionarAsync(Maquina maquina)
         {
-            try
-            {
-                await _context.Maquinas.AddAsync(maquina);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _context.Maquinas.AddAsync(maquina);
+            await _context.SaveChangesAsync();
         }
 
         public async Task AtualizarAsync(Maquina maquina)
         {
-            try
-            {
-                _context.Maquinas.Update(maquina);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            _context.Maquinas.Update(maquina);
+            await _context.SaveChangesAsync();
         }
     }
 }

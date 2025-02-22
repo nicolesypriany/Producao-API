@@ -41,8 +41,6 @@ namespace ProducaoAPI.Services
 
         public async Task<Produto> AtualizarAsync(int id, ProdutoRequest request)
         {
-            try
-            {
                 await ValidarDadosParaAtualizar(request, id);
                 var produto = await _produtoRepository.BuscarProdutoPorIdAsync(id);
 
@@ -53,11 +51,6 @@ namespace ProducaoAPI.Services
 
                 await _produtoRepository.AtualizarAsync(produto);
                 return produto;
-            }
-            catch (BadRequestException)
-            {
-                throw;
-            }
         }
 
         public async Task<Produto> InativarProduto(int id)
@@ -70,55 +63,41 @@ namespace ProducaoAPI.Services
 
         public async Task ValidarDadosParaCadastrar(ProdutoRequest request)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
 
-                var produtos = await _produtoRepository.ListarTodosProdutos();
-                var nomeProdutos = new List<string>();
-                foreach (var produto in produtos)
-                {
-                    nomeProdutos.Add(produto.Nome);
-                }
-
-                if (nomeProdutos.Contains(request.Nome)) throw new BadRequestException("Já existe um produto com este nome!");
-                if (string.IsNullOrWhiteSpace(request.Medidas)) throw new BadRequestException("O campo \"Medidas\" não pode estar vazio.");
-                if (string.IsNullOrWhiteSpace(request.Unidade)) throw new BadRequestException("O campo \"Unidade\" não pode estar vazio.");
-                if (request.Unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
-                if (request.PecasPorUnidade < 1) throw new BadRequestException("O número de peças por unidade deve ser maior do que 0.");
-            }
-            catch (BadRequestException)
+            var produtos = await _produtoRepository.ListarTodosProdutos();
+            var nomeProdutos = new List<string>();
+            foreach (var produto in produtos)
             {
-                throw;
+                nomeProdutos.Add(produto.Nome);
             }
+
+            if (nomeProdutos.Contains(request.Nome)) throw new BadRequestException("Já existe um produto com este nome!");
+            if (string.IsNullOrWhiteSpace(request.Medidas)) throw new BadRequestException("O campo \"Medidas\" não pode estar vazio.");
+            if (string.IsNullOrWhiteSpace(request.Unidade)) throw new BadRequestException("O campo \"Unidade\" não pode estar vazio.");
+            if (request.Unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
+            if (request.PecasPorUnidade < 1) throw new BadRequestException("O número de peças por unidade deve ser maior do que 0.");
         }
 
         public async Task ValidarDadosParaAtualizar(ProdutoRequest request, int id)
         {
-            try
+            var produtoAtualizado = await _produtoRepository.BuscarProdutoPorIdAsync(id);
+
+            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
+
+            var produtos = await _produtoRepository.ListarTodosProdutos();
+            var nomeProdutos = new List<string>();
+            foreach (var produto in produtos)
             {
-                var produtoAtualizado = await _produtoRepository.BuscarProdutoPorIdAsync(id);
-
-                if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
-
-                var produtos = await _produtoRepository.ListarTodosProdutos();
-                var nomeProdutos = new List<string>();
-                foreach (var produto in produtos)
-                {
-                    nomeProdutos.Add(produto.Nome);
-                }
-
-                if (nomeProdutos.Contains(request.Nome) && produtoAtualizado.Nome != request.Nome) throw new ArgumentException("Já existe um produto com este nome!");
-
-                if (string.IsNullOrWhiteSpace(request.Medidas)) throw new BadRequestException("O campo \"Medidas\" não pode estar vazio.");
-                if (string.IsNullOrWhiteSpace(request.Unidade)) throw new BadRequestException("O campo \"Unidade\" não pode estar vazio.");
-                if (request.Unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
-                if (request.PecasPorUnidade < 1) throw new BadRequestException("O número de peças por unidade deve ser maior do que 0.");
+                nomeProdutos.Add(produto.Nome);
             }
-            catch (BadRequestException)
-            {
-                throw;
-            }
+
+            if (nomeProdutos.Contains(request.Nome) && produtoAtualizado.Nome != request.Nome) throw new ArgumentException("Já existe um produto com este nome!");
+
+            if (string.IsNullOrWhiteSpace(request.Medidas)) throw new BadRequestException("O campo \"Medidas\" não pode estar vazio.");
+            if (string.IsNullOrWhiteSpace(request.Unidade)) throw new BadRequestException("O campo \"Unidade\" não pode estar vazio.");
+            if (request.Unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
+            if (request.PecasPorUnidade < 1) throw new BadRequestException("O número de peças por unidade deve ser maior do que 0.");
         }
     }
 }

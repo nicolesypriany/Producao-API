@@ -16,77 +16,42 @@ namespace ProducaoAPI.Repositories
 
         public async Task<IEnumerable<MateriaPrima>> ListarMateriasPrimasAtivas()
         {
-            try
-            {
-                var materiasPrimas = await _context.MateriasPrimas
-                    .Where(m => m.Ativo == true)
-                    .ToListAsync();
+            var materiasPrimas = await _context.MateriasPrimas
+                .Where(m => m.Ativo == true)
+                .ToListAsync();
 
-                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");
-                return materiasPrimas;
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
+            if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");
+            return materiasPrimas;
         }
 
         public async Task<IEnumerable<MateriaPrima>> ListarTodasMateriasPrimas()
         {
-            try
-            {
-                var materiasPrimas = await _context.MateriasPrimas
-                    .ToListAsync();
+            var materiasPrimas = await _context.MateriasPrimas
+                .ToListAsync();
 
-                if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");
-                return materiasPrimas;
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
+            if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");
+            return materiasPrimas;
         }
 
         public async Task<MateriaPrima> BuscarMateriaPorIdAsync(int id)
         {
-            try
-            {
-                var materiaPrima = await _context.MateriasPrimas
-                    .FirstOrDefaultAsync(m => m.Id == id);
+            var materiaPrima = await _context.MateriasPrimas
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-                if (materiaPrima == null) throw new NotFoundException("ID da matéria-prima não encontrado.");
-                return materiaPrima;
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
+            if (materiaPrima == null) throw new NotFoundException("ID da matéria-prima não encontrado.");
+            return materiaPrima;
         }
 
         public async Task AdicionarAsync(MateriaPrima materiaPrima)
         {
-            try
-            {
-                await _context.MateriasPrimas.AddAsync(materiaPrima);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _context.MateriasPrimas.AddAsync(materiaPrima);
+            await _context.SaveChangesAsync();
         }
 
         public async Task AtualizarAsync(MateriaPrima materiaPrima)
         {
-            try
-            {
-                _context.MateriasPrimas.Update(materiaPrima);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            _context.MateriasPrimas.Update(materiaPrima);
+            await _context.SaveChangesAsync();
         }
     }
 }

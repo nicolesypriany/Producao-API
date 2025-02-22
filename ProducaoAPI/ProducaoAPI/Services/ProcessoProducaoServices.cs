@@ -100,28 +100,21 @@ namespace ProducaoAPI.Services
 
         public async Task<ProcessoProducao> AtualizarAsync(int id, ProcessoProducaoRequest request)
         {
-            try
-            {
-                await ValidarDados(request);
-                var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
+            await ValidarDados(request);
+            var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
 
-                var producao = await BuscarProducaoPorIdAsync(id);
+            var producao = await BuscarProducaoPorIdAsync(id);
 
-                _producaoService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
+            _producaoService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
 
-                producao.Data = request.Data;
-                producao.MaquinaId = request.MaquinaId;
-                producao.FormaId = request.FormaId;
-                producao.ProdutoId = forma.ProdutoId;
-                producao.Ciclos = producao.Ciclos;
+            producao.Data = request.Data;
+            producao.MaquinaId = request.MaquinaId;
+            producao.FormaId = request.FormaId;
+            producao.ProdutoId = forma.ProdutoId;
+            producao.Ciclos = producao.Ciclos;
 
-                await _producaoRepository.AtualizarAsync(producao);
-                return producao;
-            }
-            catch (BadRequestException)
-            {
-                throw;
-            }
+            await _producaoRepository.AtualizarAsync(producao);
+            return producao;
         }
 
         public async Task<ProcessoProducao> InativarProducao(int id)
@@ -138,22 +131,15 @@ namespace ProducaoAPI.Services
 
         public async Task ValidarDados(ProcessoProducaoRequest request)
         {
-            try
-            {
-                if (request.Ciclos <= 0) throw new BadRequestException("O número de ciclos deve ser maior que 0.");
+            if (request.Ciclos <= 0) throw new BadRequestException("O número de ciclos deve ser maior que 0.");
 
-                await _maquinaRepository.BuscarMaquinaPorIdAsync(request.MaquinaId);
-                await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
+            await _maquinaRepository.BuscarMaquinaPorIdAsync(request.MaquinaId);
+            await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
 
-                foreach (var materiaPrima in request.MateriasPrimas)
-                {
-                    await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
-                    if (materiaPrima.Quantidade <= 0) throw new BadRequestException("A quantidade de matéria-prima deve ser maior que 0.");
-                }
-            }
-            catch (BadRequestException)
+            foreach (var materiaPrima in request.MateriasPrimas)
             {
-                throw;
+                await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+                if (materiaPrima.Quantidade <= 0) throw new BadRequestException("A quantidade de matéria-prima deve ser maior que 0.");
             }
         }
     }
