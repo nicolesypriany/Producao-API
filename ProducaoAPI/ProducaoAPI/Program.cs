@@ -103,3 +103,5 @@ app.MapPost("auth/logout", async ([FromServices] SignInManager<PessoaComAcesso> 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 app.Run();
+
+public partial class Program { }
