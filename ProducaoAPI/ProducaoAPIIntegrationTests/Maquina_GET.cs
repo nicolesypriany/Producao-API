@@ -1,7 +1,7 @@
 ﻿using ProducaoAPI.Models;
 using System.Net.Http.Json;
 
-namespace ProducaoAPI.Test.IntegrationTests
+namespace ProducaoAPI.IntegrationTests
 {
     public class Maquina_GET : IClassFixture<ProducaoAPIWebApplicationFactory>
     {
@@ -17,15 +17,15 @@ namespace ProducaoAPI.Test.IntegrationTests
         {
             //arrange
             var maquinaExistente = app.Context.Maquinas.FirstOrDefault();
-            if(maquinaExistente is null)
+            if (maquinaExistente is null)
             {
                 maquinaExistente = new Maquina("teste", "teste");
                 app.Context.Maquinas.Add(maquinaExistente);
                 app.Context.SaveChanges();
             }
-            
+
             var client = app.CreateClient();
-            
+
             //act
             var response = await client.GetFromJsonAsync<Maquina>($"/Maquina/{maquinaExistente.Id}");
 

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ProducaoAPI.Data;
 
-namespace ProducaoAPI.Test.IntegrationTests
+namespace ProducaoAPI.IntegrationTests
 {
     public class ProducaoAPIWebApplicationFactory : WebApplicationFactory<Program>
     {

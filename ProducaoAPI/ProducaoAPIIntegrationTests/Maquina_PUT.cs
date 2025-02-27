@@ -1,26 +1,21 @@
 ﻿using Bogus;
 using ProducaoAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http.Json;
 
-namespace ProducaoAPI.Test.IntegrationTests
+namespace ProducaoAPI.IntegrationTests
 {
-    public class Maquina_DELETE : IClassFixture<ProducaoAPIWebApplicationFactory>
+    public class Maquina_PUT : IClassFixture<ProducaoAPIWebApplicationFactory>
     {
         private readonly ProducaoAPIWebApplicationFactory app;
 
-        public Maquina_DELETE(ProducaoAPIWebApplicationFactory app)
+        public Maquina_PUT(ProducaoAPIWebApplicationFactory app)
         {
             this.app = app;
         }
 
         [Fact]
-        public async Task InativarMaquina()
+        public async Task AtualizarMaquina()
         {
             //arrange
             var maquinaExistente = app.Context.Maquinas.FirstOrDefault();
@@ -36,9 +31,12 @@ namespace ProducaoAPI.Test.IntegrationTests
             }
 
             var client = app.CreateClient();
+            var fakerWord = new Faker().Random.Word();
+            maquinaExistente.Nome = fakerWord;
+            maquinaExistente.Marca = fakerWord;
 
             //act
-            var response = await client.DeleteAsync($"/Maquina/{maquinaExistente.Id}");
+            var response = await client.PutAsJsonAsync($"/Maquina/{maquinaExistente.Id}", maquinaExistente);
 
             //assert
             Assert.NotNull(response);

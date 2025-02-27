@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using ProducaoAPI.Models;
-using System.Net.Http.Json;
-
-namespace ProducaoAPI.Test.IntegrationTests
+﻿namespace ProducaoAPI.IntegrationTests
 {
     public class TesteDeIntegracao : IClassFixture<ProducaoAPIWebApplicationFactory>
     {

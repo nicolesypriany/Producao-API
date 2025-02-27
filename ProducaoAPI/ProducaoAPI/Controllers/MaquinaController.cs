@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;

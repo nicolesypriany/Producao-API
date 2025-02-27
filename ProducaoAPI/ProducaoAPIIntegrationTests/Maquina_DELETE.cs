@@ -1,22 +1,20 @@
 ﻿using Bogus;
 using ProducaoAPI.Models;
-using ProducaoAPI.Requests;
 using System.Net;
-using System.Net.Http.Json;
 
-namespace ProducaoAPI.Test.IntegrationTests
+namespace ProducaoAPI.IntegrationTests
 {
-    public class Maquina_PUT : IClassFixture<ProducaoAPIWebApplicationFactory>
+    public class Maquina_DELETE : IClassFixture<ProducaoAPIWebApplicationFactory>
     {
         private readonly ProducaoAPIWebApplicationFactory app;
 
-        public Maquina_PUT(ProducaoAPIWebApplicationFactory app)
+        public Maquina_DELETE(ProducaoAPIWebApplicationFactory app)
         {
             this.app = app;
         }
 
         [Fact]
-        public async Task AtualizarMaquina()
+        public async Task InativarMaquina()
         {
             //arrange
             var maquinaExistente = app.Context.Maquinas.FirstOrDefault();
@@ -32,12 +30,9 @@ namespace ProducaoAPI.Test.IntegrationTests
             }
 
             var client = app.CreateClient();
-            var fakerWord = new Faker().Random.Word();
-            maquinaExistente.Nome = fakerWord;
-            maquinaExistente.Marca = fakerWord;
 
             //act
-            var response = await client.PutAsJsonAsync($"/Maquina/{maquinaExistente.Id}", maquinaExistente);
+            var response = await client.DeleteAsync($"/Maquina/{maquinaExistente.Id}");
 
             //assert
             Assert.NotNull(response);

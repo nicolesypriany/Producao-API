@@ -3,7 +3,7 @@ using ProducaoAPI.Models;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace ProducaoAPI.Test.IntegrationTests
+namespace ProducaoAPI.IntegrationTests
 {
     public class Maquina_POST : IClassFixture<ProducaoAPIWebApplicationFactory>
     {
