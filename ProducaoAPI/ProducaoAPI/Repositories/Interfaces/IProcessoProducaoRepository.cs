@@ -9,5 +9,6 @@ namespace ProducaoAPI.Repositories.Interfaces
         Task<ProcessoProducao> BuscarProducaoPorIdAsync(int id);
         Task AdicionarAsync(ProcessoProducao producao);
         Task AtualizarAsync(ProcessoProducao producao);
+        Task<IEnumerable<ProcessoProducao>> ListarProducoesAtivasDetalhadas();
     }
 }

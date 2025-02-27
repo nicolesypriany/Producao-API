@@ -1,9 +1,12 @@
-﻿using ProducaoAPI.Exceptions;
+﻿using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
+using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
+using System.Text;
 
 namespace ProducaoAPI.Services
 {
@@ -140,6 +143,69 @@ namespace ProducaoAPI.Services
             {
                 await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
                 if (materiaPrima.Quantidade <= 0) throw new BadRequestException("A quantidade de matéria-prima deve ser maior que 0.");
+            }
+        }
+
+        public async Task<FileStreamResult> GerarRelatorioTXT()
+        {
+            var producoes = await _producaoRepository.ListarProducoesAtivasDetalhadas();
+            string textos = "";
+
+            foreach (var producao in producoes)
+            {
+                textos += ("ID: " + producao.Id + " Data: " + producao.Data + " Maquina: " + producao.Maquina.Nome + " Forma: " + producao.Forma.Nome + " Produto: " + producao.Produto.Nome + " Quantidade Produzida: " + producao.QuantidadeProduzida + " " + producao.Produto.Unidade + "\n").ToString();
+            }
+
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(textos));
+            return new FileStreamResult(stream, "text/plain")
+            {
+                FileDownloadName = "relatorio-producao.txt"
+            };
+        }
+
+        public async Task<FileStreamResult> GerarRelatorioXLSX()
+        {
+            var producoes = await _producaoRepository.ListarProducoesAtivasDetalhadas();
+            //producoes.ToArray();
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Producoes");
+
+                worksheet.Cells[1, 1].Value = "Data";
+                worksheet.Cells[1, 2].Value = "Máquina";
+                worksheet.Cells[1, 3].Value = "Quantidade Produzida";
+
+                //for(int i = 0; i < producoes.Count(); i++)
+                //{
+                //    var row = 2;
+                //    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd-mmm-yyyy";
+                //    worksheet.Cells[row, 1].Value = item.Data;
+                //    worksheet.Cells[row, 2].Value = item.Maquina.Nome;
+                //    worksheet.Cells[row, 3].Value = item.QuantidadeProduzida;
+                //    row++;
+                //}
+
+                var row = 2;
+                foreach (var item in producoes)
+                {
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 1].Value = item.Data;
+                    worksheet.Cells[row, 2].Value = item.Maquina.Nome;
+                    worksheet.Cells[row, 3].Value = item.QuantidadeProduzida;
+                    row++;
+                }
+
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+                stream.Position = 0;
+
+                return new FileStreamResult(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = "relatorio-producao.xlsx"
+                };
             }
         }
     }

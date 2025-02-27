@@ -1,4 +1,5 @@
-﻿using ProducaoAPI.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 
@@ -18,5 +19,7 @@ namespace ProducaoAPI.Services.Interfaces
         Task CalcularProducao(int producaoId);
         Task<Forma> BuscarFormaPorIdAsync(int id);
         Task ValidarDados(ProcessoProducaoRequest request);
+        Task<FileStreamResult> GerarRelatorioTXT();
+        Task<FileStreamResult> GerarRelatorioXLSX();
     }
 }

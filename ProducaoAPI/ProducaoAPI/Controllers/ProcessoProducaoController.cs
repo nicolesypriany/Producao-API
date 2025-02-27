@@ -3,6 +3,7 @@ using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
+using System.Text;
 
 namespace ProducaoAPI.Controllers
 {
@@ -94,6 +95,18 @@ namespace ProducaoAPI.Controllers
             await _processoProducaoService.CalcularProducao(id);
             var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
             return Ok(_processoProducaoService.EntityToResponse(producao));
+        }
+
+        [HttpGet("GerarRelatórioTXT")]
+        public async Task<IActionResult> GerarRelatorioTXT()
+        {
+            return await _processoProducaoService.GerarRelatorioTXT();
+        }
+
+        [HttpGet("GerarRelatórioXLSX")]
+        public async Task<IActionResult> GerarRelatorioXLSX()
+        {
+            return await _processoProducaoService.GerarRelatorioXLSX();
         }
     }
 }

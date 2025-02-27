@@ -60,5 +60,20 @@ namespace ProducaoAPI.Repositories
             _context.Producoes.Update(producao);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesAtivasDetalhadas()
+        {
+            var producoes = await _context.Producoes
+            .Include(p => p.Maquina)
+            .Include(p => p.Forma)
+            .ThenInclude(p => p.Produto)
+            .Include(p => p.ProducaoMateriasPrimas)
+            .ThenInclude(p => p.MateriaPrima)
+            .Where(m => m.Ativo == true)
+            .ToListAsync();
+
+            if (producoes == null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção encontrada.");
+            return producoes;
+        }
     }
 }
