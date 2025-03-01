@@ -166,7 +166,6 @@ namespace ProducaoAPI.Services
         public async Task<FileStreamResult> GerarRelatorioXLSX()
         {
             var producoes = await _producaoRepository.ListarProducoesAtivasDetalhadas();
-            //producoes.ToArray();
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -176,25 +175,25 @@ namespace ProducaoAPI.Services
 
                 worksheet.Cells[1, 1].Value = "Data";
                 worksheet.Cells[1, 2].Value = "Máquina";
-                worksheet.Cells[1, 3].Value = "Quantidade Produzida";
-
-                //for(int i = 0; i < producoes.Count(); i++)
-                //{
-                //    var row = 2;
-                //    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd-mmm-yyyy";
-                //    worksheet.Cells[row, 1].Value = item.Data;
-                //    worksheet.Cells[row, 2].Value = item.Maquina.Nome;
-                //    worksheet.Cells[row, 3].Value = item.QuantidadeProduzida;
-                //    row++;
-                //}
+                worksheet.Cells[1, 3].Value = "Produto";
+                worksheet.Cells[1, 4].Value = "Ciclos";
+                worksheet.Cells[1, 5].Value = "Quantidade Produzida";
+                worksheet.Cells[1, 6].Value = "Unidade";
+                worksheet.Cells[1, 7].Value = "Custo Total";
+                worksheet.Cells[1, 8].Value = "Custo Unitário";
 
                 var row = 2;
-                foreach (var item in producoes)
+                foreach (var producao in producoes)
                 {
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
-                    worksheet.Cells[row, 1].Value = item.Data;
-                    worksheet.Cells[row, 2].Value = item.Maquina.Nome;
-                    worksheet.Cells[row, 3].Value = item.QuantidadeProduzida;
+                    worksheet.Cells[row, 1].Value = producao.Data;
+                    worksheet.Cells[row, 2].Value = producao.Maquina.Nome;
+                    worksheet.Cells[row, 3].Value = producao.Produto.Nome;
+                    worksheet.Cells[row, 4].Value = producao.Ciclos;
+                    worksheet.Cells[row, 5].Value = producao.QuantidadeProduzida;
+                    worksheet.Cells[row, 6].Value = producao.Produto.Unidade;
+                    worksheet.Cells[row, 7].Value = producao.CustoTotal;
+                    worksheet.Cells[row, 8].Value = producao.CustoUnitario;
                     row++;
                 }
 

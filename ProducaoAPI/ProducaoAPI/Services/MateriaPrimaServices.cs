@@ -29,7 +29,7 @@ namespace ProducaoAPI.Services
 
         public async Task<MateriaPrima> CriarMateriaPrimaPorXML(IFormFile arquivoXML)
         {
-            var documentoXML = SalvarXML(arquivoXML);
+            var documentoXML = ConverterIFormFileParaXmlDocument(arquivoXML);
 
             XmlNamespaceManager nsManager = new XmlNamespaceManager(documentoXML.NameTable);
             nsManager.AddNamespace("ns", "http://www.portalfiscal.inf.br/nfe");
@@ -56,19 +56,18 @@ namespace ProducaoAPI.Services
             MateriaPrima materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
             await _materiaPrimaRepository.AdicionarAsync(materiaPrima);
 
-            var filePatch = Path.Combine("Storage", arquivoXML.FileName);
-
             return materiaPrima;
         }
 
-        public XmlDocument SalvarXML(IFormFile arquivoXML)
+        public XmlDocument ConverterIFormFileParaXmlDocument(IFormFile arquivoXML)
         {
-            var filePatch = Path.Combine("Storage", arquivoXML.FileName);
-            using Stream fileStream = new FileStream(filePatch, FileMode.Create);
-            arquivoXML.CopyTo(fileStream);
-            fileStream.Close();
             XmlDocument doc = new XmlDocument();
-            doc.Load(Path.Combine(filePatch));
+            using (var stream = new MemoryStream())
+            {
+                arquivoXML.CopyTo(stream);
+                stream.Position = 0;
+                doc.Load(stream);
+            }
             return doc;
         }
 
@@ -145,5 +144,6 @@ namespace ProducaoAPI.Services
             if (request.Unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
             if (request.Preco <= 0) throw new BadRequestException("O preço não pode ser igual ou menor que 0.");
         }
+
     }
 }

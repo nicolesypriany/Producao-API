@@ -3,6 +3,7 @@ using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
+using System.Xml;
 
 namespace ProducaoAPI.Controllers
 {
@@ -92,8 +93,8 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var novaMateriaPrima = await _materiaPrimaService.CriarMateriaPrimaPorXML(arquivoXML);
-                var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(novaMateriaPrima.Id);
-                return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
+                //var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(novaMateriaPrima.Id);
+                return Ok(_materiaPrimaService.EntityToResponse(novaMateriaPrima));
             }
             catch (Exception ex)
             {
