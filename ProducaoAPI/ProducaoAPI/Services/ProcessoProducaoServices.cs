@@ -49,7 +49,7 @@ namespace ProducaoAPI.Services
 
             foreach (var materiaPrima in materiasPrimas)
             {
-                var materiaPrimaSelecionada = await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+                var materiaPrimaSelecionada = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(materiaPrima.Id);
                 var producaoMateriaPrima = new ProcessoProducaoMateriaPrima(ProducaoId, materiaPrimaSelecionada.Id, materiaPrima.Quantidade);
                 producoesMateriasPrimas.Add(producaoMateriaPrima);
             }
@@ -141,7 +141,7 @@ namespace ProducaoAPI.Services
 
             foreach (var materiaPrima in request.MateriasPrimas)
             {
-                await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+                await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(materiaPrima.Id);
                 if (materiaPrima.Quantidade <= 0) throw new BadRequestException("A quantidade de matéria-prima deve ser maior que 0.");
             }
         }

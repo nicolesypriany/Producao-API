@@ -23,5 +23,15 @@ namespace ProducaoAPI.Validations
         {
             if (nomes.Contains(nome) && nome != novoNome) throw new BadRequestException("Já existe um cadastro com este nome!");
         }
+
+        public static void Unidade(string unidade)
+        {
+            if (unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
+        }
+
+        public static void Preco(double preco)
+        {
+            if (preco <= 0) throw new BadRequestException("O preço não pode ser igual ou menor que 0.");
+        }
     }
 }

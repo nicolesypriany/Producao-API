@@ -33,7 +33,7 @@ namespace ProducaoAPI.Repositories
             return materiasPrimas;
         }
 
-        public async Task<MateriaPrima> BuscarMateriaPorIdAsync(int id)
+        public async Task<MateriaPrima> BuscarMateriaPrimaPorIdAsync(int id)
         {
             var materiaPrima = await _context.MateriasPrimas
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -52,6 +52,13 @@ namespace ProducaoAPI.Repositories
         {
             _context.MateriasPrimas.Update(materiaPrima);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<string>> ListarNomes()
+        {
+            return await _context.MateriasPrimas
+                .Select(m => m.Nome)
+                .ToListAsync();
         }
     }
 }

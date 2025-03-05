@@ -1,5 +1,4 @@
-﻿using ProducaoAPI.Exceptions;
-using ProducaoAPI.Models;
+﻿using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
