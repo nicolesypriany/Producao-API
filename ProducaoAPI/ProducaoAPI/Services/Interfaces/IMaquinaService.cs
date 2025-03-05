@@ -14,8 +14,5 @@ namespace ProducaoAPI.Services.Interfaces
         Task<Maquina> InativarMaquina(int id);
         MaquinaResponse EntityToResponse(Maquina maquina);
         ICollection<MaquinaResponse> EntityListToResponseList(IEnumerable<Maquina> maquinas);
-        Task ValidarDadosParaCadastrar(MaquinaRequest request);
-        Task ValidarDadosParaAtualizar(MaquinaRequest request, int id);
-
     }
 }
