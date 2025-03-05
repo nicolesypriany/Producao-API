@@ -1,15 +1,12 @@
-using ProducaoAPI.Data;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using ProducaoAPI.Repositories.Interfaces;
-using ProducaoAPI.Repositories;
-using ProducaoAPI.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using ProducaoAPI.Services.Interfaces;
-using ProducaoAPI.Services;
+using Microsoft.OpenApi.Models;
+using ProducaoAPI.Data;
 using ProducaoAPI.Exceptions;
+using ProducaoAPI.Repositories;
+using ProducaoAPI.Repositories.Interfaces;
+using ProducaoAPI.Services;
+using ProducaoAPI.Services.Interfaces;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,10 +52,6 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services
-    .AddIdentityApiEndpoints<PessoaComAcesso>()
-    .AddEntityFrameworkStores<ProducaoContext>();
-
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -88,17 +81,7 @@ app.UseAuthorization();
 
 app.UseCors("AllowLocalhost");
 
-
-
 app.MapControllers();
-
-app.MapGroup("auth").MapIdentityApi<PessoaComAcesso>().WithTags("Autorização");
-
-app.MapPost("auth/logout", async ([FromServices] SignInManager<PessoaComAcesso> signInManager) =>
-{
-    await signInManager.SignOutAsync();
-    return Results.Ok();
-}).RequireAuthorization().WithTags("Autorização");
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
