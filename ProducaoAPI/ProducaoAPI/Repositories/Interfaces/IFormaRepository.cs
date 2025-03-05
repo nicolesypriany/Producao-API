@@ -9,5 +9,6 @@ namespace ProducaoAPI.Repositories.Interfaces
         Task<Forma> BuscarFormaPorIdAsync(int id);
         Task AdicionarAsync(Forma forma);
         Task AtualizarAsync(Forma forma);
+        Task<IEnumerable<string>> ListarNomes();
     }
 }

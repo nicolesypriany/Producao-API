@@ -59,5 +59,12 @@ namespace ProducaoAPI.Repositories
             _context.Formas.Update(forma);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<string>> ListarNomes()
+        {
+            return await _context.Formas
+                .Select(f => f.Nome)
+                .ToListAsync();
+        }
     }
 }

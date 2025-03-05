@@ -11,9 +11,11 @@ namespace ProducaoAPI.Services
     public class MaquinaServices : IMaquinaService
     {
         private readonly IMaquinaRepository _maquinaRepository;
-        public MaquinaServices(IMaquinaRepository maquinaRepository)
+        private readonly IBaseRepository<Maquina> _baseRepository;
+        public MaquinaServices(IMaquinaRepository maquinaRepository, IBaseRepository<Maquina> baseRepository)
         {
             _maquinaRepository = maquinaRepository;
+            _baseRepository = baseRepository;
         }
         public MaquinaResponse EntityToResponse(Maquina maquina)
         {
