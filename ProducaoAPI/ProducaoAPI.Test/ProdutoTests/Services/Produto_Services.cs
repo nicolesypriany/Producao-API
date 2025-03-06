@@ -28,12 +28,12 @@ namespace ProducaoAPI.Test.ProdutoTests.Services
         }
 
         [Theory]
-        [InlineData(" ", "teste", "un", 10, "O campo \"Nome\" não pode estar vazio.")]
-        [InlineData("", "teste", "un", 10, "O campo \"Nome\" não pode estar vazio.")]
-        [InlineData("teste 2", " ", "un", 10, "O campo \"Medidas\" não pode estar vazio.")]
-        [InlineData("teste 3", "teste", " ", 10, "O campo \"Unidade\" não pode estar vazio.")]
+        [InlineData(" ", "teste", "un", 10, "O campo 'Nome' não pode estar vazio.")]
+        [InlineData("", "teste", "un", 10, "O campo 'Nome' não pode estar vazio.")]
+        [InlineData("teste 2", " ", "un", 10, "O campo 'Medidas' não pode estar vazio.")]
+        [InlineData("teste 3", "teste", " ", 10, "O campo 'Unidade' não pode estar vazio.")]
         [InlineData("teste 3", "teste", "unidade", 10, "A sigla da unidade não pode ter mais de 5 caracteres.")]
-        [InlineData("teste 4", "teste", "un", 0, "O número de peças por unidade deve ser maior do que 0.")]
+        [InlineData("teste 4", "teste", "un", 0, "O número de 'Peças por Unidade' deve ser maior do que 0.")]
         public async Task RetornaErroAoValidarDados(string nome, string medidas, string unidade, int pecas, string errorMessage)
         {
             //arrange
@@ -45,7 +45,7 @@ namespace ProducaoAPI.Test.ProdutoTests.Services
             var produtoRequest = new ProdutoRequest(nome, medidas, unidade, pecas);
 
             //act & assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => ProdutoService.ValidarDadosParaCadastrar(produtoRequest));
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => ProdutoService.AdicionarAsync(produtoRequest));
             Assert.Equal(errorMessage, exception.Message);
         }
 

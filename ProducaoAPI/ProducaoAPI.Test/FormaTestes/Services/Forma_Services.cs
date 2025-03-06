@@ -35,9 +35,9 @@ namespace ProducaoAPI.Test.FormaTestes.Services
         }
 
         [Theory]
-        [InlineData("", "O campo \"Nome\" não pode estar vazio.")]
-        [InlineData(" ", "O campo \"Nome\" não pode estar vazio.")]
-        [InlineData("Teste", "Já existe uma forma com este nome!")]
+        [InlineData("", "O campo 'Nome' não pode estar vazio.")]
+        [InlineData(" ", "O campo 'Nome' não pode estar vazio.")]
+        [InlineData("Teste", "Já existe um cadastro com este nome!")]
         public async Task ValidarDadosComNomeVazioOuEmBrancoOuDuplicado(string name, string errorMessage)
         {
             //arrange
@@ -48,7 +48,7 @@ namespace ProducaoAPI.Test.FormaTestes.Services
             var formaRequest = new FormaRequest(name, 1, 100, new List<FormaMaquinaRequest>(1));
 
             //act & assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => FormaService.ValidarDadosParaCadastrar(formaRequest));
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => FormaService.AdicionarAsync(formaRequest));
             Assert.Equal(errorMessage, exception.Message);
         }
 
@@ -63,7 +63,7 @@ namespace ProducaoAPI.Test.FormaTestes.Services
             var formaRequest = new FormaRequest("Forma", 1, -1, new List<FormaMaquinaRequest>(1));
 
             //act & assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => FormaService.ValidarDadosParaCadastrar(formaRequest));
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => FormaService.AdicionarAsync(formaRequest));
             Assert.Equal("O número de peças por ciclo deve ser maior do que 0.", exception.Message);
         }
 

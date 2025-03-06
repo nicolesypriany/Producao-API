@@ -18,7 +18,6 @@ namespace ProducaoAPI.Services.Interfaces
         Task<List<ProcessoProducaoMateriaPrima>> CriarProducoesMateriasPrimas(ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimas, int ProducaoId);
         Task CalcularProducao(int producaoId);
         Task<Forma> BuscarFormaPorIdAsync(int id);
-        Task ValidarDados(ProcessoProducaoRequest request);
         Task<FileStreamResult> GerarRelatorioTXT();
         Task<FileStreamResult> GerarRelatorioXLSX();
     }

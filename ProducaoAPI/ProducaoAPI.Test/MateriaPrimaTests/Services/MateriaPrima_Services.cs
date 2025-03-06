@@ -28,10 +28,10 @@ namespace ProducaoAPI.Test.MateriaPrimaTests.Services
         }
 
         [Theory]
-        [InlineData("teste", "teste", "un", 30, "Já existe uma matéria-prima com este nome!")]
-        [InlineData(" ", "teste", "un", 30, "O campo \"Nome\" não pode estar vazio.")]
-        [InlineData("teste 1", " ", "un", 30, "O campo \"Fornecedor\" não pode estar vazio.")]
-        [InlineData("teste 2", "teste", " ", 30, "O campo \"Unidade\" não pode estar vazio.")]
+        [InlineData("teste", "teste", "un", 30, "Já existe um cadastro com este nome!")]
+        [InlineData(" ", "teste", "un", 30, "O campo 'Nome' não pode estar vazio.")]
+        [InlineData("teste 1", " ", "un", 30, "O campo 'Fornecedor' não pode estar vazio.")]
+        [InlineData("teste 2", "teste", " ", 30, "O campo 'Unidade' não pode estar vazio.")]
         [InlineData("teste 3", "teste", "unidade", 30, "A sigla da unidade não pode ter mais de 5 caracteres.")]
         [InlineData("teste 4", "teste", "un", 0, "O preço não pode ser igual ou menor que 0.")]
         public async Task RetornaErroAoValidarDados(string nome, string fornecedor, string unidade, double preco, string errorMessage)
@@ -45,7 +45,7 @@ namespace ProducaoAPI.Test.MateriaPrimaTests.Services
             var materiaPrimaRequest = new MateriaPrimaRequest(nome, fornecedor, unidade, preco);
 
             //act & assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => MateriaPrimaService.ValidarDadosParaCadastrar(materiaPrimaRequest));
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => MateriaPrimaService.AdicionarAsync(materiaPrimaRequest));
             Assert.Equal(errorMessage, exception.Message);
         }
     }

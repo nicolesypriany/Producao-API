@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
-using ProducaoAPI.Exceptions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
+using ProducaoAPI.Validations;
 using System.Text;
 
 namespace ProducaoAPI.Services
@@ -49,7 +49,7 @@ namespace ProducaoAPI.Services
 
             foreach (var materiaPrima in materiasPrimas)
             {
-                var materiaPrimaSelecionada = await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
+                var materiaPrimaSelecionada = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(materiaPrima.Id);
                 var producaoMateriaPrima = new ProcessoProducaoMateriaPrima(ProducaoId, materiaPrimaSelecionada.Id, materiaPrima.Quantidade);
                 producoesMateriasPrimas.Add(producaoMateriaPrima);
             }
@@ -87,7 +87,7 @@ namespace ProducaoAPI.Services
         public async Task<ProcessoProducao> AdicionarAsync(ProcessoProducaoRequest request)
         {
 
-            await ValidarDados(request);
+            await ValidarRequest(request);
             var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
             var producao = new ProcessoProducao(request.Data, request.MaquinaId, request.FormaId, forma.ProdutoId, request.Ciclos);
             await _producaoRepository.AdicionarAsync(producao);
@@ -103,7 +103,7 @@ namespace ProducaoAPI.Services
 
         public async Task<ProcessoProducao> AtualizarAsync(int id, ProcessoProducaoRequest request)
         {
-            await ValidarDados(request);
+            await ValidarRequest(request);
             var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
 
             var producao = await BuscarProducaoPorIdAsync(id);
@@ -131,20 +131,6 @@ namespace ProducaoAPI.Services
         public Task<Forma> BuscarFormaPorIdAsync(int id) => _formaRepository.BuscarFormaPorIdAsync(id);
 
         public Task AdicionarProducaoMateriaAsync(ProcessoProducaoMateriaPrima producaoMateriaPrima) => _producaoMateriaPrimaRepository.AdicionarAsync(producaoMateriaPrima);
-
-        public async Task ValidarDados(ProcessoProducaoRequest request)
-        {
-            if (request.Ciclos <= 0) throw new BadRequestException("O número de ciclos deve ser maior que 0.");
-
-            await _maquinaRepository.BuscarMaquinaPorIdAsync(request.MaquinaId);
-            await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
-
-            foreach (var materiaPrima in request.MateriasPrimas)
-            {
-                await _materiaPrimaRepository.BuscarMateriaPorIdAsync(materiaPrima.Id);
-                if (materiaPrima.Quantidade <= 0) throw new BadRequestException("A quantidade de matéria-prima deve ser maior que 0.");
-            }
-        }
 
         public async Task<FileStreamResult> GerarRelatorioTXT()
         {
@@ -206,6 +192,34 @@ namespace ProducaoAPI.Services
                     FileDownloadName = "relatorio-producao.xlsx"
                 };
             }
+        }
+
+        private async Task ValidarRequest(ProcessoProducaoRequest request)
+        {
+            ValidarCampos.Inteiro(request.Ciclos, "Ciclos");
+            ValidarMaquina(request.MaquinaId);
+            ValidarForma(request.FormaId);
+
+            foreach (var materiaPrima in request.MateriasPrimas)
+            {
+                ValidarMateriaPrima(materiaPrima.Id);
+                ValidarCampos.Double(materiaPrima.Quantidade, "Quantidade de Matéria-Prima");
+            }
+        }
+
+        private void ValidarMaquina(int id)
+        {
+            _maquinaRepository.BuscarMaquinaPorIdAsync(id);
+        }
+
+        private void ValidarForma(int id)
+        {
+            _formaRepository.BuscarFormaPorIdAsync(id);
+        }
+
+        private void ValidarMateriaPrima(int id)
+        {
+            _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
         }
     }
 }

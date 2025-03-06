@@ -1,9 +1,9 @@
-﻿using ProducaoAPI.Exceptions;
-using ProducaoAPI.Models;
+﻿using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
+using ProducaoAPI.Validations;
 
 namespace ProducaoAPI.Services
 {
@@ -54,7 +54,7 @@ namespace ProducaoAPI.Services
 
         public async Task<Forma> AdicionarAsync(FormaRequest request)
         {
-            await ValidarDadosParaCadastrar(request);
+            await ValidarRequest(true, request);
             var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
             var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo, maquinas);
             await _formaRepository.AdicionarAsync(forma);
@@ -63,8 +63,8 @@ namespace ProducaoAPI.Services
 
         public async Task<Forma> AtualizarAsync(int id, FormaRequest request)
         {
-            await ValidarDadosParaAtualizar(request, id);
             var forma = await BuscarFormaPorIdAsync(id);
+            await ValidarRequest(false, request, forma.Nome);
 
             var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
 
@@ -85,48 +85,25 @@ namespace ProducaoAPI.Services
             return forma;
         }
 
-        public async Task ValidarDadosParaCadastrar(FormaRequest request)
+        private async Task ValidarRequest(bool Cadastrar, FormaRequest request, string nomeAtual = "")
         {
-            var formas = await _formaRepository.ListarTodasFormas();
-            var nomeFormas = new List<string>();
-            foreach (var forma in formas)
-            {
-                nomeFormas.Add(forma.Nome);
-            }
+            var nomeFormas = await _formaRepository.ListarNomes();
 
-            if (nomeFormas.Contains(request.Nome)) throw new BadRequestException("Já existe uma forma com este nome!");
-            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
-            if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
-
-            await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
-
-            foreach (var maquina in request.Maquinas)
-            {
-                await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
-            }
+            ValidarCampos.Nome(Cadastrar, nomeFormas, request.Nome, nomeAtual);
+            ValidarCampos.String(request.Nome, "Nome");
+            ValidarCampos.Inteiro(request.PecasPorCiclo, "Peças por Ciclo");
+            ValidarProduto(request.ProdutoId);
+            ValidarMaquinas(request.Maquinas);
         }
 
-        public async Task ValidarDadosParaAtualizar(FormaRequest request, int id)
+        private void ValidarProduto(int id)
         {
-            var formaAtualizada = await _formaRepository.BuscarFormaPorIdAsync(id);
+            _produtoService.BuscarProdutoPorIdAsync(id);
+        }
 
-            var formas = await _formaRepository.ListarTodasFormas();
-            var nomeFormas = new List<string>();
-            foreach (var forma in formas)
-            {
-                nomeFormas.Add(forma.Nome);
-            }
-
-            if (nomeFormas.Contains(request.Nome) && formaAtualizada.Nome != request.Nome) throw new BadRequestException("Já existe uma forma com este nome!");
-            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio.");
-            if (request.PecasPorCiclo < 1) throw new BadRequestException("O número de peças por ciclo deve ser maior do que 0.");
-
-            await _produtoService.BuscarProdutoPorIdAsync(request.ProdutoId);
-
-            foreach (var maquina in request.Maquinas)
-            {
-                await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
-            }
+        private void ValidarMaquinas(ICollection<FormaMaquinaRequest> maquinas)
+        {
+            foreach (var maquina in maquinas) _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
         }
     }
 }

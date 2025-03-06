@@ -14,7 +14,5 @@ namespace ProducaoAPI.Services.Interfaces
         Task<Produto> InativarProduto(int id);
         ProdutoResponse EntityToResponse(Produto produto);
         ICollection<ProdutoResponse> EntityListToResponseList(IEnumerable<Produto> produto);
-        Task ValidarDadosParaCadastrar(ProdutoRequest request);
-        Task ValidarDadosParaAtualizar(ProdutoRequest request, int id);
     }
 }

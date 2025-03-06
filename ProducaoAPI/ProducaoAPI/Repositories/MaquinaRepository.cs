@@ -53,5 +53,12 @@ namespace ProducaoAPI.Repositories
             _context.Maquinas.Update(maquina);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<string>> ListarNomes()
+        {
+            return await _context.Maquinas
+                .Select(m => m.Nome)
+                .ToListAsync();
+        }
     }
 }

@@ -9,5 +9,6 @@ namespace ProducaoAPI.Repositories.Interfaces
         Task<Maquina> BuscarMaquinaPorIdAsync(int id);
         Task AdicionarAsync(Maquina maquina);
         Task AtualizarAsync(Maquina maquina);
+        Task<IEnumerable<string>> ListarNomes();
     }
 }

@@ -17,7 +17,5 @@ namespace ProducaoAPI.Services.Interfaces
         ICollection<MateriaPrimaResponse> EntityListToResponseList(IEnumerable<MateriaPrima> materiaPrima);
         Task<MateriaPrima> CriarMateriaPrimaPorXML(IFormFile arquivoXML);
         XmlDocument ConverterIFormFileParaXmlDocument(IFormFile arquivoXML);
-        Task ValidarDadosParaCadastrar(MateriaPrimaRequest request);
-        Task ValidarDadosParaAtualizar(MateriaPrimaRequest request, int id);
     }
 }

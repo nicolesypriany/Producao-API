@@ -1,10 +1,9 @@
-﻿using ProducaoAPI.Exceptions;
-using ProducaoAPI.Models;
-using ProducaoAPI.Repositories;
+﻿using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
+using ProducaoAPI.Validations;
 
 namespace ProducaoAPI.Services
 {
@@ -31,7 +30,7 @@ namespace ProducaoAPI.Services
 
         public async Task<Maquina> AdicionarAsync(MaquinaRequest request)
         {
-            await ValidarDadosParaCadastrar(request);
+            await ValidarRequest(true, request);
             var maquina = new Maquina(request.Nome, request.Marca);
             await _maquinaRepository.AdicionarAsync(maquina);
             return maquina;
@@ -39,8 +38,8 @@ namespace ProducaoAPI.Services
 
         public async Task<Maquina> AtualizarAsync(int id, MaquinaRequest request)
         {
-            await ValidarDadosParaAtualizar(request, id);
             var maquina = await BuscarMaquinaPorIdAsync(id);
+            await ValidarRequest(false, request, maquina.Nome);
 
             maquina.Nome = request.Nome;
             maquina.Marca = request.Marca;
@@ -57,35 +56,13 @@ namespace ProducaoAPI.Services
             return maquina;
         }
 
-        public async Task ValidarDadosParaCadastrar(MaquinaRequest request)
+        private async Task ValidarRequest(bool Cadastrar, MaquinaRequest request, string nomeAtual = "")
         {
-            var maquinas = await _maquinaRepository.ListarTodasMaquinas();
-            var nomeMaquinas = new List<string>();
-            foreach (var maquina in maquinas)
-            {
-                nomeMaquinas.Add(maquina.Nome);
-            }
-
-            if (nomeMaquinas.Contains(request.Nome)) throw new BadRequestException("Já existe uma máquina com este nome!");
-            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio");
-            if (string.IsNullOrWhiteSpace(request.Marca)) throw new BadRequestException("O campo \"Marca\" não pode estar vazio");
-        }
-
-        public async Task ValidarDadosParaAtualizar(MaquinaRequest request, int id)
-        {
-            var maquinaAtualizada = await _maquinaRepository.BuscarMaquinaPorIdAsync(id);
-
-            var maquinas = await _maquinaRepository.ListarTodasMaquinas();
-            var nomeMaquinas = new List<string>();
-            foreach (var maquina in maquinas)
-            {
-                nomeMaquinas.Add(maquina.Nome);
-            }
-
-            if (nomeMaquinas.Contains(request.Nome) && maquinaAtualizada.Nome != request.Nome) throw new BadRequestException("Já existe uma máquina com este nome!");
-
-            if (string.IsNullOrWhiteSpace(request.Nome)) throw new BadRequestException("O campo \"Nome\" não pode estar vazio");
-            if (string.IsNullOrWhiteSpace(request.Marca)) throw new BadRequestException("O campo \"Marca\" não pode estar vazio");
+            var nomeMaquinas = await _maquinaRepository.ListarNomes();
+            
+            ValidarCampos.Nome(Cadastrar, nomeMaquinas, request.Nome, nomeAtual);
+            ValidarCampos.String(request.Nome, "Nome");
+            ValidarCampos.String(request.Marca, "Marca");
         }
     }
 }

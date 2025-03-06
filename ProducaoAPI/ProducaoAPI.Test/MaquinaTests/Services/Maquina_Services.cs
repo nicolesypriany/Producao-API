@@ -27,11 +27,11 @@ namespace ProducaoAPI.Test.MaquinaTests.Services
         }
 
         [Theory]
-        [InlineData("", "teste", "O campo \"Nome\" não pode estar vazio")]
-        [InlineData(" ", "teste", "O campo \"Nome\" não pode estar vazio")]
-        [InlineData("Teste", "teste", "Já existe uma máquina com este nome!")]
-        [InlineData("teste 1", "", "O campo \"Marca\" não pode estar vazio")]
-        [InlineData("teste 2", " ", "O campo \"Marca\" não pode estar vazio")]
+        [InlineData("", "teste", "O campo 'Nome' não pode estar vazio")]
+        [InlineData(" ", "teste", "O campo 'Nome' não pode estar vazio")]
+        [InlineData("Teste", "teste", "Já existe um cadastro com este nome!")]
+        [InlineData("teste 1", "", "O campo 'Marca' não pode estar vazio")]
+        [InlineData("teste 2", " ", "O campo 'Marca' não pode estar vazio")]
         public async Task ValidarDadosComNomeEMarcaVazioOuEmBrancoOuDuplicado(string name, string marca, string errorMessage)
         {
             //arrange
@@ -42,7 +42,7 @@ namespace ProducaoAPI.Test.MaquinaTests.Services
             var maquinaRequest = new MaquinaRequest(name, marca);
 
             //act & assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => MaquinaService.ValidarDadosParaCadastrar(maquinaRequest));
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => MaquinaService.AdicionarAsync(maquinaRequest));
             Assert.Equal(errorMessage, exception.Message);
         }
 
