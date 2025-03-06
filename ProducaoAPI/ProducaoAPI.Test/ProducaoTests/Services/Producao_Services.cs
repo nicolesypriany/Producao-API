@@ -40,8 +40,8 @@ namespace ProducaoAPI.Test.ProducaoTests.Services
         }
 
         [Theory]
-        [InlineData(0, 100, "O número de ciclos deve ser maior que 0.")]
-        [InlineData(100, 0, "A quantidade de matéria-prima deve ser maior que 0.")]
+        [InlineData(0, 100, "O número de 'Ciclos' deve ser maior do que 0.")]
+        [InlineData(100, 0, "\"O valor de 'Quantidade de Matéria-Prima' deve ser maior do que 0.\"")]
         public async Task RetornaErroAoValidarDados(int ciclos, int quantidadeMateriaPrima, string errorMessage)
         {
             //arrange
@@ -55,7 +55,7 @@ namespace ProducaoAPI.Test.ProducaoTests.Services
             var request = new ProcessoProducaoRequest(DateTime.Now, 1, 1, ciclos, new List<ProcessoProducaoMateriaPrimaRequest> { new(1, quantidadeMateriaPrima) });
 
             //act & assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => ProcessoProducaoService.ValidarDados(request));
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => ProcessoProducaoService.AdicionarAsync(request));
             Assert.Equal(errorMessage, exception.Message);
         }
 

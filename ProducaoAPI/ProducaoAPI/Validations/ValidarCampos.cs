@@ -14,14 +14,9 @@ namespace ProducaoAPI.Validations
             if (campo < 1) throw new BadRequestException($"O número de '{nomeCampo}' deve ser maior do que 0.");
         }
 
-        public static void NomeParaCadastrarObjeto(IEnumerable<string> nomes, string nome)
+        public static void Double(double campo, string nomeCampo)
         {
-            if (nomes.Contains(nome)) throw new BadRequestException("Já existe um cadastro com este nome!");
-        }
-
-        public static void NomeParaAtualizarObjeto(IEnumerable<string> nomes, string nome, string novoNome)
-        {
-            if (nomes.Contains(nome) && nome != novoNome) throw new BadRequestException("Já existe um cadastro com este nome!");
+            if (campo < 1) throw new BadRequestException($"O valor de '{nomeCampo}' deve ser maior do que 0.");
         }
 
         public static void Unidade(string unidade)
@@ -32,6 +27,18 @@ namespace ProducaoAPI.Validations
         public static void Preco(double preco)
         {
             if (preco <= 0) throw new BadRequestException("O preço não pode ser igual ou menor que 0.");
+        }
+
+        public static void Nome(bool Cadastrar, IEnumerable<string> nomes, string nomeNovo, string nomeAtual = "")
+        {
+            if (Cadastrar)
+            {
+                if (nomes.Contains(nomeNovo)) throw new BadRequestException("Já existe um cadastro com este nome!");
+            }
+            else
+            {
+                if (nomes.Contains(nomeNovo) && nomeAtual != nomeNovo) throw new BadRequestException("Já existe um cadastro com este nome!");
+            }
         }
     }
 }

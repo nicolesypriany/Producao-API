@@ -9,5 +9,6 @@ namespace ProducaoAPI.Repositories.Interfaces
         Task<Produto> BuscarProdutoPorIdAsync(int id);
         Task AdicionarAsync(Produto produto);
         Task AtualizarAsync(Produto produto);
+        Task<IEnumerable<string>> ListarNomes();
     }
 }

@@ -63,8 +63,8 @@ namespace ProducaoAPI.Services
 
         public async Task<Forma> AtualizarAsync(int id, FormaRequest request)
         {
-            await ValidarRequest(false, request, id);
             var forma = await BuscarFormaPorIdAsync(id);
+            await ValidarRequest(false, request, forma.Nome);
 
             var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
 
@@ -85,20 +85,11 @@ namespace ProducaoAPI.Services
             return forma;
         }
 
-        private async Task ValidarRequest(bool Cadastrar, FormaRequest request, int id = 0)
+        private async Task ValidarRequest(bool Cadastrar, FormaRequest request, string nomeAtual = "")
         {
             var nomeFormas = await _formaRepository.ListarNomes();
 
-            if (Cadastrar)
-            {
-                ValidarCampos.NomeParaCadastrarObjeto(nomeFormas, request.Nome);
-            }
-            else
-            {
-                var forma = await _formaRepository.BuscarFormaPorIdAsync(id);
-                ValidarCampos.NomeParaAtualizarObjeto(nomeFormas, forma.Nome, request.Nome);
-            }
-
+            ValidarCampos.Nome(Cadastrar, nomeFormas, request.Nome, nomeAtual);
             ValidarCampos.String(request.Nome, "Nome");
             ValidarCampos.Inteiro(request.PecasPorCiclo, "Peças por Ciclo");
             ValidarProduto(request.ProdutoId);

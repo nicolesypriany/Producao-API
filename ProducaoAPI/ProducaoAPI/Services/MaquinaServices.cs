@@ -38,8 +38,8 @@ namespace ProducaoAPI.Services
 
         public async Task<Maquina> AtualizarAsync(int id, MaquinaRequest request)
         {
-            await ValidarRequest(false, request, id);
             var maquina = await BuscarMaquinaPorIdAsync(id);
+            await ValidarRequest(false, request, maquina.Nome);
 
             maquina.Nome = request.Nome;
             maquina.Marca = request.Marca;
@@ -56,20 +56,11 @@ namespace ProducaoAPI.Services
             return maquina;
         }
 
-        private async Task ValidarRequest(bool Cadastrar, MaquinaRequest request, int id = 0)
+        private async Task ValidarRequest(bool Cadastrar, MaquinaRequest request, string nomeAtual = "")
         {
             var nomeMaquinas = await _maquinaRepository.ListarNomes();
-
-            if (Cadastrar)
-            {
-                ValidarCampos.NomeParaCadastrarObjeto(nomeMaquinas, request.Nome);
-            }
-            else
-            {
-                var maquina = await _maquinaRepository.BuscarMaquinaPorIdAsync(id);
-                ValidarCampos.NomeParaAtualizarObjeto(nomeMaquinas, maquina.Nome, request.Nome);
-            }
-
+            
+            ValidarCampos.Nome(Cadastrar, nomeMaquinas, request.Nome, nomeAtual);
             ValidarCampos.String(request.Nome, "Nome");
             ValidarCampos.String(request.Marca, "Marca");
         }

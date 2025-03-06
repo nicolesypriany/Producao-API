@@ -1,5 +1,4 @@
-﻿using ProducaoAPI.Exceptions;
-using ProducaoAPI.Models;
+﻿using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -88,8 +87,8 @@ namespace ProducaoAPI.Services
 
         public async Task<MateriaPrima> AtualizarAsync(int id, MateriaPrimaRequest request)
         {
-            await ValidarRequest(false, request, id);
             var materiaPrima = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
+            await ValidarRequest(false, request, materiaPrima.Nome);
 
             materiaPrima.Nome = request.Nome;
             materiaPrima.Fornecedor = request.Fornecedor;
@@ -108,21 +107,11 @@ namespace ProducaoAPI.Services
             return materiaPrima;
         }
 
-        private async Task ValidarRequest(bool Cadastrar, MateriaPrimaRequest request, int id = 0)
+        private async Task ValidarRequest(bool Cadastrar, MateriaPrimaRequest request, string nomeAtual = "")
         {
             var nomeMateriasPrimas = await _materiaPrimaRepository.ListarNomes();
 
-            if (Cadastrar)
-            {
-                ValidarCampos.NomeParaCadastrarObjeto(nomeMateriasPrimas, request.Nome);
-            }
-            else
-            {
-                var materiaPrima = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
-                ValidarCampos.NomeParaAtualizarObjeto(nomeMateriasPrimas, materiaPrima.Nome, request.Nome);
-            }
-
-
+            ValidarCampos.Nome(Cadastrar, nomeMateriasPrimas, request.Nome, nomeAtual);
             ValidarCampos.String(request.Nome, "Nome");
             ValidarCampos.String(request.Fornecedor, "Fornecedor");
             ValidarCampos.String(request.Unidade, "Unidade");
