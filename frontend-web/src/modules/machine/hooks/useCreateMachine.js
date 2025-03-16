@@ -6,12 +6,9 @@ export function useCreateMachine() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: { machineName: "", mark: "" } });
+  } = useForm({ defaultValues: { machineName: "", brand: "" } });
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    await createMachineService(data);
-  };
+  const onSubmit = async (data) => await createMachineService(data);
 
   return {
     register,
