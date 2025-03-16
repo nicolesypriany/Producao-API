@@ -1,7 +1,9 @@
 ﻿using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
+using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
+using ProducaoAPI.Validations;
 using System.Xml;
 
 namespace ProducaoAPI.Services
@@ -25,51 +27,96 @@ namespace ProducaoAPI.Services
             return materiaPrima.Select(m => EntityToResponse(m)).ToList();
         }
 
-        public MateriaPrima CriarMateriaPrimaPorXML(IFormFile arquivoXML)
+        public async Task<MateriaPrima> CriarMateriaPrimaPorXML(IFormFile arquivoXML)
         {
-            var documentoXML = SalvarXML(arquivoXML);
+            var documentoXML = ConverterIFormFileParaXmlDocument(arquivoXML);
 
             XmlNamespaceManager nsManager = new XmlNamespaceManager(documentoXML.NameTable);
             nsManager.AddNamespace("ns", "http://www.portalfiscal.inf.br/nfe");
 
             XmlNode? fornecedorNode = documentoXML.SelectSingleNode("//ns:nfeProc/ns:NFe/ns:infNFe/ns:emit/ns:xNome", nsManager);
+            if (fornecedorNode == null) throw new Exception("Erro ao ler arquivo XML: Fornecedor não encontrado.");
             string fornecedor = fornecedorNode.InnerText;
 
             XmlNode? produtoNode = documentoXML.SelectSingleNode("//ns:nfeProc/ns:NFe/ns:infNFe/ns:det/ns:prod/ns:xProd", nsManager);
+            if (produtoNode == null) throw new Exception("Erro ao ler arquivo XML: Produto não encontrado.");
             string produto = produtoNode.InnerText;
 
             XmlNode? unidadeNode = documentoXML.SelectSingleNode("//ns:nfeProc/ns:NFe/ns:infNFe/ns:det/ns:prod/ns:uCom", nsManager);
+            if (unidadeNode == null) throw new Exception("Erro ao ler arquivo XML: Unidade não encontrada.");
             string unidade = unidadeNode.InnerText == "T" ? "KG" : unidadeNode.InnerText;
 
             XmlNode? precoNode = documentoXML.SelectSingleNode("//ns:nfeProc/ns:NFe/ns:infNFe/ns:det/ns:prod/ns:vUnCom", nsManager);
+            if (precoNode == null) throw new Exception("Erro ao ler arquivo XML: Preço não encontrado.");
             double preco = Convert.ToDouble(precoNode.InnerText.Replace(".", ","));
             if (unidade == "KG") preco /= 1000;
 
-            MateriaPrima materiaPrima = new MateriaPrima(produto, fornecedor, unidade, preco);
-            _materiaPrimaRepository.AdicionarAsync(materiaPrima);
-
-            var filePatch = Path.Combine("Storage", arquivoXML.FileName);
+            MateriaPrimaRequest request = new MateriaPrimaRequest(produto, fornecedor, unidade, preco);
+            await ValidarRequest(true, request);
+            MateriaPrima materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
+            await _materiaPrimaRepository.AdicionarAsync(materiaPrima);
 
             return materiaPrima;
         }
 
-        public XmlDocument SalvarXML(IFormFile arquivoXML)
+        public XmlDocument ConverterIFormFileParaXmlDocument(IFormFile arquivoXML)
         {
-            var filePatch = Path.Combine("Storage", arquivoXML.FileName);
-            using Stream fileStream = new FileStream(filePatch, FileMode.Create);
-            arquivoXML.CopyTo(fileStream);
-            fileStream.Close();
             XmlDocument doc = new XmlDocument();
-            doc.Load(Path.Combine(filePatch));
+            using (var stream = new MemoryStream())
+            {
+                arquivoXML.CopyTo(stream);
+                stream.Position = 0;
+                doc.Load(stream);
+            }
             return doc;
         }
 
-        public Task<IEnumerable<MateriaPrima>> ListarMateriasAsync() => _materiaPrimaRepository.ListarMateriasAsync();
+        public Task<IEnumerable<MateriaPrima>> ListarMateriasPrimasAtivas() => _materiaPrimaRepository.ListarMateriasPrimasAtivas();
 
-        public Task<MateriaPrima> BuscarMateriaPorIdAsync(int id) => _materiaPrimaRepository.BuscarMateriaPorIdAsync(id);
+        public Task<IEnumerable<MateriaPrima>> ListarTodasMateriasPrimas() => _materiaPrimaRepository.ListarTodasMateriasPrimas();
 
-        public Task AdicionarAsync(MateriaPrima materiaPrima) => _materiaPrimaRepository.AdicionarAsync(materiaPrima);
+        public Task<MateriaPrima> BuscarMateriaPorIdAsync(int id) => _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
 
-        public Task AtualizarAsync(MateriaPrima materiaPrima) => _materiaPrimaRepository.AtualizarAsync(materiaPrima);
+        public async Task<MateriaPrima> AdicionarAsync(MateriaPrimaRequest request)
+        {
+            await ValidarRequest(true, request);
+            var materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
+            await _materiaPrimaRepository.AdicionarAsync(materiaPrima);
+            return materiaPrima;
+        }
+
+        public async Task<MateriaPrima> AtualizarAsync(int id, MateriaPrimaRequest request)
+        {
+            var materiaPrima = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
+            await ValidarRequest(false, request, materiaPrima.Nome);
+
+            materiaPrima.Nome = request.Nome;
+            materiaPrima.Fornecedor = request.Fornecedor;
+            materiaPrima.Unidade = request.Unidade;
+            materiaPrima.Preco = request.Preco;
+
+            await _materiaPrimaRepository.AtualizarAsync(materiaPrima);
+            return materiaPrima;
+        }
+
+        public async Task<MateriaPrima> InativarMateriaPrima(int id)
+        {
+            var materiaPrima = await BuscarMateriaPorIdAsync(id);
+            materiaPrima.Ativo = false;
+            await _materiaPrimaRepository.AtualizarAsync(materiaPrima);
+            return materiaPrima;
+        }
+
+        private async Task ValidarRequest(bool Cadastrar, MateriaPrimaRequest request, string nomeAtual = "")
+        {
+            var nomeMateriasPrimas = await _materiaPrimaRepository.ListarNomes();
+
+            ValidarCampos.Nome(Cadastrar, nomeMateriasPrimas, request.Nome, nomeAtual);
+            ValidarCampos.String(request.Nome, "Nome");
+            ValidarCampos.String(request.Fornecedor, "Fornecedor");
+            ValidarCampos.String(request.Unidade, "Unidade");
+            ValidarCampos.Unidade(request.Unidade);
+            ValidarCampos.Preco(request.Preco);
+        }
     }
 }

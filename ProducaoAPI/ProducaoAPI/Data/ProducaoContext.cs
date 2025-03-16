@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Models;
 
 namespace ProducaoAPI.Data
 {
-    public class ProducaoContext : IdentityDbContext<PessoaComAcesso, PerfilDeAcesso, int>
+    public class ProducaoContext : DbContext
     {
         public ProducaoContext(DbContextOptions<ProducaoContext> options) : base(options)
         {

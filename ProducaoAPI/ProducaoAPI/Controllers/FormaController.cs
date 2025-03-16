@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -18,71 +17,70 @@ namespace ProducaoAPI.Controllers
             _formaServices = formaServices;
         }
 
-        /// <summary>
-        /// Obter formas
-        /// </summary>
+        ///<summary>
+        ///Obter formas
+        ///</summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma forma encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FormaResponse>>> ListarFormas()
         {
-            var formas = await _formaServices.ListarFormasAsync();
-            if (formas == null) return NotFound();
+            var formas = await _formaServices.ListarFormasAtivas();
             return Ok(_formaServices.EntityListToResponseList(formas));
         }
 
-        /// <summary>
-        /// Obter forma por ID
-        /// </summary>
+        ///<summary>
+        ///Obter forma por ID
+        ///</summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma forma encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<FormaResponse>> BuscarFormaPorId(int id)
         {
             var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-            if (forma == null) return NotFound();
             return Ok(_formaServices.EntityToResponse(forma));
         }
 
-        /// <summary>
-        /// Criar uma nova forma
-        /// </summary>
+        ///<summary>
+        ///Criar uma nova forma
+        ///</summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpPost]
-        public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest req)
+        public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
         {
-            var forma = new Forma(req.Nome, req.ProdutoId, req.PecasPorCiclo);
-            await _formaServices.AdicionarAsync(forma);
-            return Ok(forma);
+            var forma = await _formaServices.AdicionarAsync(request);
+            return Ok(_formaServices.EntityToResponse(forma));
         }
 
         /// <summary>
         /// Atualizar uma forma
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="404">Nenhuma forma encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpPut("{id}")]
-        public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest req)
+        public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest request)
         {
-            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-            if (forma == null) return NotFound();
-
-            var maquinas = await _formaServices.FormaMaquinaRequestToEntity(req.Maquinas);
-
-            forma.Nome = req.Nome;
-            forma.ProdutoId = req.ProdutoId;
-            forma.PecasPorCiclo = req.PecasPorCiclo;
-            forma.Maquinas = maquinas;
-
-            await _formaServices.AtualizarAsync(forma);
-            return Ok(forma);
+            var forma = await _formaServices.AtualizarAsync(id, request);
+            return Ok(_formaServices.EntityToResponse(forma));
         }
 
         /// <summary>
         /// Inativar uma forma
         /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="404">Nenhuma forma encontrada</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {
-            var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-            if (forma == null) return NotFound();
-            forma.Ativo = false;
-
-            await _formaServices.AtualizarAsync(forma);
-            return Ok(forma);
+            var forma = await _formaServices.InativarForma(id);
+            return Ok(_formaServices.EntityToResponse(forma));
         }
     }
 }
