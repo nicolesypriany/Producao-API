@@ -1,115 +1,116 @@
-import { Button, Flex, Heading, Input, Table } from "@chakra-ui/react";
+import Header from "@/modules/core/components/header";
+import { ActionIcon, Button, Flex, Table, TextInput } from "@mantine/core";
 import { useEffect } from "react";
-import { useMachines } from "../../hooks/useMachines";
+import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import { useGetMachines } from "../../hooks/useGetMachines";
+import { useFormMachines } from "../../hooks/useMachines";
 
 const TableMachines = () => {
+  const { machines, handleGetMachines } = useGetMachines();
   const {
-    machines,
-    isEditingMachine,
+    editingMachineId,
     register,
     handleSubmit,
-    handleGetMachines,
     handleEditMachine,
     handleRemoveMachine,
     handleSaveEditMachine,
     handleCancelEditMachine,
-  } = useMachines();
+  } = useFormMachines();
 
+  // TODO - Usar reactQuery para fazer a requisição e armazenar em cache e atualizar a lista
+  // quando for removido algum item
   useEffect(() => {
     handleGetMachines();
   }, []);
 
-  return (
-    <Flex direction="column" gap={10}>
-      <Flex w="100%" justifyContent="center">
-        <Heading fontSize="4xl">Listagem de máquinas</Heading>
-      </Flex>
-      <form>
-        {machines && machines.length > 0 && (
-          <Table.Root w="100%">
-            <Table.Header>
-              <Table.Row>
-                <Table.ColumnHeader>Id</Table.ColumnHeader>
-                <Table.ColumnHeader>Nome</Table.ColumnHeader>
-                <Table.ColumnHeader>Marca</Table.ColumnHeader>
-                <Table.ColumnHeader textAlign="end">Ação</Table.ColumnHeader>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {machines.map((machine) => (
-                <Table.Row key={machine.id}>
-                  <Table.Cell>{machine.id}</Table.Cell>
-                  {isEditingMachine === machine.id ? (
-                    <>
-                      <Table.Cell>
-                        <Input
-                          placeholder="Digite o nome da máquina"
-                          {...register("machineName", {
-                            required: "Nome da máquina é obrigatório",
-                          })}
-                        />
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Input
-                          placeholder="Digite a marca da máquina"
-                          {...register("markName", {
-                            required: "Marca da máquina é obrigatória",
-                          })}
-                        />
-                      </Table.Cell>
-                    </>
-                  ) : (
-                    <>
-                      <Table.Cell>{machine.nome}</Table.Cell>
-                      <Table.Cell>{machine.marca}</Table.Cell>
-                    </>
-                  )}
-                  <Table.Cell textAlign="end">
-                    {isEditingMachine === machine.id ? (
-                      <Button
-                        onClick={handleSubmit((data) =>
-                          handleSaveEditMachine(machine.id, data)
-                        )}
-                        bg="blue.500"
-                        color="#fefefe"
-                        mr={2}
-                      >
-                        Salvar
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleEditMachine(machine.id)}
-                        bg="blue.500"
-                        color="#fefefe"
-                        mr={2}
-                      >
-                        Editar
-                      </Button>
-                    )}
-                    {isEditingMachine === machine.id ? (
-                      <Button
-                        onClick={() => handleCancelEditMachine()}
-                        bg="red.500"
-                        color="#fefefe"
-                      >
-                        Cancelar
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleRemoveMachine(machine.id)}
-                        bg="red.500"
-                        color="#fefefe"
-                      >
-                        Remover
-                      </Button>
-                    )}
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Root>
+  const rows = machines.map((machine) => (
+    <Table.Tr key={machine.id}>
+      <Table.Td>{machine.id}</Table.Td>
+      {editingMachineId === machine.id ? (
+        <>
+          <Table.Td>
+            <TextInput
+              placeholder="Digite o nome da máquina"
+              {...register("machineName", {
+                required: "Nome da máquina é obrigatório",
+              })}
+            />
+          </Table.Td>
+          <Table.Td>
+            <TextInput
+              placeholder="Digite a marca da máquina"
+              {...register("markName", {
+                required: "Marca da máquina é obrigatória",
+              })}
+            />
+          </Table.Td>
+        </>
+      ) : (
+        <>
+          <Table.Td>{machine.nome}</Table.Td>
+          <Table.Td>{machine.marca}</Table.Td>
+        </>
+      )}
+      {editingMachineId === machine.id ? (
+        <Button
+          onClick={handleSubmit((data) =>
+            handleSaveEditMachine(machine.id, data)
+          )}
+          // bg="blue.500"
+          // color="#fefefe"
+          mr={2}
+        >
+          Salvar
+        </Button>
+      ) : (
+        <ActionIcon
+          // bg="transparent"
+          // color={{ base: "black", _dark: "#fefefe" }}
+          onClick={() => handleEditMachine(machine.id)}
+        >
+          <FaRegEdit />
+        </ActionIcon>
+      )}
+      <Table.Td>
+        {editingMachineId === machine.id ? (
+          <Button
+            onClick={() => handleCancelEditMachine()}
+            // bg="red.500"
+            // color="#fefefe"
+          >
+            Cancelar
+          </Button>
+        ) : (
+          <ActionIcon
+            // bg="transparent"
+            // color={{ base: "black", _dark: "#fefefe" }}
+            onClick={() => handleRemoveMachine(machine.id)}
+          >
+            <FaRegTrashAlt />
+          </ActionIcon>
         )}
-      </form>
+      </Table.Td>
+    </Table.Tr>
+  ));
+
+  return (
+    <Flex direction="column">
+      {/* <form> */}
+      {machines && machines.length > 0 && (
+        <Table>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Id</Table.Th>
+              <Table.Th>Nome</Table.Th>
+              <Table.Th>Marca</Table.Th>
+              <Table.Th></Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
+      )}
+      {/* </form> */}
+      {/* <Toaster /> */}
     </Flex>
   );
 };
