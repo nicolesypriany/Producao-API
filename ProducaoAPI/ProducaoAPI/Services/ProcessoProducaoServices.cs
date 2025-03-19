@@ -17,23 +17,23 @@ namespace ProducaoAPI.Services
         private readonly IFormaRepository _formaRepository;
         private readonly IProdutoRepository _produtoRepository;
         private readonly IProducaoMateriaPrimaRepository _producaoMateriaPrimaRepository;
-        private readonly IProducaoMateriaPrimaService _producaoService;
+        private readonly IProducaoMateriaPrimaService _producaoMateriaPrimaService;
         private readonly IMaquinaRepository _maquinaRepository;
 
-        public ProcessoProducaoServices(IProcessoProducaoRepository producaoRepository, IMateriaPrimaRepository materiaPrimaRepository, IFormaRepository formaRepository, IProdutoRepository produtoRepository, IProducaoMateriaPrimaRepository producaoMateriaPrimaRepository, IProducaoMateriaPrimaService producaoService, IMaquinaRepository maquinaRepository)
+        public ProcessoProducaoServices(IProcessoProducaoRepository producaoRepository, IMateriaPrimaRepository materiaPrimaRepository, IFormaRepository formaRepository, IProdutoRepository produtoRepository, IProducaoMateriaPrimaRepository producaoMateriaPrimaRepository, IProducaoMateriaPrimaService producaoMateriaPrimaService, IMaquinaRepository maquinaRepository)
         {
             _producaoRepository = producaoRepository;
             _materiaPrimaRepository = materiaPrimaRepository;
             _formaRepository = formaRepository;
             _produtoRepository = produtoRepository;
             _producaoMateriaPrimaRepository = producaoMateriaPrimaRepository;
-            _producaoService = producaoService;
+            _producaoMateriaPrimaService = producaoMateriaPrimaService;
             _maquinaRepository = maquinaRepository;
         }
 
         public ProcessoProducaoResponse EntityToResponse(ProcessoProducao producao)
         {
-            var prod = _producaoService.EntityListToResponseList(producao.ProducaoMateriasPrimas);
+            var prod = _producaoMateriaPrimaService.EntityListToResponseList(producao.ProducaoMateriasPrimas);
             return new ProcessoProducaoResponse(producao.Id, producao.Data, producao.MaquinaId, producao.FormaId, producao.Ciclos, prod, producao.QuantidadeProduzida, producao.CustoUnitario, producao.CustoTotal, producao.Ativo);
 
         }
@@ -108,13 +108,13 @@ namespace ProducaoAPI.Services
 
             var producao = await BuscarProducaoPorIdAsync(id);
 
-            _producaoService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
+            _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
 
             producao.Data = request.Data;
             producao.MaquinaId = request.MaquinaId;
             producao.FormaId = request.FormaId;
             producao.ProdutoId = forma.ProdutoId;
-            producao.Ciclos = producao.Ciclos;
+            producao.Ciclos = request.Ciclos;
 
             await _producaoRepository.AtualizarAsync(producao);
             return producao;

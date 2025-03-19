@@ -33,11 +33,11 @@ namespace ProducaoAPI.Validations
         {
             if (Cadastrar)
             {
-                if (nomes.Contains(nomeNovo)) throw new BadRequestException("Já existe um cadastro com este nome!");
+                if (nomes.Contains(nomeNovo.ToUpper())) throw new BadRequestException("Já existe um cadastro com este nome!");
             }
             else
             {
-                if (nomes.Contains(nomeNovo) && nomeAtual != nomeNovo) throw new BadRequestException("Já existe um cadastro com este nome!");
+                if (nomes.Contains(nomeNovo.ToUpper()) && nomeAtual != nomeNovo) throw new BadRequestException("Já existe um cadastro com este nome!");
             }
         }
     }
