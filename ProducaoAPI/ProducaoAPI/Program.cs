@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ProducaoAPI.Data;
 using ProducaoAPI.Exceptions;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Services;
@@ -52,6 +53,10 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services
+    .AddIdentityApiEndpoints<PessoaComAcesso>()
+    .AddEntityFrameworkStores<ProducaoContext>();
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -82,6 +87,8 @@ app.UseAuthorization();
 app.UseCors("AllowLocalhost");
 
 app.MapControllers();
+
+app.MapGroup("auth").MapIdentityApi<PessoaComAcesso>().WithTags("Autorização");
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
