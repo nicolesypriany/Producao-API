@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProducaoAPI.Models;
 
 namespace ProducaoAPI.Data
 {
-    public class ProducaoContext : IdentityDbContext<PessoaComAcesso, PerfilDeAcesso, int> 
+    public class ProducaoContext : DbContext
     {
         public ProducaoContext(DbContextOptions<ProducaoContext> options) : base(options)
         {
@@ -17,6 +16,7 @@ namespace ProducaoAPI.Data
         public DbSet<MateriaPrima> MateriasPrimas { get; set; }
         public DbSet<ProcessoProducao> Producoes { get; set; }
         public DbSet<ProcessoProducaoMateriaPrima> ProducoesMateriasPrimas { get; set; }
+        public DbSet<User> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
