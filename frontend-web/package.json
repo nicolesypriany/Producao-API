@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@mantine/core": "^7.17.1",
+    "@mantine/form": "^7.17.3",
     "@mantine/hooks": "^7.17.1",
     "add": "^2.0.6",
     "eslint-config-prettier": "^10.1.1",
