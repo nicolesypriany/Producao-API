@@ -1,4 +1,3 @@
-import Header from "@/modules/core/components/header";
 import { ActionIcon, Button, Flex, Table, TextInput } from "@mantine/core";
 import { useEffect } from "react";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
@@ -25,6 +24,7 @@ const TableMachines = () => {
 
   const rows = machines.map((machine) => (
     <Table.Tr key={machine.id}>
+      {/* <form> */}
       <Table.Td>{machine.id}</Table.Td>
       {editingMachineId === machine.id ? (
         <>
@@ -51,51 +51,37 @@ const TableMachines = () => {
           <Table.Td>{machine.marca}</Table.Td>
         </>
       )}
-      {editingMachineId === machine.id ? (
-        <Button
-          onClick={handleSubmit((data) =>
-            handleSaveEditMachine(machine.id, data)
-          )}
-          // bg="blue.500"
-          // color="#fefefe"
-          mr={2}
-        >
-          Salvar
-        </Button>
-      ) : (
-        <ActionIcon
-          // bg="transparent"
-          // color={{ base: "black", _dark: "#fefefe" }}
-          onClick={() => handleEditMachine(machine.id)}
-        >
-          <FaRegEdit />
-        </ActionIcon>
-      )}
       <Table.Td>
         {editingMachineId === machine.id ? (
           <Button
-            onClick={() => handleCancelEditMachine()}
-            // bg="red.500"
-            // color="#fefefe"
+            onClick={handleSubmit((data) =>
+              handleSaveEditMachine(machine.id, data)
+            )}
+            mr={2}
           >
-            Cancelar
+            Salvar
           </Button>
         ) : (
-          <ActionIcon
-            // bg="transparent"
-            // color={{ base: "black", _dark: "#fefefe" }}
-            onClick={() => handleRemoveMachine(machine.id)}
-          >
+          <ActionIcon onClick={() => handleEditMachine(machine.id)}>
+            <FaRegEdit />
+          </ActionIcon>
+        )}
+      </Table.Td>
+      <Table.Td>
+        {editingMachineId === machine.id ? (
+          <Button onClick={() => handleCancelEditMachine()}>Cancelar</Button>
+        ) : (
+          <ActionIcon onClick={() => handleRemoveMachine(machine.id)}>
             <FaRegTrashAlt />
           </ActionIcon>
         )}
       </Table.Td>
+      {/* </form> */}
     </Table.Tr>
   ));
 
   return (
     <Flex direction="column">
-      {/* <form> */}
       {machines && machines.length > 0 && (
         <Table>
           <Table.Thead>
@@ -109,7 +95,6 @@ const TableMachines = () => {
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       )}
-      {/* </form> */}
       {/* <Toaster /> */}
     </Flex>
   );
