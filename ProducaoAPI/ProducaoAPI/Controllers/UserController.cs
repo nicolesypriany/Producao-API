@@ -26,12 +26,11 @@ namespace ProducaoAPI.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            var result = await _userService.Authenticate(request.email, request.password);
-            var usuario = await _userService.BuscarUsuarioPorEmail(request.email);
+            await _userService.Authenticate(request.email, request.password);
+            var usuario = await _userService.BuscarPorEmail(request.email);
             var token = _userService.GenerateToken(usuario.Id, usuario.Email);
 
-            return Ok(new { token });  // Aqui estamos retornando o token
-
+            return Ok(new { token });
         }
     }
 }
