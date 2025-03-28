@@ -1,17 +1,19 @@
-import Footer from "@/modules/core/components/footer";
 import Header from "@/modules/core/components/header";
 import { useCreateMachine } from "@/modules/machine/hooks/useCreateMachine";
-import { Flex, TextInput } from "@mantine/core";
+import { Flex } from "@mantine/core";
 import TableMachines from "../components/Table";
+import { ModalAddItem } from "../components/add-machine";
 
 const MachinesPage = () => {
-  const { handleSubmit, onSubmit, errors, register } = useCreateMachine();
+  // const { handleSubmit, onSubmit, errors, register } = useCreateMachine();
 
   return (
     // <form onSubmit={handleSubmit(onSubmit)}>
-    <Flex width="100%" direction="column">
-      <Header>Cadastro de máquinas</Header>
-
+    <Flex direction="column">
+      <Flex>
+        <Header>Cadastro de máquinas</Header>
+        <ModalAddItem />
+      </Flex>
       <TableMachines />
     </Flex>
     // </form>
