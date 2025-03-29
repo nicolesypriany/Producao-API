@@ -1,8 +1,8 @@
 import { ActionIcon, Button, Flex, Table, TextInput } from "@mantine/core";
 import { useEffect } from "react";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
-import { useGetMachines } from "../../hooks/useGetMachines";
-import { useFormMachines } from "../../hooks/useMachines";
+import { useGetMachines } from "../hooks/useGetMachines";
+import { useFormMachines } from "../hooks/useMachines";
 
 const TableMachines = () => {
   const { machines, handleGetMachines } = useGetMachines();

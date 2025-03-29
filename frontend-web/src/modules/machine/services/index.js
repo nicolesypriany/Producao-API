@@ -56,7 +56,7 @@ export const editMachine = async (id, { nome, marca }) => {
 
 export const removeMachine = async (id) => {
   try {
-    const response = await fetch(`${api}/Maquina2/${id}`, {
+    const response = await fetch(`${api}/Maquina/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -1,12 +1,10 @@
-import { Button, Flex, Group, Modal, TextInput } from "@mantine/core";
-
+import RegisterModal from "@/modules/core/components/modal";
+import { Button, Flex, Group, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
+import { createMachine as createMachineService } from "../services";
 
-export const ModalAddItem = () => {
-  const [opened, { open, close }] = useDisclosure(false);
-
-  const form = useForm({
+export const AddMachine = () => {
+  const { key, getInputProps, onSubmit } = useForm({
     mode: "uncontrolled",
     initialValues: {
       machineName: "",
@@ -15,36 +13,32 @@ export const ModalAddItem = () => {
   });
 
   return (
-    <>
-      <Modal opened={opened} onClose={close} title="Cadastrar máquina" centered>
-        <form onSubmit={form.onSubmit((values) => console.table(values))}>
-          <Flex direction="column" gap={4}>
-            <TextInput
-              label="Nome da máquina"
-              placeholder="Digite o nome da máquina"
-              key={form.key("machineName")}
-              {...form.getInputProps("machineName")}
-            />
+    <RegisterModal title={"Cadastrar máquina"}>
+      <form
+        onSubmit={onSubmit(async (data) => await createMachineService(data))}
+      >
+        <Flex direction="column" gap={4}>
+          <TextInput
+            label="Nome da máquina"
+            placeholder="Digite o nome da máquina"
+            key={key("machineName")}
+            {...getInputProps("machineName")}
+          />
 
-            <TextInput
-              label="Marca"
-              placeholder="Digite o nome da marca"
-              key={form.key("brand")}
-              {...form.getInputProps("brand")}
-            />
+          <TextInput
+            label="Marca"
+            placeholder="Digite o nome da marca"
+            key={key("brand")}
+            {...getInputProps("brand")}
+          />
 
-            <Group mt="lg" justify="flex-end">
-              <Button variant="filled" w="30%">
-                Salvar
-              </Button>
-            </Group>
-          </Flex>
-        </form>
-      </Modal>
-
-      <Button variant="filled" w="30%" size="sm" onClick={open}>
-        Cadastrar máquina
-      </Button>
-    </>
+          <Group mt="lg" justify="flex-end">
+            <Button type="submit" variant="filled" w="30%">
+              Salvar
+            </Button>
+          </Group>
+        </Flex>
+      </form>
+    </RegisterModal>
   );
 };
