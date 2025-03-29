@@ -16,6 +16,7 @@ namespace ProducaoAPI.Data
         public DbSet<MateriaPrima> MateriasPrimas { get; set; }
         public DbSet<ProcessoProducao> Producoes { get; set; }
         public DbSet<ProcessoProducaoMateriaPrima> ProducoesMateriasPrimas { get; set; }
+        public DbSet<User> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

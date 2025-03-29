@@ -57,7 +57,7 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<string>> ListarNomes()
         {
             return await _context.Produtos
-                .Select(p => p.Nome)
+                .Select(p => p.Nome.ToUpper())
                 .ToListAsync();
         }
     }
