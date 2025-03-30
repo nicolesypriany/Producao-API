@@ -4,13 +4,10 @@ import {
   Modal,
   ModalStack,
   Text,
-  Tooltip,
   useModalsStack,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 
-const RegisterModal = ({ children, title, registerType }) => {
+const RegisterModal = ({ children, title, registerType, resetFormValues }) => {
   const stack = useModalsStack(["register-item", "cancel-confirm-action"]);
   const confirmTitle = `Deseja cancelar o cadastro ${registerType}?`;
 
@@ -47,7 +44,14 @@ const RegisterModal = ({ children, title, registerType }) => {
           >
             Cancelar
           </Button>
-          <Button variant="filled" w="30%" onClick={stack.closeAll}>
+          <Button
+            variant="filled"
+            w="30%"
+            onClick={() => {
+              stack.closeAll();
+              resetFormValues();
+            }}
+          >
             Confirmar
           </Button>
         </Group>

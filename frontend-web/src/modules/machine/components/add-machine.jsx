@@ -4,7 +4,7 @@ import { useForm } from "@mantine/form";
 import { createMachine as createMachineService } from "../services";
 
 export const AddMachine = () => {
-  const { key, getInputProps, onSubmit } = useForm({
+  const { key, getInputProps, onSubmit, reset } = useForm({
     mode: "uncontrolled",
     initialValues: {
       machineName: "",
@@ -13,7 +13,11 @@ export const AddMachine = () => {
   });
 
   return (
-    <RegisterModal title={"Cadastrar máquina"} registerType="máquinas">
+    <RegisterModal
+      title={"Cadastrar máquina"}
+      registerType="máquinas"
+      resetFormValues={reset}
+    >
       <form
         onSubmit={onSubmit(async (data) => await createMachineService(data))}
       >
