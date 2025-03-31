@@ -1,10 +1,10 @@
 import RegisterModal from "@/modules/core/components/modal";
-import { Button, Flex, Group, TextInput } from "@mantine/core";
+import { Flex, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { createMachine as createMachineService } from "../services";
 
 export const AddMachine = () => {
-  const { key, getInputProps, onSubmit } = useForm({
+  const { key, getInputProps, onSubmit, reset } = useForm({
     mode: "uncontrolled",
     initialValues: {
       machineName: "",
@@ -13,7 +13,11 @@ export const AddMachine = () => {
   });
 
   return (
-    <RegisterModal title={"Cadastrar máquina"}>
+    <RegisterModal
+      title={"Cadastrar máquina"}
+      registerType="máquinas"
+      resetFormValues={reset}
+    >
       <form
         onSubmit={onSubmit(async (data) => await createMachineService(data))}
       >
@@ -31,12 +35,6 @@ export const AddMachine = () => {
             key={key("brand")}
             {...getInputProps("brand")}
           />
-
-          <Group mt="lg" justify="flex-end">
-            <Button type="submit" variant="filled" w="30%">
-              Salvar
-            </Button>
-          </Group>
         </Flex>
       </form>
     </RegisterModal>
