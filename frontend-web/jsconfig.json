@@ -2,11 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["/src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/routers/*": ["./src/routers/*"],
-      "@/pages/*": ["./src/modules/machine/pages/machine/*"],
-      "@/machine/*": ["./src/modules/machine/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],

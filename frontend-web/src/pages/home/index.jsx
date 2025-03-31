@@ -1,13 +1,11 @@
-import TableMachines from "@/machine/components/Table";
-import { Flex, Heading } from "@chakra-ui/react";
+import TableMachines from "@/modules/machine/components/Table";
+import TableRawMaterial from "@/modules/raw-material/components/Table";
 
 const Home = () => (
-  <Flex p={4} direction="column" gap={5}>
-    <Flex w="100%" justifyContent="center">
-      <Heading fontSize="4xl">Listagem de máquinas</Heading>
-    </Flex>
-    <TableMachines />
-  </Flex>
+  <>
+    {/* <TableMachines /> */}
+    {/* <TableRawMaterial /> */}
+  </>
 );
 
 export default Home;

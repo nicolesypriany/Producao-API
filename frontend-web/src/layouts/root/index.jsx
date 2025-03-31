@@ -1,40 +1,47 @@
-import { ColorModeButton } from "@/components/ui/color-mode";
-import { routes } from "@/routers";
-import { Container, Flex, Link } from "@chakra-ui/react";
+import SidebarRoutes from "@/components/Routes";
+import { AppShell, Burger, Group } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { Outlet } from "react-router";
 
-const PublicLayout = () => (
-  <>
-    <Flex
-      width="full"
-      alignItems="center"
-      border="1px solid black"
-      backgroundColor="gray.200"
-      _dark={{ backgroundColor: "gray.400" }}
-    >
-      <Flex p={4} gap={5} width="80%" alignItems="center">
-        <Link
-          href={routes.home}
-          fontSize="xl"
-          fontWeight="medium"
-          color="black"
-        >
-          Produção
-        </Link>
-        <Link href={routes.createMachines} _dark={{ color: "black" }}>
-          Máquinas
-        </Link>
-      </Flex>
-      <Flex width="20%" justifyContent="flex-end" px={2}>
-        <ColorModeButton
-          _dark={{ color: "black", backgroundColor: "gray.400" }}
-        />
-      </Flex>
-    </Flex>
-    <Container>
-      <Outlet />
-    </Container>
-  </>
-);
+function RootLayout() {
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
 
-export default PublicLayout;
+  return (
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 200,
+        breakpoint: "sm",
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+      }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md">
+          <Burger
+            opened={mobileOpened}
+            onClick={toggleMobile}
+            hiddenFrom="sm"
+            size="sm"
+          />
+          <Burger
+            opened={desktopOpened}
+            onClick={toggleDesktop}
+            visibleFrom="sm"
+            size="sm"
+          />
+          Produção
+        </Group>
+      </AppShell.Header>
+      <AppShell.Navbar p="md">
+        <SidebarRoutes />
+      </AppShell.Navbar>
+      <AppShell.Main>
+        <Outlet />
+      </AppShell.Main>
+    </AppShell>
+  );
+}
+
+export default RootLayout;

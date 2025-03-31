@@ -1,9 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using ProducaoAPI.Data;
+﻿using Microsoft.IdentityModel.Tokens;
 using ProducaoAPI.Models;
-using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Services.Interfaces;
@@ -16,27 +12,20 @@ namespace ProducaoAPI.Services
 {
     public class UserService : IUserService
     {
-        private readonly ProducaoContext _context;
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
 
 
-        public UserService(ProducaoContext context, IUserRepository userRepository, IConfiguration configuration)
+        public UserService(IUserRepository userRepository, IConfiguration configuration)
         {
-            _context = context;
             _userRepository = userRepository;
             _configuration = configuration;
 
         }
 
-        public Task<User> Atualizar(UserRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<bool> Authenticate(string email, string senha)
         {
-            var usuario = await _context.Usuarios.Where(u => u.Email.ToUpper() == email.ToUpper()).FirstOrDefaultAsync();
+            var usuario = await _userRepository.BuscarPorEmail(email);
 
             if (usuario is null) return false;
 
@@ -48,11 +37,6 @@ namespace ProducaoAPI.Services
             }
 
             return true;
-        }
-
-        public async Task<User> BuscarUsuarioPorEmail(string email)
-        {
-            return await _context.Usuarios.Where(x => x.Email.ToLower() == email.ToLower()).FirstOrDefaultAsync();
         }
 
         public async Task<User> Criar(UserRequest request)
@@ -72,29 +56,10 @@ namespace ProducaoAPI.Services
             return usuario;
         }
 
-        public Task<User> Inativar(int id)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<User> BuscarPorId(int id) => _userRepository.BuscarPorId(id);
 
-        public Task<User> Selecionar(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<User>> SelecionarTodos()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> UserExists(string email)
-        {
-            var usuario = await _context.Usuarios.Where(u => u.Email.ToUpper() == email.ToUpper()).FirstOrDefaultAsync();
-
-            if (usuario is null) return false;
-
-            return true;
-        }
+        public Task<User> BuscarPorEmail(string email) => _userRepository.BuscarPorEmail(email);
+        public Task<IEnumerable<User>> ListarTodos() => _userRepository.ListarTodos();
 
         public string GenerateToken(int id, string email)
         {
