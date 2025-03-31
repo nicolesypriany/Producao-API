@@ -1,15 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
-using System.Text;
 
 namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ProcessoProducaoController : Controller
     {
         private readonly IProcessoProducaoService _processoProducaoService;
@@ -24,6 +24,7 @@ namespace ProducaoAPI.Controllers
         /// Obter produções
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma produção encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet]
@@ -37,6 +38,7 @@ namespace ProducaoAPI.Controllers
         /// Obter produção por ID
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma produção encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet("{id}")]
@@ -51,6 +53,7 @@ namespace ProducaoAPI.Controllers
         /// </summary>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPost]
         public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest request)
@@ -64,6 +67,7 @@ namespace ProducaoAPI.Controllers
         /// </summary>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma produção encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPut("{id}")]
@@ -77,6 +81,7 @@ namespace ProducaoAPI.Controllers
         /// Inativar uma produção
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma produção encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpDelete("{id}")]

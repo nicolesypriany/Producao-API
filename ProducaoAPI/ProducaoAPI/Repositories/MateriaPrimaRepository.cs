@@ -18,6 +18,7 @@ namespace ProducaoAPI.Repositories
         {
             var materiasPrimas = await _context.MateriasPrimas
                 .Where(m => m.Ativo == true)
+                .OrderBy(m => m.Id)
                 .ToListAsync();
 
             if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");
@@ -27,6 +28,7 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<MateriaPrima>> ListarTodasMateriasPrimas()
         {
             var materiasPrimas = await _context.MateriasPrimas
+                .OrderBy(m => m.Id)
                 .ToListAsync();
 
             if (materiasPrimas == null || materiasPrimas.Count == 0) throw new NotFoundException("Nenhuma matéria-prima ativa encontrada.");

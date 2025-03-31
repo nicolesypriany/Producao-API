@@ -1,15 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
-using System.Xml;
 
 namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class MateriaPrimaController : Controller
     {
         private readonly IMateriaPrimaService _materiaPrimaService;
@@ -22,6 +21,7 @@ namespace ProducaoAPI.Controllers
         /// Obter matérias-primas
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet]
@@ -35,6 +35,7 @@ namespace ProducaoAPI.Controllers
         /// Obter matéria-prima por ID
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet("{id}")]
@@ -48,6 +49,7 @@ namespace ProducaoAPI.Controllers
         /// Criar uma nova matéria-prima
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPost]
@@ -62,6 +64,7 @@ namespace ProducaoAPI.Controllers
         /// </summary>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPut("{id}")]
@@ -75,6 +78,7 @@ namespace ProducaoAPI.Controllers
         /// Inativar uma matéria-prima
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpDelete("{id}")]

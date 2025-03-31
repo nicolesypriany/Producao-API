@@ -62,13 +62,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>
     {
-        policy.WithOrigins("http://localhost:3001", "http://127.0.0.1:3001/") // The URL of your frontend
+        policy.WithOrigins("http://localhost:3001", "http://localhost:5500") // The URL of your frontend
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 
-builder.Services. (opt =>
+builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;

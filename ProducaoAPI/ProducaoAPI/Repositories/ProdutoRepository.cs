@@ -17,7 +17,8 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<Produto>> ListarProdutosAtivos()
         {
             var produtos = await _context.Produtos
-                .Where(m => m.Ativo == true)
+                .Where(p => p.Ativo == true)
+                .OrderBy(p => p.Id)
                 .ToListAsync();
 
             if (produtos == null || produtos.Count == 0) throw new NotFoundException("Nenhum produto ativo.");
@@ -27,6 +28,7 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<Produto>> ListarTodosProdutos()
         {
             var produtos = await _context.Produtos
+                .OrderBy(p => p.Id)
                 .ToListAsync();
 
             if (produtos == null || produtos.Count == 0) throw new NotFoundException("Nenhum produto encontrado.");

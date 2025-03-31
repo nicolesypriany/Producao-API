@@ -22,6 +22,7 @@ namespace ProducaoAPI.Controllers
         ///Obter formas
         ///</summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet]
@@ -35,6 +36,7 @@ namespace ProducaoAPI.Controllers
         ///Obter forma por ID
         ///</summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet("{id}")]
@@ -49,6 +51,7 @@ namespace ProducaoAPI.Controllers
         ///</summary>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPost]
         public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
@@ -62,6 +65,7 @@ namespace ProducaoAPI.Controllers
         /// </summary>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPut("{id}")]
@@ -75,6 +79,7 @@ namespace ProducaoAPI.Controllers
         /// Inativar uma forma
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpDelete("{id}")]

@@ -18,6 +18,7 @@ namespace ProducaoAPI.Repositories
         {
             var maquinas = await _context.Maquinas
             .Where(m => m.Ativo == true)
+            .OrderBy(m => m.Id)
             .ToListAsync();
 
             if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina ativa encontrada.");
@@ -27,6 +28,7 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<Maquina>> ListarTodasMaquinas()
         {
             var maquinas = await _context.Maquinas
+            .OrderBy(m => m.Id)
             .ToListAsync();
 
             if (maquinas == null || maquinas.Count == 0) throw new NotFoundException("Nenhuma máquina encontrada.");

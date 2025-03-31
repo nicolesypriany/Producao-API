@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -8,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ProdutoController : Controller
     {
         private readonly IProdutoService _produtoServices;
@@ -21,6 +21,7 @@ namespace ProducaoAPI.Controllers
         /// Obter produtos
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum produto encontrado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet]
@@ -34,6 +35,7 @@ namespace ProducaoAPI.Controllers
         /// Obter produto por ID
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum produto encontrado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpGet("{id}")]
@@ -48,6 +50,7 @@ namespace ProducaoAPI.Controllers
         /// </summary>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPost]
         public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest request)
@@ -61,12 +64,13 @@ namespace ProducaoAPI.Controllers
         /// </summary>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum produto encontrado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPut("{id}")]
         public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest request)
         {
-           var produto = await _produtoServices.AtualizarAsync(id, request);
+            var produto = await _produtoServices.AtualizarAsync(id, request);
             return Ok(_produtoServices.EntityToResponse(produto));
         }
 
@@ -74,6 +78,7 @@ namespace ProducaoAPI.Controllers
         /// Inativar um produto
         /// </summary>
         ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum produto encontrado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpDelete("{id}")]

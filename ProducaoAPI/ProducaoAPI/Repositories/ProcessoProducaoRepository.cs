@@ -20,6 +20,7 @@ namespace ProducaoAPI.Repositories
             .Include(p => p.ProducaoMateriasPrimas)
             .ThenInclude(p => p.MateriaPrima)
             .Where(m => m.Ativo == true)
+            .OrderBy(p => p.Id)
             .ToListAsync();
 
             if (producoes == null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção encontrada.");
@@ -31,6 +32,7 @@ namespace ProducaoAPI.Repositories
             var producoes = await _context.Producoes
             .Include(p => p.ProducaoMateriasPrimas)
             .ThenInclude(p => p.MateriaPrima)
+            .OrderBy(p => p.Id)
             .ToListAsync();
 
             if (producoes == null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção ativa encontrada.");
@@ -70,6 +72,7 @@ namespace ProducaoAPI.Repositories
             .Include(p => p.ProducaoMateriasPrimas)
             .ThenInclude(p => p.MateriaPrima)
             .Where(m => m.Ativo == true)
+            .OrderBy(p => p.Id)
             .ToListAsync();
 
             if (producoes == null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção encontrada.");
