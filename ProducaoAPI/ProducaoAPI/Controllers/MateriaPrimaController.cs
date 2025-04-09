@@ -8,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class MateriaPrimaController : Controller
     {
         private readonly IMateriaPrimaService _materiaPrimaService;

@@ -8,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //  [Authorize]
     public class FormaController : Controller
     {
         private readonly IFormaService _formaServices;
@@ -29,7 +29,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<IEnumerable<FormaResponse>>> ListarFormas()
         {
             var formas = await _formaServices.ListarFormasAtivas();
-            return Ok(_formaServices.EntityListToResponseList(formas));
+            return Ok(await _formaServices.EntityListToResponseList(formas));
         }
 
         ///<summary>
@@ -43,7 +43,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<FormaResponse>> BuscarFormaPorId(int id)
         {
             var forma = await _formaServices.BuscarFormaPorIdAsync(id);
-            return Ok(_formaServices.EntityToResponse(forma));
+            return Ok(await _formaServices.EntityToResponse(forma));
         }
 
         ///<summary>
@@ -54,10 +54,13 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPost]
-        public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
+        //public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
+        public async Task<ActionResult> CadastrarForma(FormaRequest request)
         {
             var forma = await _formaServices.AdicionarAsync(request);
-            return Ok(_formaServices.EntityToResponse(forma));
+            //return Ok(_formaServices.EntityToResponse(forma));
+            return Ok();
+
         }
 
         /// <summary>

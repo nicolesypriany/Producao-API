@@ -8,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProdutoController : Controller
     {
         private readonly IProdutoService _produtoServices;
@@ -28,7 +28,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProdutoResponse>>> ListarProdutos()
         {
             var produtos = await _produtoServices.ListarProdutosAtivos();
-            return Ok(_produtoServices.EntityListToResponseList(produtos));
+            return Ok(await _produtoServices.EntityListToResponseList(produtos));
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProdutoResponse>> BuscarProdutoPorId(int id)
         {
             var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-            return Ok(_produtoServices.EntityToResponse(produto));
+            return Ok(await _produtoServices.EntityToResponse(produto));
         }
 
         /// <summary>

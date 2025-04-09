@@ -1,4 +1,5 @@
-﻿using ProducaoAPI.Models;
+﻿using Microsoft.IdentityModel.Tokens;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -20,16 +21,30 @@ namespace ProducaoAPI.Services
             _produtoService = produtoService;
         }
 
-        public FormaResponse EntityToResponse(Forma forma)
+        public async Task<FormaResponse> EntityToResponse(Forma forma)
         {
-            var produto = _produtoService.EntityToResponse(forma.Produto);
-            var maquinas = _maquinaService.EntityListToResponseList(forma.Maquinas);
-            return new FormaResponse(forma.Id, forma.Nome, produto, forma.PecasPorCiclo, maquinas, forma.Ativo);
+            var produto = await _produtoService.BuscarProdutoPorIdAsync(forma.ProdutoId);
+            var produtoResponse = await _produtoService.EntityToResponse(produto);
+            if (forma.Maquinas.IsNullOrEmpty())
+            {
+                List<MaquinaResponse> maquinas = [];
+                return new FormaResponse(forma.Id, forma.Nome, produtoResponse, forma.PecasPorCiclo, maquinas, forma.Ativo);
+            } else
+            {
+                var maquinas = _maquinaService.EntityListToResponseList(forma.Maquinas);
+                return new FormaResponse(forma.Id, forma.Nome, produtoResponse, forma.PecasPorCiclo, maquinas, forma.Ativo);
+            }
         }
 
-        public ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma)
+        public async Task<ICollection<FormaResponse>> EntityListToResponseList(IEnumerable<Forma> forma)
         {
-            return forma.Select(f => EntityToResponse(f)).ToList();
+            var responseList = new List<FormaResponse>();
+            foreach (var f in forma)
+            {
+                var response = await EntityToResponse(f);
+                responseList.Add(response);
+            }
+            return responseList;
         }
 
         public async Task<List<Maquina>> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas)
@@ -55,10 +70,19 @@ namespace ProducaoAPI.Services
         public async Task<Forma> AdicionarAsync(FormaRequest request)
         {
             await ValidarRequest(true, request);
-            var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
-            var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo, maquinas);
-            await _formaRepository.AdicionarAsync(forma);
-            return forma;
+            if (request.Maquinas.IsNullOrEmpty())
+            {
+                var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo);
+                await _formaRepository.AdicionarAsync(forma);
+                return forma;
+            }
+            else
+            {
+                var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
+                var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo, maquinas);
+                await _formaRepository.AdicionarAsync(forma);
+                return forma;
+            }
         }
 
         public async Task<Forma> AtualizarAsync(int id, FormaRequest request)
@@ -92,18 +116,18 @@ namespace ProducaoAPI.Services
             ValidarCampos.Nome(Cadastrar, nomeFormas, request.Nome, nomeAtual);
             ValidarCampos.String(request.Nome, "Nome");
             ValidarCampos.Inteiro(request.PecasPorCiclo, "Peças por Ciclo");
-            ValidarProduto(request.ProdutoId);
-            ValidarMaquinas(request.Maquinas);
+            await ValidarProduto(request.ProdutoId);
+            await ValidarMaquinas(request.Maquinas);
         }
 
-        private void ValidarProduto(int id)
+        private async Task ValidarProduto(int id)
         {
-            _produtoService.BuscarProdutoPorIdAsync(id);
+            await _produtoService.BuscarProdutoPorIdAsync(id);
         }
 
-        private void ValidarMaquinas(ICollection<FormaMaquinaRequest> maquinas)
+        private async Task ValidarMaquinas(ICollection<FormaMaquinaRequest> maquinas)
         {
-            foreach (var maquina in maquinas) _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
+            foreach (var maquina in maquinas) await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
         }
     }
 }

@@ -15,14 +15,20 @@ namespace ProducaoAPI.Services
             _produtoRepository = produtoRepository;
         }
 
-        public ProdutoResponse EntityToResponse(Produto produto)
+        public async Task<ProdutoResponse> EntityToResponse(Produto produto)
         {
             return new ProdutoResponse(produto.Id, produto.Nome, produto.Medidas, produto.Unidade, produto.PecasPorUnidade, produto.Ativo);
         }
 
-        public ICollection<ProdutoResponse> EntityListToResponseList(IEnumerable<Produto> produto)
+        public async Task<ICollection<ProdutoResponse>> EntityListToResponseList(IEnumerable<Produto> produto)
         {
-            return produto.Select(f => EntityToResponse(f)).ToList();
+            var responseList = new List<ProdutoResponse>();
+            foreach (var p in produto)
+            {
+                var response = await EntityToResponse(p);
+                responseList.Add(response);
+            }
+            return responseList;
         }
 
         public Task<IEnumerable<Produto>> ListarProdutosAtivos() => _produtoRepository.ListarProdutosAtivos();

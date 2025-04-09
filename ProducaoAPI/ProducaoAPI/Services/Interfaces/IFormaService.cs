@@ -12,8 +12,8 @@ namespace ProducaoAPI.Services.Interfaces
         Task<Forma> AdicionarAsync(FormaRequest request);
         Task<Forma> AtualizarAsync(int id, FormaRequest request);
         Task<Forma> InativarForma(int id);
-        FormaResponse EntityToResponse(Forma forma);
-        ICollection<FormaResponse> EntityListToResponseList(IEnumerable<Forma> forma);
+        Task<FormaResponse> EntityToResponse(Forma forma);
+        Task<ICollection<FormaResponse>> EntityListToResponseList(IEnumerable<Forma> forma);
         Task<List<Maquina>> FormaMaquinaRequestToEntity(ICollection<FormaMaquinaRequest> maquinas);
     }
 }
