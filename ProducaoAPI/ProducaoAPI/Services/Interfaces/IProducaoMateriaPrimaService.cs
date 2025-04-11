@@ -7,7 +7,7 @@ namespace ProducaoAPI.Services.Interfaces
     public interface IProducaoMateriaPrimaService
     {
         ProducaoMateriaPrimaResponse EntityToResponse(ProcessoProducaoMateriaPrima producaoMateriaPrima);
-        ICollection<ProducaoMateriaPrimaResponse> EntityListToResponseList(ICollection<ProcessoProducaoMateriaPrima> producoesMateriasPrimas);
+        Task<ICollection<ProducaoMateriaPrimaResponse>> EntityListToResponseList(ICollection<ProcessoProducaoMateriaPrima> producoesMateriasPrimas);
         void VerificarProducoesMateriasPrimasExistentes(int producaoId, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest);
         void CriarOuAtualizarProducaoMateriaPrima(int producaoId, List<int> listaIdNovasMaterias, List<int> listaIdMateriasAtuais, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest);
         void ExcluirProducaoMateriaPrima(int producaoId, List<int> listaIdNovasMaterias, List<int> listaIdMateriasAtuais);

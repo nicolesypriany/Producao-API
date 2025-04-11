@@ -31,16 +31,32 @@ namespace ProducaoAPI.Services
             _maquinaRepository = maquinaRepository;
         }
 
-        public ProcessoProducaoResponse EntityToResponse(ProcessoProducao producao)
+        public async Task<ProcessoProducaoResponse> EntityToResponse(ProcessoProducao producao)
         {
-            var prod = _producaoMateriaPrimaService.EntityListToResponseList(producao.ProducaoMateriasPrimas);
-            return new ProcessoProducaoResponse(producao.Id, producao.Data, producao.MaquinaId, producao.FormaId, producao.Ciclos, prod, producao.QuantidadeProduzida, producao.CustoUnitario, producao.CustoTotal, producao.Ativo);
-
+            var producoesMateriasPrimas = await _producaoMateriaPrimaService.EntityListToResponseList(producao.ProducaoMateriasPrimas);
+            return new ProcessoProducaoResponse(
+                producao.Id, 
+                producao.Data, 
+                producao.MaquinaId, 
+                producao.FormaId, 
+                producao.Ciclos, 
+                producoesMateriasPrimas, 
+                producao.QuantidadeProduzida, 
+                producao.CustoUnitario, 
+                producao.CustoTotal, 
+                producao.Ativo
+            );
         }
 
-        public ICollection<ProcessoProducaoResponse> EntityListToResponseList(IEnumerable<ProcessoProducao> producoes)
+        public async Task<ICollection<ProcessoProducaoResponse>> EntityListToResponseList(IEnumerable<ProcessoProducao> producoes)
         {
-            return producoes.Select(m => EntityToResponse(m)).ToList();
+            var responseList = new List<ProcessoProducaoResponse>();
+            foreach (var producao in producoes)
+            {
+                var response = await EntityToResponse(producao);
+                responseList.Add(response);
+            }
+            return responseList;
         }
 
         public async Task<List<ProcessoProducaoMateriaPrima>> CriarProducoesMateriasPrimas(ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimas, int ProducaoId)
@@ -86,7 +102,6 @@ namespace ProducaoAPI.Services
 
         public async Task<ProcessoProducao> AdicionarAsync(ProcessoProducaoRequest request)
         {
-
             await ValidarRequest(request);
             var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
             var producao = new ProcessoProducao(request.Data, request.MaquinaId, request.FormaId, forma.ProdutoId, request.Ciclos);
@@ -228,29 +243,29 @@ namespace ProducaoAPI.Services
         private async Task ValidarRequest(ProcessoProducaoRequest request)
         {
             ValidarCampos.Inteiro(request.Ciclos, "Ciclos");
-            ValidarMaquina(request.MaquinaId);
-            ValidarForma(request.FormaId);
+            await ValidarMaquina(request.MaquinaId);
+            await ValidarForma(request.FormaId);
 
             foreach (var materiaPrima in request.MateriasPrimas)
             {
-                ValidarMateriaPrima(materiaPrima.Id);
+                await ValidarMateriaPrima(materiaPrima.Id);
                 ValidarCampos.Double(materiaPrima.Quantidade, "Quantidade de Matéria-Prima");
             }
         }
 
-        private void ValidarMaquina(int id)
+        private async Task ValidarMaquina(int id)
         {
-            _maquinaRepository.BuscarMaquinaPorIdAsync(id);
+            await _maquinaRepository.BuscarMaquinaPorIdAsync(id);
         }
 
-        private void ValidarForma(int id)
+        private async Task ValidarForma(int id)
         {
-            _formaRepository.BuscarFormaPorIdAsync(id);
+            await _formaRepository.BuscarFormaPorIdAsync(id);
         }
 
-        private void ValidarMateriaPrima(int id)
+        private async Task ValidarMateriaPrima(int id)
         {
-            _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
+            await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
         }
     }
 }

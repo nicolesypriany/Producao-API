@@ -9,7 +9,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProcessoProducaoController : Controller
     {
         private readonly IProcessoProducaoService _processoProducaoService;
@@ -31,7 +31,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProcessoProducaoResponse>>> ListarProducoes()
         {
             var producoes = await _processoProducaoService.ListarProducoesAtivas();
-            return Ok(_processoProducaoService.EntityListToResponseList(producoes));
+            return Ok(await _processoProducaoService.EntityListToResponseList(producoes));
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProcessoProducaoResponse>> BuscarProducaoPorId(int id)
         {
             var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
-            return Ok(_processoProducaoService.EntityToResponse(producao));
+            return Ok(await _processoProducaoService.EntityToResponse(producao));
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProcessoProducaoResponse>> CadastrarProducao(ProcessoProducaoRequest request)
         {
             var producao = await _processoProducaoService.AdicionarAsync(request);
-            return Ok(_processoProducaoService.EntityToResponse(producao));
+            return Ok(await _processoProducaoService.EntityToResponse(producao));
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProcessoProducaoResponse>> AtualizarProducao(int id, ProcessoProducaoRequest request)
         {
             var producao = await _processoProducaoService.AtualizarAsync(id, request);
-            return Ok(_processoProducaoService.EntityToResponse(producao));
+            return Ok(await _processoProducaoService.EntityToResponse(producao));
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProcessoProducaoResponse>> InativarProducao(int id)
         {
             var producao = await _processoProducaoService.InativarProducao(id);
-            return Ok(_processoProducaoService.EntityToResponse(producao));
+            return Ok(await _processoProducaoService.EntityToResponse(producao));
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace ProducaoAPI.Controllers
         {
             await _processoProducaoService.CalcularProducao(id);
             var producao = await _processoProducaoService.BuscarProducaoPorIdAsync(id);
-            return Ok(_processoProducaoService.EntityToResponse(producao));
+            return Ok(await _processoProducaoService.EntityToResponse(producao));
         }
 
         [HttpGet("GerarRelatórioTXT")]

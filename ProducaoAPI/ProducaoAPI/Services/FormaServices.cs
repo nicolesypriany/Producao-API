@@ -36,12 +36,12 @@ namespace ProducaoAPI.Services
             }
         }
 
-        public async Task<ICollection<FormaResponse>> EntityListToResponseList(IEnumerable<Forma> forma)
+        public async Task<ICollection<FormaResponse>> EntityListToResponseList(IEnumerable<Forma> formas)
         {
             var responseList = new List<FormaResponse>();
-            foreach (var f in forma)
+            foreach (var forma in formas)
             {
-                var response = await EntityToResponse(f);
+                var response = await EntityToResponse(forma);
                 responseList.Add(response);
             }
             return responseList;
