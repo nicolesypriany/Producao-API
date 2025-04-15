@@ -12,6 +12,7 @@ namespace ProducaoAPI.Data.Mappings
             builder.Property(p => p.ProducaoId).HasColumnName("producao_id");
             builder.Property(p => p.MateriaPrimaId).HasColumnName("materia_prima_id");
             builder.Property(p => p.Quantidade).HasColumnName("quantidade");
+            builder.Property(p => p.Preco).HasColumnName("preco");
             builder.Property(p => p.Ativo).HasColumnName("ativo");
 
             builder

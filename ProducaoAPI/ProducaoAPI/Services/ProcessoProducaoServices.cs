@@ -37,13 +37,16 @@ namespace ProducaoAPI.Services
             return new ProcessoProducaoResponse(
                 producao.Id, 
                 producao.Data, 
-                producao.MaquinaId, 
-                producao.FormaId, 
-                producao.Ciclos, 
+                producao.Maquina.Nome, 
+                producao.Forma.Nome,
+                producao.Produto.Nome,
+                producao.Ciclos,
                 producoesMateriasPrimas, 
                 producao.QuantidadeProduzida, 
                 producao.CustoUnitario, 
-                producao.CustoTotal, 
+                producao.CustoTotal,
+                producao.DataCriacao,
+                producao.DataEdicao,
                 producao.Ativo
             );
         }
@@ -66,7 +69,7 @@ namespace ProducaoAPI.Services
             foreach (var materiaPrima in materiasPrimas)
             {
                 var materiaPrimaSelecionada = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(materiaPrima.Id);
-                var producaoMateriaPrima = new ProcessoProducaoMateriaPrima(ProducaoId, materiaPrimaSelecionada.Id, materiaPrima.Quantidade);
+                var producaoMateriaPrima = new ProcessoProducaoMateriaPrima(ProducaoId, materiaPrimaSelecionada.Id, materiaPrimaSelecionada.Preco, materiaPrima.Quantidade);
                 producoesMateriasPrimas.Add(producaoMateriaPrima);
             }
             return producoesMateriasPrimas;
@@ -75,18 +78,14 @@ namespace ProducaoAPI.Services
         public async Task CalcularProducao(int producaoId)
         {
             var producao = await _producaoRepository.BuscarProducaoPorIdAsync(producaoId);
-
             var forma = await _formaRepository.BuscarFormaPorIdAsync(producao.FormaId);
-
             var produto = await _produtoRepository.BuscarProdutoPorIdAsync(producao.ProdutoId);
+            decimal quantidadeProduzida = (producao.Ciclos * forma.PecasPorCiclo) / produto.PecasPorUnidade;
 
-            double quantidadeProduzida = ((Convert.ToDouble(producao.Ciclos)) * forma.PecasPorCiclo) / produto.PecasPorUnidade;
-
-            double custoTotal = 0;
+            decimal custoTotal = 0;
             foreach (var producaoMateriaPrima in producao.ProducaoMateriasPrimas)
             {
-                var total = producaoMateriaPrima.Quantidade * producaoMateriaPrima.MateriaPrima.Preco;
-                custoTotal += total;
+                custoTotal += producaoMateriaPrima.Quantidade * producaoMateriaPrima.Preco;
             }
 
             producao.QuantidadeProduzida = quantidadeProduzida;
@@ -113,6 +112,7 @@ namespace ProducaoAPI.Services
                 await _producaoMateriaPrimaRepository.AdicionarAsync(producaMateriaPrima);
             }
 
+            await CalcularProducao(producao.Id);
             return producao;
         }
 
@@ -131,6 +131,8 @@ namespace ProducaoAPI.Services
             producao.ProdutoId = forma.ProdutoId;
             producao.Ciclos = request.Ciclos;
 
+            await CalcularProducao(id);
+            producao.DataEdicao = DateTime.Now;
             await _producaoRepository.AtualizarAsync(producao);
             return producao;
         }
@@ -249,7 +251,7 @@ namespace ProducaoAPI.Services
             foreach (var materiaPrima in request.MateriasPrimas)
             {
                 await ValidarMateriaPrima(materiaPrima.Id);
-                ValidarCampos.Double(materiaPrima.Quantidade, "Quantidade de Matéria-Prima");
+                ValidarCampos.Decimal(materiaPrima.Quantidade, "Quantidade de Matéria-Prima");
             }
         }
 

@@ -48,7 +48,7 @@ namespace ProducaoAPI.Services
 
             XmlNode? precoNode = documentoXML.SelectSingleNode("//ns:nfeProc/ns:NFe/ns:infNFe/ns:det/ns:prod/ns:vUnCom", nsManager);
             if (precoNode == null) throw new Exception("Erro ao ler arquivo XML: Preço não encontrado.");
-            double preco = Convert.ToDouble(precoNode.InnerText.Replace(".", ","));
+            decimal preco = Convert.ToDecimal(precoNode.InnerText.Replace(".", ","));
             if (unidade == "KG") preco /= 1000;
 
             MateriaPrimaRequest request = new MateriaPrimaRequest(produto, fornecedor, unidade, preco);

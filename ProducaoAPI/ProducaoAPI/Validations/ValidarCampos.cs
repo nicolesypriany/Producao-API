@@ -14,7 +14,7 @@ namespace ProducaoAPI.Validations
             if (campo < 1) throw new BadRequestException($"O número de '{nomeCampo}' deve ser maior do que 0.");
         }
 
-        public static void Double(double campo, string nomeCampo)
+        public static void Decimal(decimal campo, string nomeCampo)
         {
             if (campo < 1) throw new BadRequestException($"O valor de '{nomeCampo}' deve ser maior do que 0.");
         }
@@ -24,7 +24,7 @@ namespace ProducaoAPI.Validations
             if (unidade.Length > 5) throw new BadRequestException("A sigla da unidade não pode ter mais de 5 caracteres.");
         }
 
-        public static void Preco(double preco)
+        public static void Preco(decimal preco)
         {
             if (preco <= 0) throw new BadRequestException("O preço não pode ser igual ou menor que 0.");
         }

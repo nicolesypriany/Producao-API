@@ -19,6 +19,8 @@ namespace ProducaoAPI.Data.Mappings
             builder.Property(p => p.CustoUnitario).HasColumnName("custo_unitario");
             builder.Property(p => p.CustoTotal).HasColumnName("custo_total");
             builder.Property(p => p.Ativo).HasColumnName("ativo");
+            builder.Property(p => p.DataCriacao).HasColumnName("data_criacao");
+            builder.Property(p => p.DataEdicao).HasColumnName("data_edicao");
 
             builder
                 .HasOne(p => p.Maquina)

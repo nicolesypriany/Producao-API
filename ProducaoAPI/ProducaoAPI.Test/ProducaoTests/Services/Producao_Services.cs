@@ -67,7 +67,7 @@ namespace ProducaoAPI.Test.ProducaoTests.Services
             await Context.Maquinas.AddAsync(new Maquina("teste", "teste"));
             await Context.Produtos.AddAsync(new Produto("teste", "teste", "un", 10));
             await Context.Formas.AddAsync(new Forma("teste", 1, 10));
-            await Context.MateriasPrimas.AddAsync(new MateriaPrima("teste", "teste", "un", 100.00));
+            await Context.MateriasPrimas.AddAsync(new MateriaPrima("teste", "teste", "un", 100,.00));
             await Context.Producoes.AddAsync(new ProcessoProducao(DateTime.Now, 1, 1, 1, 100));
             await Context.SaveChangesAsync();
 

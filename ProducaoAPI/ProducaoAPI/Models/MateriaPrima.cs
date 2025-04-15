@@ -2,7 +2,7 @@
 {
     public class MateriaPrima
     {
-        public MateriaPrima(string nome, string fornecedor, string unidade, double preco)
+        public MateriaPrima(string nome, string fornecedor, string unidade, decimal preco)
         {
             Nome = nome;
             Fornecedor = fornecedor;
@@ -15,7 +15,7 @@
         public string Nome { get; set; }
         public string Fornecedor { get; set; }
         public string Unidade { get; set; }
-        public double Preco { get; set; }
+        public decimal Preco { get; set; }
         public ICollection<ProcessoProducaoMateriaPrima> ProducaoMateriasPrimas { get; set; }
         public bool Ativo { get; set; }
     }

@@ -1,3 +1,3 @@
 ﻿namespace ProducaoAPI.Requests;
 
-public record MateriaPrimaRequest(string Nome, string Fornecedor, string Unidade, double Preco);
+public record MateriaPrimaRequest(string Nome, string Fornecedor, string Unidade, decimal Preco);
