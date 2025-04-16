@@ -35,6 +35,9 @@ namespace ProducaoAPI.Repositories
             var producoes = await _context.Producoes
             .Include(p => p.ProducaoMateriasPrimas)
             .ThenInclude(p => p.MateriaPrima)
+            .Include(p => p.Maquina)
+            .Include(p => p.Forma)
+            .Include(p => p.Produto)
             .OrderBy(p => p.Id)
             .ToListAsync();
 
@@ -47,6 +50,9 @@ namespace ProducaoAPI.Repositories
             var producao = await _context.Producoes
             .Include(p => p.ProducaoMateriasPrimas)
             .ThenInclude(p => p.MateriaPrima)
+            .Include(p => p.Maquina)
+            .Include(p => p.Forma)
+            .Include(p => p.Produto)
             .Where(m => m.Ativo == true)
             .FirstOrDefaultAsync(p => p.Id == id);
 
