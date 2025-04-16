@@ -42,7 +42,8 @@ namespace ProducaoAPI.Services
                 producao.Produto.Nome,
                 producao.Ciclos,
                 producoesMateriasPrimas, 
-                producao.QuantidadeProduzida, 
+                producao.QuantidadeProduzida,
+                producao.Produto.Unidade,
                 producao.CustoUnitario, 
                 producao.CustoTotal,
                 producao.DataCriacao,
@@ -120,10 +121,8 @@ namespace ProducaoAPI.Services
         {
             await ValidarRequest(request);
             var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
-
             var producao = await BuscarProducaoPorIdAsync(id);
-
-            _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
+            await _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
 
             producao.Data = request.Data;
             producao.MaquinaId = request.MaquinaId;

@@ -26,7 +26,7 @@ namespace ProducaoAPI.Services
             return producoesMateriasPrimas.Select(m => EntityToResponse(m)).ToList();
         }
 
-        public async void VerificarProducoesMateriasPrimasExistentes(int producaoId, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
+        public async Task VerificarProducoesMateriasPrimasExistentes(int producaoId, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
         {
             var listaIdMateriasAtuais = new List<int>();
             var producoesMateriasPrimas = await _producaoMateriaPrimaRepository.ListarProcessosProducaoMateriaPrima(producaoId);
@@ -35,23 +35,22 @@ namespace ProducaoAPI.Services
             var listaIdNovasMaterias = new List<int>();
             foreach (var producaoMateriaPrimaRequest in materiasPrimasRequest) listaIdNovasMaterias.Add(producaoMateriaPrimaRequest.Id);
 
-            CriarOuAtualizarProducaoMateriaPrima(producaoId, listaIdNovasMaterias, listaIdMateriasAtuais, materiasPrimasRequest);
-
-            ExcluirProducaoMateriaPrima(producaoId, listaIdNovasMaterias, listaIdMateriasAtuais);
+            await CriarOuAtualizarProducaoMateriaPrima(producaoId, listaIdNovasMaterias, listaIdMateriasAtuais, materiasPrimasRequest);
+            await ExcluirProducaoMateriaPrima(producaoId, listaIdNovasMaterias, listaIdMateriasAtuais);
 
         }
 
-        public async void CriarOuAtualizarProducaoMateriaPrima(int producaoId, List<int> listaIdNovasMaterias, List<int> listaIdMateriasAtuais, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
+        public async Task CriarOuAtualizarProducaoMateriaPrima(int producaoId, List<int> listaIdNovasMaterias, List<int> listaIdMateriasAtuais, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
         {
             foreach (var materiaPrimaId in listaIdNovasMaterias)
             {
                 if (listaIdMateriasAtuais.Contains(materiaPrimaId))
                 {
-                    CompararQuantidadesMateriasPrimas(producaoId, materiaPrimaId, materiasPrimasRequest);
+                    await CompararQuantidadesMateriasPrimas(producaoId, materiaPrimaId, materiasPrimasRequest);
                 }
                 else
                 {
-                    var quantidade = RetornarQuantidadeMateriaPrima(materiaPrimaId, materiasPrimasRequest);
+                    var quantidade = await RetornarQuantidadeMateriaPrima(materiaPrimaId, materiasPrimasRequest);
                     var materiaPrima = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(materiaPrimaId);
                     var novoProcesso = new ProcessoProducaoMateriaPrima(producaoId, materiaPrimaId, materiaPrima.Preco, quantidade);
                     await _producaoMateriaPrimaRepository.AdicionarAsync(novoProcesso);
@@ -71,7 +70,7 @@ namespace ProducaoAPI.Services
             }
         }
 
-        public decimal RetornarQuantidadeMateriaPrima(int idMateriaPrima, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
+        public async Task<decimal> RetornarQuantidadeMateriaPrima(int idMateriaPrima, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
         {
             decimal quantidade = 0;
             foreach (var materiaPrima in materiasPrimasRequest)
@@ -84,7 +83,7 @@ namespace ProducaoAPI.Services
         public async Task CompararQuantidadesMateriasPrimas(int producaoId, int materiaPrimaId, ICollection<ProcessoProducaoMateriaPrimaRequest> materiasPrimasRequest)
         {
             var producaoMateriaPrimaExistente = await _producaoMateriaPrimaRepository.BuscarProcessoProducaoMateriaPrima(producaoId, materiaPrimaId);
-            var quantidadeNova = RetornarQuantidadeMateriaPrima(materiaPrimaId, materiasPrimasRequest);
+            var quantidadeNova = await RetornarQuantidadeMateriaPrima(materiaPrimaId, materiasPrimasRequest);
             if (producaoMateriaPrimaExistente.Quantidade != quantidadeNova) producaoMateriaPrimaExistente.Quantidade = quantidadeNova;
             await _producaoMateriaPrimaRepository.AtualizarAsync(producaoMateriaPrimaExistente);
         }
