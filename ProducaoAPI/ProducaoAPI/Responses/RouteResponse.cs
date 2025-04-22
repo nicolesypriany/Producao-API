@@ -1,3 +1,3 @@
 ﻿namespace ProducaoAPI.Responses;
 
-public record RouteResponse(double Latitude, double Longitude);
+public record RouteResponse(double Distancia, decimal PrecoLitro, decimal PrecoTotal);
