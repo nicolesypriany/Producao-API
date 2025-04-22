@@ -32,6 +32,7 @@ builder.Services.AddScoped<IProdutoService, ProdutoServices>();
 builder.Services.AddScoped<IProcessoProducaoService, ProcessoProducaoServices>();
 builder.Services.AddScoped<IProducaoMateriaPrimaService, ProducaoMateriaPrimaServices>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFreteService, FreteServices>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

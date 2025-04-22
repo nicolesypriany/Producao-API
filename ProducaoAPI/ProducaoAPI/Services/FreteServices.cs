@@ -1,37 +1,48 @@
 ﻿using ProducaoAPI.Exceptions;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
+using ProducaoAPI.Services.Interfaces;
 using System.Text.Json;
 
 namespace ProducaoAPI.Services
 {
-    public class RouteServices
+    public class FreteServices : IFreteService
     {
         private readonly string _apiKey = "5b3ce3597851110001cf62487d4a448205d9405ebbc1df1ea0b5defe";
         private readonly HttpClient _client;
+        private readonly IProdutoService _produtoService;
 
-        public RouteServices()
+        public FreteServices(IProdutoService produtoService)
         {
             _client = new HttpClient
             {
                 BaseAddress = new Uri("https://api.openrouteservice.org/")
             };
+            _produtoService = produtoService;
         }
 
-        public async Task<RouteResponse> CalcularPreco(FreteRequest enderecos)
+        public async Task<FreteResponse> CalcularPreco(FreteRequest request)
         {
-            var coordenadas = await BuscarCoordenadas(enderecos);
-            var distancia = await RetornaDistanciaDaRota(coordenadas);
-            var litros = Convert.ToDecimal(distancia) / enderecos.KmPorLitro;
-            var precoTotal = litros * enderecos.PrecoDiesel;
-            return new RouteResponse(distancia, enderecos.PrecoDiesel, precoTotal);
+            var coordenadasOrigem = await BuscarCoordenadas(request.EnderecoOrigem);
+            var coordenadasDestino = await BuscarCoordenadas(request.EnderecoDestino);
+            var distanciaEmQuilometros = await RetornaDistanciaDaRota([coordenadasOrigem, coordenadasDestino]);
+            var precoViagem = (distanciaEmQuilometros / request.KmPorLitro) * request.PrecoDiesel;
+            var numeroDePaletes = request.QuantidadeProduto / request.QuantidadePorPalete;
+            int numeroDeViagens = (int)Math.Ceiling((double)numeroDePaletes / request.PaletesPorCarga);
+            var precoTotal = precoViagem * numeroDeViagens;
+
+            return new FreteResponse(
+                distanciaEmQuilometros, 
+                numeroDeViagens, 
+                request.PrecoDiesel, 
+                Math.Round(precoTotal)
+            );
         }
 
-        public async Task<List<CoordinatesResponse>> BuscarCoordenadas(FreteRequest endereco)
+        private async Task<CoordinatesResponse> BuscarCoordenadas(string endereco)
         {
-            var url = $"/geocode/search?api_key={_apiKey}&text={endereco.EnderecoOrigem}";
+            var url = $"/geocode/search?api_key={_apiKey}&text={endereco}";
 
-            var listaCoordenadas = new List<CoordinatesResponse>();
             var response = await _client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -42,34 +53,15 @@ namespace ProducaoAPI.Services
 
                 var longitude = coordenadas[0].GetDouble();
                 var latitude = coordenadas[1].GetDouble();
-
-                listaCoordenadas.Add(new CoordinatesResponse(longitude, latitude));
-            }
-
-            url = $"/geocode/search?api_key={_apiKey}&text={endereco.EnderecoDestino}";
- 
-            response = await _client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                using var documento = JsonDocument.Parse(json);
-                var feature = documento.RootElement.GetProperty("features")[0];
-                var coordenadas = feature.GetProperty("geometry").GetProperty("coordinates");
-
-                var longitude = coordenadas[0].GetDouble();
-                var latitude = coordenadas[1].GetDouble();
-
-                listaCoordenadas.Add(new CoordinatesResponse(longitude, latitude));
+                return new CoordinatesResponse(longitude, latitude);
             }
             else
             {
                 throw new NotFoundException("Nenhuma coordenada encontrada para o endereço informado.");
             }
-
-            return listaCoordenadas;
         }
 
-        public async Task<double> RetornaDistanciaDaRota(List<CoordinatesResponse> coordinates)
+        private async Task<double> RetornaDistanciaDaRota(List<CoordinatesResponse> coordinates)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "v2/directions/driving-car/geojson");
             request.Headers.Add("Authorization", _apiKey);
@@ -85,6 +77,8 @@ namespace ProducaoAPI.Services
                 System.Text.Encoding.UTF8,
                 "application/json"
             );
+
+            Console.WriteLine(request.Content);
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
