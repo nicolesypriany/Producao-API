@@ -25,17 +25,26 @@ namespace ProducaoAPI.Services
         {
             var coordenadasOrigem = await BuscarCoordenadas(request.EnderecoOrigem);
             var coordenadasDestino = await BuscarCoordenadas(request.EnderecoDestino);
-            var distanciaEmQuilometros = await RetornaDistanciaDaRota([coordenadasOrigem, coordenadasDestino]);
+
+            var (distanciaEmQuilometros, geojson) = await RetornaDistanciaDaRota(new List<CoordinatesResponse>
+            {
+                coordenadasOrigem,
+                coordenadasDestino
+            });
+
             var precoViagem = (distanciaEmQuilometros / request.KmPorLitro) * request.PrecoDiesel;
             var numeroDePaletes = request.QuantidadeProduto / request.QuantidadePorPalete;
             int numeroDeViagens = (int)Math.Ceiling((double)numeroDePaletes / request.PaletesPorCarga);
             var precoTotal = precoViagem * numeroDeViagens;
 
             return new FreteResponse(
-                distanciaEmQuilometros, 
-                numeroDeViagens, 
-                request.PrecoDiesel, 
-                Math.Round(precoTotal)
+                coordenadasOrigem,
+                coordenadasDestino,
+                distanciaEmQuilometros,
+                numeroDeViagens,
+                request.PrecoDiesel,
+                Math.Round(precoTotal),
+                geojson.ToString()
             );
         }
 
@@ -61,24 +70,22 @@ namespace ProducaoAPI.Services
             }
         }
 
-        private async Task<double> RetornaDistanciaDaRota(List<CoordinatesResponse> coordinates)
+        private async Task<(double distanciaKm, JsonElement geojson)> RetornaDistanciaDaRota(List<CoordinatesResponse> coordinates)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "v2/directions/driving-car/geojson");
             request.Headers.Add("Authorization", _apiKey);
             request.Content = new StringContent(
-            JsonSerializer.Serialize(new 
-            {
-                coordinates = new List<List<double>> 
+                JsonSerializer.Serialize(new
                 {
-                    new List<double> { coordinates[0].Longitude, coordinates[0].Latitude },
-                    new List<double> { coordinates[1].Longitude, coordinates[1].Latitude }
-                }
-            }),
+                    coordinates = new List<List<double>>
+                    {
+                new List<double> { coordinates[0].Longitude, coordinates[0].Latitude },
+                new List<double> { coordinates[1].Longitude, coordinates[1].Latitude }
+                    }
+                }),
                 System.Text.Encoding.UTF8,
                 "application/json"
             );
-
-            Console.WriteLine(request.Content);
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -86,15 +93,11 @@ namespace ProducaoAPI.Services
             var json = await response.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(json);
 
-            var distanceMeters = doc
-                .RootElement
-                .GetProperty("features")[0]
-                .GetProperty("properties")
-                .GetProperty("segments")[0]
-                .GetProperty("distance")
-                .GetDouble();
+            var feature = doc.RootElement.GetProperty("features")[0];
+            var distanceMeters = feature.GetProperty("properties").GetProperty("segments")[0].GetProperty("distance").GetDouble();
 
-            return distanceMeters / 1000;
+            return (distanceMeters / 1000, doc.RootElement.Clone());
         }
+
     }
 }

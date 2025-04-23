@@ -17,7 +17,7 @@ namespace ProducaoAPI.Controllers
             _freteServices = freteService;
         }
 
-        [HttpPost("coordenadas")]
+        [HttpPost("Calcular")]
         public async Task<ActionResult<FreteResponse>> CalcularFrete(FreteRequest request)
         {
             var frete = await _freteServices.CalcularPreco(request);
