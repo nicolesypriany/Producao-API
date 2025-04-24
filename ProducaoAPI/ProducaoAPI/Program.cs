@@ -25,6 +25,7 @@ builder.Services.AddScoped<IMateriaPrimaRepository, MateriaPrimaRepository>();
 builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoRepository>();
 builder.Services.AddScoped<IProducaoMateriaPrimaRepository, ProducaoMateriaPrimaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
 builder.Services.AddScoped<IFormaService, FormaServices>();
 builder.Services.AddScoped<IMaquinaService, MaquinaServices>();
 builder.Services.AddScoped<IMateriaPrimaService, MateriaPrimaServices>();
@@ -33,6 +34,7 @@ builder.Services.AddScoped<IProcessoProducaoService, ProcessoProducaoServices>()
 builder.Services.AddScoped<IProducaoMateriaPrimaService, ProducaoMateriaPrimaServices>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFreteService, FreteServices>();
+builder.Services.AddScoped<IDespesaService, DespesaService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

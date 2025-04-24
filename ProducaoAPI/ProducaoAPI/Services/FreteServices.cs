@@ -79,8 +79,8 @@ namespace ProducaoAPI.Services
                 {
                     coordinates = new List<List<double>>
                     {
-                new List<double> { coordinates[0].Longitude, coordinates[0].Latitude },
-                new List<double> { coordinates[1].Longitude, coordinates[1].Latitude }
+                        new List<double> { coordinates[0].Longitude, coordinates[0].Latitude },
+                        new List<double> { coordinates[1].Longitude, coordinates[1].Latitude }
                     }
                 }),
                 System.Text.Encoding.UTF8,
@@ -98,6 +98,5 @@ namespace ProducaoAPI.Services
 
             return (distanceMeters / 1000, doc.RootElement.Clone());
         }
-
     }
 }
