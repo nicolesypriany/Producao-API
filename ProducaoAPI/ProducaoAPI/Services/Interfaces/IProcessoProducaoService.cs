@@ -20,6 +20,6 @@ namespace ProducaoAPI.Services.Interfaces
         Task<Forma> BuscarFormaPorIdAsync(int id);
         Task<FileStreamResult> GerarRelatorioTXT();
         Task<FileStreamResult> GerarRelatorioXLSX();
-        Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime data);
+        Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime dataInicio, DateTime dataFim);
     }
 }

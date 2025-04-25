@@ -22,6 +22,7 @@ namespace ProducaoAPI.Controllers
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
+        ///<response code="404">Nenhum resultado encontrado</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPost]
         public async Task<ActionResult<ProducaoPorProdutoEPeriodoResponse>> CalcularMediaDeCustoPorPeriodo(ProducaoPorProdutoEPeriodoRequest request)

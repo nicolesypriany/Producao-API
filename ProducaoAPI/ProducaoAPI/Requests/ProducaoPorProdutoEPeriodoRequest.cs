@@ -2,5 +2,6 @@
 
 public record ProducaoPorProdutoEPeriodoRequest(
     int ProdutoId,
-    DateTime DataInicio
+    DateTime DataInicio,
+    DateTime DataFim
 );

@@ -20,13 +20,14 @@ namespace ProducaoAPI.Services
             await ValidarRequest(request);
             var producoes = await _processoProducaoService.ListarProducoesPorProdutoEPeriodo(
                 request.ProdutoId,
-                request.DataInicio
+                request.DataInicio,
+                request.DataFim
             );
 
             var producoesResponse = await _processoProducaoService.EntityListToResponseList(producoes);
 
             var custoMedio = producoes
-                .Select(p => p.CustoTotal)
+                .Select(p => p.CustoUnitario)
                 .Average();
 
             return new ProducaoPorProdutoEPeriodoResponse(

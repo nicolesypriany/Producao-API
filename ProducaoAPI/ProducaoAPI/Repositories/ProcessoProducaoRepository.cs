@@ -88,18 +88,18 @@ namespace ProducaoAPI.Repositories
             return producoes;
         }
 
-        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime data)
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime dataInicio, DateTime dataFim)
         {
             var producoes = await _context.Producoes
                 .Where(p => p.ProdutoId == produtoId)
-                .Where(p => p.Data >= data)
+                .Where(p => p.Data >= dataInicio && p.Data <= dataFim)
                 .Include(p => p.Maquina)
                 .Include(p => p.Forma)
                 .ThenInclude(p => p.Produto)
                 .Include(p => p.ProducaoMateriasPrimas)
                 .ThenInclude(p => p.MateriaPrima)
                 .Where(m => m.Ativo == true)
-                .OrderBy(p => p.Id)
+                .OrderBy(p => p.Data)
                 .ToListAsync();
 
             if (producoes is null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção encontrada.");
