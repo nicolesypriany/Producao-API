@@ -268,5 +268,7 @@ namespace ProducaoAPI.Services
         {
             await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
         }
+
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime data) => await _producaoRepository.ListarProducoesPorProdutoEPeriodo(produtoId, data);
     }
 }
