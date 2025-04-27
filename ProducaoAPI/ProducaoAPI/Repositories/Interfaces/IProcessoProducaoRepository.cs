@@ -11,5 +11,6 @@ namespace ProducaoAPI.Repositories.Interfaces
         Task AtualizarAsync(ProcessoProducao producao);
         Task<IEnumerable<ProcessoProducao>> ListarProducoesAtivasDetalhadas();
         Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime dataInicio, DateTime dataFim);
+        Task<IEnumerable<ProcessoProducao>> ListarProducoesPorMes(DateTime dataInicio, DateTime dataFim);
     }
 }

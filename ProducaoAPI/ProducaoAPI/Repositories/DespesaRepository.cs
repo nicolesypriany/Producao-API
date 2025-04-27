@@ -41,7 +41,7 @@ namespace ProducaoAPI.Repositories
                 .Where(d => d.Ativo)
                 .ToListAsync();
 
-            if(despesas is null || despesas.Count == 0) throw new NotFoundException("Nenhuma despesa encontrada.");
+            if (despesas is null || despesas.Count == 0) throw new NotFoundException("Nenhuma despesa encontrada.");
             return despesas;
         }
 

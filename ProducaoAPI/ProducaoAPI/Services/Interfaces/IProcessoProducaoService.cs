@@ -21,5 +21,6 @@ namespace ProducaoAPI.Services.Interfaces
         Task<FileStreamResult> GerarRelatorioTXT();
         Task<FileStreamResult> GerarRelatorioXLSX();
         Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime dataInicio, DateTime dataFim);
+        Task<IEnumerable<ProcessoProducao>> ListarProducoesPorMes(DateTime dataInicio, DateTime dataFim);
     }
 }

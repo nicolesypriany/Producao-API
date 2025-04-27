@@ -105,5 +105,22 @@ namespace ProducaoAPI.Repositories
             if (producoes is null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção encontrada.");
             return producoes;
         }
+
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesPorMes(DateTime dataInicio, DateTime dataFim)
+        {
+            var producoes = await _context.Producoes
+                .Where(p => p.Data >= dataInicio && dataInicio <= dataFim)
+                .Include(p => p.Maquina)
+                .Include(p => p.Forma)
+                .ThenInclude(p => p.Produto)
+                .Include(p => p.ProducaoMateriasPrimas)
+                .ThenInclude(p => p.MateriaPrima)
+                .Where(m => m.Ativo == true)
+                .OrderBy (p => p.Data)
+                .ToListAsync();
+
+            if (producoes is null || producoes.Count == 0) throw new NotFoundException("Nenhuma produção encontrada.");
+            return producoes;
+        }
     }
 }

@@ -270,5 +270,7 @@ namespace ProducaoAPI.Services
         }
 
         public async Task<IEnumerable<ProcessoProducao>> ListarProducoesPorProdutoEPeriodo(int produtoId, DateTime dataInicio, DateTime dataFim) => await _producaoRepository.ListarProducoesPorProdutoEPeriodo(produtoId, dataInicio, dataFim);
+
+        public async Task<IEnumerable<ProcessoProducao>> ListarProducoesPorMes(DateTime dataInicio, DateTime dataFim) => await _producaoRepository.ListarProducoesPorMes(dataInicio, dataFim);
     }
 }
