@@ -1,4 +1,6 @@
-﻿using ProducaoAPI.Models;
+﻿using ProducaoAPI.Enums;
+using ProducaoAPI.Models;
+using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -10,9 +12,11 @@ namespace ProducaoAPI.Services
     public class MaquinaServices : IMaquinaService
     {
         private readonly IMaquinaRepository _maquinaRepository;
-        public MaquinaServices(IMaquinaRepository maquinaRepository)
+        private readonly ILogRepository _logRepository;
+        public MaquinaServices(IMaquinaRepository maquinaRepository, ILogRepository logRepository)
         {
             _maquinaRepository = maquinaRepository;
+            _logRepository = logRepository;
         }
         public MaquinaResponse EntityToResponse(Maquina maquina)
         {
@@ -33,6 +37,14 @@ namespace ProducaoAPI.Services
             await ValidarRequest(true, request);
             var maquina = new Maquina(request.Nome, request.Marca);
             await _maquinaRepository.AdicionarAsync(maquina);
+
+            await _logRepository.AdicionarAsync(new Log(
+                nameof(Acoes.Criar),
+                nameof(Entidades.Maquina),
+                maquina.Id,
+                1
+            ));
+
             return maquina;
         }
 

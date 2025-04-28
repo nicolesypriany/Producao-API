@@ -26,6 +26,7 @@ builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoReposito
 builder.Services.AddScoped<IProducaoMateriaPrimaRepository, ProducaoMateriaPrimaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
+builder.Services.AddScoped<ILogRepository, LogRepository>();
 
 builder.Services.AddScoped<IFormaService, FormaServices>();
 builder.Services.AddScoped<IMaquinaService, MaquinaServices>();

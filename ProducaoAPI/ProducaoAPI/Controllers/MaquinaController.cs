@@ -8,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class MaquinaController : Controller
     {
         private readonly IMaquinaService _maquinaService;
@@ -17,6 +17,17 @@ namespace ProducaoAPI.Controllers
         {
             _maquinaService = maquinaService;
         }
+    
+        [HttpGet("perfil")]
+        [Authorize]
+        public IActionResult Perfil()
+        {
+            var userId = User.FindFirst("id")?.Value;
+            var email = User.FindFirst("email")?.Value;
+
+            return Ok(new { UserId = userId, Email = email });
+        }
+
 
         /// <summary>
         /// Obter máquinas
