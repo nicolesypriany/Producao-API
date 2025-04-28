@@ -35,16 +35,16 @@ namespace ProducaoAPI.Services
         {
             var producoesMateriasPrimas = await _producaoMateriaPrimaService.EntityListToResponseList(producao.ProducaoMateriasPrimas);
             return new ProcessoProducaoResponse(
-                producao.Id, 
-                producao.Data, 
-                producao.Maquina.Nome, 
+                producao.Id,
+                producao.Data,
+                producao.Maquina.Nome,
                 producao.Forma.Nome,
                 producao.Produto.Nome,
                 producao.Ciclos,
-                producoesMateriasPrimas, 
+                producoesMateriasPrimas,
                 producao.QuantidadeProduzida,
                 producao.Produto.Unidade,
-                producao.CustoUnitario, 
+                producao.CustoUnitario,
                 producao.CustoTotal,
                 producao.DataCriacao,
                 producao.DataEdicao,

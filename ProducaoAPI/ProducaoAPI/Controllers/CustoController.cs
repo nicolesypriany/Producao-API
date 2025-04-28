@@ -24,7 +24,7 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum resultado encontrado</response>
         ///<response code="500">Erro de servidor</response>
-        [HttpGet("CustoMedioPorProdutoEPeriodo")]
+        [HttpPost("CustoMedioPorProdutoEPeriodo")]
         public async Task<ActionResult<ProducaoPorProdutoEPeriodoResponse>> CalcularMediaDeCustoPorPeriodo(ProducaoPorProdutoEPeriodoRequest request)
         {
             var response = await _custoService.CalcularMediaDeCustoPorPeriodo(request);
@@ -39,7 +39,7 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum resultado encontrado</response>
         ///<response code="500">Erro de servidor</response>
-        [HttpGet("CustoTotalMensal")]
+        [HttpPost("CustoTotalMensal")]
         public async Task<ActionResult<CustoMensalResponse>> CalcularCustoMensal(CustoPorMesRequest request)
         {
             var response = await _custoService.CalcularCustoTotalDoMes(request);

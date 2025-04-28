@@ -58,14 +58,15 @@ namespace ProducaoAPI.Services
                 .Select(d => d.Valor)
                 .Sum();
 
-            var diasDoMes = DateTime.DaysInMonth(request.Ano, request.Mes);
-            var custoTotalMensal = (custoDoMes + totalDespesas) / diasDoMes;
+            var custoTotalMensal = custoDoMes + totalDespesas;
 
             var despesasResponseList = _despesaService.EntityListToResponseList(despesas);
             var producoesResponseList = await _processoProducaoService.EntityListToResponseList(producoesDoMes);
 
             return new CustoMensalResponse(
                 custoTotalMensal,
+                totalDespesas,
+                custoDoMes,
                 despesasResponseList,
                 producoesResponseList
             );
