@@ -1,6 +1,4 @@
-﻿using ProducaoAPI.Enums;
-using ProducaoAPI.Models;
-using ProducaoAPI.Repositories;
+﻿using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -12,22 +10,26 @@ namespace ProducaoAPI.Services
     public class MaquinaServices : IMaquinaService
     {
         private readonly IMaquinaRepository _maquinaRepository;
-        private readonly ILogRepository _logRepository;
-        public MaquinaServices(IMaquinaRepository maquinaRepository, ILogRepository logRepository)
+        private readonly ILogServices _logServices;
+
+        public MaquinaServices(IMaquinaRepository maquinaRepository, ILogServices logServices)
         {
             _maquinaRepository = maquinaRepository;
-            _logRepository = logRepository;
+            _logServices = logServices;
         }
+
         public MaquinaResponse EntityToResponse(Maquina maquina)
         {
             return new MaquinaResponse(maquina.Id, maquina.Nome, maquina.Marca, maquina.Ativo);
         }
+
         public ICollection<MaquinaResponse> EntityListToResponseList(IEnumerable<Maquina> maquinas)
         {
             return maquinas.Select(m => EntityToResponse(m)).ToList();
         }
 
         public Task<IEnumerable<Maquina>> ListarMaquinasAtivas() => _maquinaRepository.ListarMaquinasAtivas();
+
         public Task<IEnumerable<Maquina>> ListarTodasMaquinas() => _maquinaRepository.ListarTodasMaquinas();
 
         public Task<Maquina> BuscarMaquinaPorIdAsync(int id) => _maquinaRepository.BuscarMaquinaPorIdAsync(id);
@@ -37,14 +39,7 @@ namespace ProducaoAPI.Services
             await ValidarRequest(true, request);
             var maquina = new Maquina(request.Nome, request.Marca);
             await _maquinaRepository.AdicionarAsync(maquina);
-
-            await _logRepository.AdicionarAsync(new Log(
-                nameof(Acoes.Criar),
-                nameof(Entidades.Maquina),
-                maquina.Id,
-                1
-            ));
-
+            await _logServices.CriarLogAdicionar(typeof(Maquina), maquina.Id);
             return maquina;
         }
 
@@ -52,6 +47,14 @@ namespace ProducaoAPI.Services
         {
             var maquina = await BuscarMaquinaPorIdAsync(id);
             await ValidarRequest(false, request, maquina.Nome);
+
+            await _logServices.CriarLogAtualizar(
+                typeof(Maquina),
+                typeof(MaquinaRequest),
+                maquina,
+                request,
+                maquina.Id
+            );
 
             maquina.Nome = request.Nome;
             maquina.Marca = request.Marca;
@@ -63,6 +66,7 @@ namespace ProducaoAPI.Services
         public async Task<Maquina> InativarMaquina(int id)
         {
             var maquina = await BuscarMaquinaPorIdAsync(id);
+            await _logServices.CriarLogInativar(typeof(Maquina), maquina.Id);
             maquina.Ativo = false;
             await _maquinaRepository.AtualizarAsync(maquina);
             return maquina;
@@ -71,7 +75,7 @@ namespace ProducaoAPI.Services
         private async Task ValidarRequest(bool Cadastrar, MaquinaRequest request, string nomeAtual = "")
         {
             var nomeMaquinas = await _maquinaRepository.ListarNomes();
-            
+
             ValidarCampos.Nome(Cadastrar, nomeMaquinas, request.Nome, nomeAtual);
             ValidarCampos.String(request.Nome, "Nome");
             ValidarCampos.String(request.Marca, "Marca");

@@ -8,10 +8,12 @@ using ProducaoAPI.Repositories;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Services;
 using ProducaoAPI.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 // Add services to the container.
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -38,6 +40,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFreteService, FreteServices>();
 builder.Services.AddScoped<IDespesaService, DespesaService>();
 builder.Services.AddScoped<ICustoService, CustoService>();
+builder.Services.AddScoped<ILogServices, LogServices>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -62,6 +65,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpContextAccessor();
 
 // Add CORS services
 builder.Services.AddCors(options =>

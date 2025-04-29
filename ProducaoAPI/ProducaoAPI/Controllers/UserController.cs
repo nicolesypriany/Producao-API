@@ -29,7 +29,6 @@ namespace ProducaoAPI.Controllers
             await _userService.Authenticate(request.email, request.password);
             var usuario = await _userService.BuscarPorEmail(request.email);
             var token = _userService.GenerateToken(usuario.Id, usuario.Email);
-
             return Ok(new { token });
         }
     }
