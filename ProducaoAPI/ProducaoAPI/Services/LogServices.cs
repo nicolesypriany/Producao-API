@@ -1,6 +1,7 @@
 ﻿using ProducaoAPI.Enums;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
+using ProducaoAPI.Requests;
 using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Services
@@ -17,6 +18,8 @@ namespace ProducaoAPI.Services
             _httpContextAccessor = httpContextAccessor;
             UserId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User?.FindFirst("id")?.Value);
         }
+
+        public Task<IEnumerable<Log>> BuscarLogs(LogRequest request) => _logRepository.BuscarLogs(request);
 
         public async Task CriarLogAdicionar(Type tipoObjeto, int objetoId)
         {
