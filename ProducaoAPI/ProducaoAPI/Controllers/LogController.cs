@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProducaoAPI.Models;
 using ProducaoAPI.Requests;
+using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Controllers
@@ -24,7 +24,7 @@ namespace ProducaoAPI.Controllers
         ///<response code="404">Nenhuma despesa encontrada</response>
         ///<response code="500">Erro de servidor</response>
         [HttpPost]
-        public async Task<IEnumerable<Log>> ListarLogs(LogRequest request)
+        public async Task<IEnumerable<LogResponse>> ListarLogs(LogRequest request)
         {
             var logs = await _logServices.BuscarLogs(request);
             return logs;

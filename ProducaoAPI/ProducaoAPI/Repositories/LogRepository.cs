@@ -25,7 +25,6 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<Log>> BuscarLogs(LogRequest request)
         {
             var logs = await _context.Logs
-                .Where(l => l.Acao == request.Acao)
                 .Where(l => l.Objeto == request.Objeto)
                 .Where(l => l.IdObjeto == request.ObjetoId)
                 .OrderBy(l => l.Data)

@@ -23,14 +23,19 @@ namespace ProducaoAPI.Repositories
 
         public async Task<User> BuscarPorId(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Id == id);
+
             if (usuario is null) throw new NotFoundException("Usuário não encontrado.");
             return usuario;
         }
 
         public async Task<User> BuscarPorEmail(string email)
         {
-            var usuario = await _context.Usuarios.Where(u => u.Email.ToUpper() == email.ToUpper()).FirstOrDefaultAsync();
+            var usuario = await _context.Usuarios
+                .Where(u => u.Email.ToUpper() == email.ToUpper())
+                .FirstOrDefaultAsync();
+
             if (usuario is null) throw new NotFoundException("Usuário não encontrado.");
             return usuario;
         }

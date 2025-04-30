@@ -28,7 +28,7 @@
         public int IdObjeto { get; set; }
         public int UserId { get; set; }
         public DateTime Data { get; set; }
-        public string DadoAlterado { get; set; }
-        public string Conteudo { get; set; }
+        public string? DadoAlterado { get; set; }
+        public string? Conteudo { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
+using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
 
 namespace ProducaoAPI.Services
@@ -10,16 +11,22 @@ namespace ProducaoAPI.Services
     {
         private readonly ILogRepository _logRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserService _userService;
         private readonly int UserId;
 
-        public LogServices(ILogRepository logRepository, IHttpContextAccessor httpContextAccessor)
+        public LogServices(ILogRepository logRepository, IHttpContextAccessor httpContextAccessor, IUserService userService)
         {
             _logRepository = logRepository;
             _httpContextAccessor = httpContextAccessor;
+            _userService = userService;
             UserId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User?.FindFirst("id")?.Value);
         }
 
-        public Task<IEnumerable<Log>> BuscarLogs(LogRequest request) => _logRepository.BuscarLogs(request);
+        public async Task<IEnumerable<LogResponse>> BuscarLogs(LogRequest request)
+        {
+            var logs = await _logRepository.BuscarLogs(request);
+            return await EntityListToResponseList(logs);
+        }
 
         public async Task CriarLogAdicionar(Type tipoObjeto, int objetoId)
         {
@@ -62,6 +69,26 @@ namespace ProducaoAPI.Services
                 objetoId,
                 UserId
             ));
+        }
+
+        private async Task<IEnumerable<LogResponse>> EntityListToResponseList(IEnumerable<Log> logs)
+        {
+            List<LogResponse> logResponses = [];
+            foreach (var l in logs)
+            {
+                var usuario = await _userService.BuscarPorId(l.UserId);
+                logResponses.Add(new LogResponse(
+                    l.Id,
+                    l.Acao,
+                    l.Objeto,
+                    l.IdObjeto,
+                    usuario.Nome,
+                    l.Data,
+                    l.DadoAlterado,
+                    l.Conteudo
+                ));
+            }
+            return logResponses;
         }
     }
 }
