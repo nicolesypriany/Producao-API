@@ -16,19 +16,32 @@ namespace ProducaoAPI.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
+        ///<summary>
+        ///Registrar um novo usuário
+        ///</summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="500">Erro de servidor</response>
+        [HttpPost("Registrar")]
         public async Task<ActionResult<User>> CadastrarUsuario(UserRequest request)
         {
             var usuario = await _userService.Criar(request);
             return Ok(usuario);
         }
 
+        ///<summary>
+        ///Efetuar login no sistema
+        ///</summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="400">Dados inválidos</response>
+        ///<response code="404">Usuário não encontrado</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
             await _userService.Authenticate(request.email, request.password);
             var usuario = await _userService.BuscarPorEmail(request.email);
-            var token = _userService.GenerateToken(usuario.Id, usuario.Email);
+            var token = _userService.GenerateToken(usuario.Id, usuario.Email, usuario.Nome, usuario.Cargo);
             return Ok(new { token });
         }
     }

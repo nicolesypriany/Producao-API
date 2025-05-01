@@ -48,5 +48,15 @@ namespace ProducaoAPI.Repositories
             if (usuarios == null || usuarios.Count == 0) throw new NotFoundException("Nenhum usuário encontrado.");
             return usuarios;
         }
+
+        public async Task<bool> VerificarSeEmailExiste(string email)
+        {
+            var usuario = await _context.Usuarios
+                .Where(u => u.Email.ToUpper() == email.ToUpper())
+                .FirstOrDefaultAsync();
+
+            if (usuario is null) return false;
+            return true;
+        }
     }
 }

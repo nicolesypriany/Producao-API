@@ -1,7 +1,7 @@
 ﻿namespace ProducaoAPI.Responses;
 
 public record LogResponse(
-    int Id, 
+    int Id,
     string Acao,
     string Objeto,
     int IdObjeto,

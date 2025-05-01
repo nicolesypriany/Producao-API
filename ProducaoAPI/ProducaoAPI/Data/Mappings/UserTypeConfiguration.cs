@@ -13,6 +13,7 @@ namespace ProducaoAPI.Data.Mappings
             builder.Property(u => u.Id).HasColumnName("id");
             builder.Property(u => u.Nome).HasColumnName("nome");
             builder.Property(u => u.Email).HasColumnName("email");
+            builder.Property(u => u.Cargo).HasColumnName("cargo");
             builder.Property(u => u.PasswordHash).HasColumnName("password_hash");
             builder.Property(u => u.PasswordSalt).HasColumnName("password_salt");
         }

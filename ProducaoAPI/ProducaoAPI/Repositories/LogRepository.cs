@@ -15,7 +15,6 @@ namespace ProducaoAPI.Repositories
         {
             _context = context;
         }
-
         public async Task AdicionarAsync(Log log)
         {
             await _context.Logs.AddAsync(log);

@@ -9,5 +9,6 @@ namespace ProducaoAPI.Repositories.Interfaces
         Task<User> BuscarPorId(int id);
         Task<User> BuscarPorEmail(string email);
         Task<IEnumerable<User>> ListarTodos();
+        Task<bool> VerificarSeEmailExiste(string email);
     }
 }

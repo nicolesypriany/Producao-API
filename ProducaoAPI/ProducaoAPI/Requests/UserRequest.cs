@@ -1,3 +1,3 @@
 ﻿namespace ProducaoAPI.Requests;
 
-public record UserRequest(string nome, string email, string password);
+public record UserRequest(string Nome, string Email, string Password);

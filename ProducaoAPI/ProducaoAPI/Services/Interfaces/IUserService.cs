@@ -10,6 +10,6 @@ namespace ProducaoAPI.Services.Interfaces
         Task<User> BuscarPorId(int id);
         Task<User> BuscarPorEmail(string email);
         Task<IEnumerable<User>> ListarTodos();
-        string GenerateToken(int id, string email);
+        string GenerateToken(int id, string email, string nomeUsuario, string cargo);
     }
 }
