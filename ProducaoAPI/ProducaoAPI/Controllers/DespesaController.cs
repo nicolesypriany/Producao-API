@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -7,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //  [Authorize]
+    [Authorize]
     public class DespesaController : Controller
     {
         private readonly IDespesaService _despesaServices;
@@ -52,6 +53,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPost]
         public async Task<ActionResult> CadastrarDespesa(DespesaRequest request)
         {
@@ -67,6 +70,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma despesa encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPut("{id}")]
         public async Task<ActionResult<DespesaResponse>> AtualizarDespesa(int id, DespesaRequest request)
         {
@@ -81,6 +86,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma despesa encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<DespesaResponse>> InativarDespesa(int id)
         {

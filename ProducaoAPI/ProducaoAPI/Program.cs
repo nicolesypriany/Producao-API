@@ -111,6 +111,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowLocalhost");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -53,6 +53,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPost]
         public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest request)
         {
@@ -68,6 +70,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma máquina encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPut("{id}")]
         public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest request)
         {
@@ -82,6 +86,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma máquina encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {

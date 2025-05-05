@@ -8,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class MateriaPrimaController : Controller
     {
         private readonly IMateriaPrimaService _materiaPrimaService;
@@ -52,6 +52,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPost]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrima(MateriaPrimaRequest request)
         {
@@ -67,6 +69,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPut("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> AtualizarMateriaPrima(int id, MateriaPrimaRequest request)
         {
@@ -81,6 +85,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<MateriaPrimaResponse>> InativarProduto(int id)
         {
@@ -91,6 +97,8 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Cadastrar uma matéria-prima por importação do XML de uma nota fiscal
         /// </summary>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPost("ImportarXML")]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrimaPorXML(IFormFile arquivoXML)
         {

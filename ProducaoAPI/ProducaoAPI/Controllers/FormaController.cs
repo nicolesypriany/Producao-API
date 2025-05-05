@@ -8,7 +8,7 @@ namespace ProducaoAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //  [Authorize]
+    [Authorize]
     public class FormaController : Controller
     {
         private readonly IFormaService _formaServices;
@@ -53,6 +53,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPost]
         //public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
         public async Task<ActionResult> CadastrarForma(FormaRequest request)
@@ -71,6 +73,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpPut("{id}")]
         public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest request)
         {
@@ -85,6 +89,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
+        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Gerente")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {

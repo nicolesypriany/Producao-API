@@ -61,12 +61,14 @@ namespace ProducaoAPI.Services
 
         public string GenerateToken(int id, string email, string nomeUsuario, string cargo)
         {
+            var expiration = DateTime.UtcNow.AddMinutes(30);
             var claims = new[]
             {
                 new Claim("id", id.ToString()),
                 new Claim("email", email.ToLower()),
                 new Claim("nome", nomeUsuario),
-                new Claim("cargo", cargo),
+                new Claim(ClaimTypes.Role, cargo),
+                new Claim("expiracao", expiration.ToString()),
 
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
@@ -74,7 +76,6 @@ namespace ProducaoAPI.Services
             var privateKey = new SymmetricSecurityKey(Encoding.UTF8.
                 GetBytes(_configuration["jwt:secretKey"]));
             var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddMinutes(30);
 
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: _configuration["jwt:issuer"],
