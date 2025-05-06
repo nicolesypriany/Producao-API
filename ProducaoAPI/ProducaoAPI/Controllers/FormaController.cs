@@ -53,10 +53,8 @@ namespace ProducaoAPI.Controllers
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="500">Erro de servidor</response>
-        [Authorize(Roles = "Administrador")]
-        [Authorize(Roles = "Gerente")]
+        [Authorize(Roles = "Administrador,Gerente")]
         [HttpPost]
-        //public async Task<ActionResult<FormaResponse>> CadastrarForma(FormaRequest request)
         public async Task<ActionResult> CadastrarForma(FormaRequest request)
         {
             var forma = await _formaServices.AdicionarAsync(request);
@@ -73,13 +71,12 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
-        [Authorize(Roles = "Administrador")]
-        [Authorize(Roles = "Gerente")]
+        [Authorize(Roles = "Administrador,Gerente")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<FormaResponse>> AtualizarForma(int id, FormaRequest request)
+        public async Task<ActionResult> AtualizarForma(int id, FormaRequest request)
         {
-            var forma = await _formaServices.AtualizarAsync(id, request);
-            return Ok(_formaServices.EntityToResponse(forma));
+            await _formaServices.AtualizarAsync(id, request);
+            return Ok();
         }
 
         /// <summary>
@@ -89,8 +86,7 @@ namespace ProducaoAPI.Controllers
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
         ///<response code="500">Erro de servidor</response>
-        [Authorize(Roles = "Administrador")]
-        [Authorize(Roles = "Gerente")]
+        [Authorize(Roles = "Administrador,Gerente")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<FormaResponse>> InativarForma(int id)
         {

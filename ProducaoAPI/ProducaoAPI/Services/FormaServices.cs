@@ -13,12 +13,14 @@ namespace ProducaoAPI.Services
         private readonly IFormaRepository _formaRepository;
         private readonly IMaquinaService _maquinaService;
         private readonly IProdutoService _produtoService;
+        private readonly ILogServices _logServices;
 
-        public FormaServices(IFormaRepository formaRepository, IMaquinaService maquinaService, IProdutoService produtoService)
+        public FormaServices(IFormaRepository formaRepository, IMaquinaService maquinaService, IProdutoService produtoService, ILogServices logServices)
         {
             _formaRepository = formaRepository;
             _maquinaService = maquinaService;
             _produtoService = produtoService;
+            _logServices = logServices;
         }
 
         public async Task<FormaResponse> EntityToResponse(Forma forma)
@@ -70,19 +72,10 @@ namespace ProducaoAPI.Services
         public async Task<Forma> AdicionarAsync(FormaRequest request)
         {
             await ValidarRequest(true, request);
-            if (request.Maquinas.IsNullOrEmpty())
-            {
-                var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo);
-                await _formaRepository.AdicionarAsync(forma);
-                return forma;
-            }
-            else
-            {
-                var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
-                var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo, maquinas);
-                await _formaRepository.AdicionarAsync(forma);
-                return forma;
-            }
+            var forma = new Forma(request.Nome, request.ProdutoId, request.PecasPorCiclo);
+            await _formaRepository.AdicionarAsync(forma);
+            await _logServices.CriarLogAdicionar(typeof(Forma), forma.Id);
+            return forma;
         }
 
         public async Task<Forma> AtualizarAsync(int id, FormaRequest request)
@@ -90,12 +83,17 @@ namespace ProducaoAPI.Services
             var forma = await BuscarFormaPorIdAsync(id);
             await ValidarRequest(false, request, forma.Nome);
 
-            var maquinas = await FormaMaquinaRequestToEntity(request.Maquinas);
+            await _logServices.CriarLogAtualizar(
+                typeof(Forma),
+                typeof(FormaRequest),
+                forma,
+                request,
+                forma.Id
+            );
 
             forma.Nome = request.Nome;
             forma.ProdutoId = request.ProdutoId;
             forma.PecasPorCiclo = request.PecasPorCiclo;
-            forma.Maquinas = maquinas;
 
             await _formaRepository.AtualizarAsync(forma);
             return forma;
@@ -104,6 +102,7 @@ namespace ProducaoAPI.Services
         public async Task<Forma> InativarForma(int id)
         {
             var forma = await BuscarFormaPorIdAsync(id);
+            await _logServices.CriarLogInativar(typeof(Forma), forma.Id);
             forma.Ativo = false;
             await _formaRepository.AtualizarAsync(forma);
             return forma;
@@ -117,7 +116,6 @@ namespace ProducaoAPI.Services
             ValidarCampos.String(request.Nome, "Nome");
             ValidarCampos.Inteiro(request.PecasPorCiclo, "Peças por Ciclo");
             await ValidarProduto(request.ProdutoId);
-            await ValidarMaquinas(request.Maquinas);
         }
 
         private async Task ValidarProduto(int id)

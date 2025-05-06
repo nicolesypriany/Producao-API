@@ -11,10 +11,12 @@ namespace ProducaoAPI.Services
     public class MateriaPrimaServices : IMateriaPrimaService
     {
         private readonly IMateriaPrimaRepository _materiaPrimaRepository;
+        private readonly ILogServices _logServices;
 
-        public MateriaPrimaServices(IMateriaPrimaRepository materiaPrimaRepository)
+        public MateriaPrimaServices(IMateriaPrimaRepository materiaPrimaRepository, ILogServices logServices)
         {
             _materiaPrimaRepository = materiaPrimaRepository;
+            _logServices = logServices;
         }
 
         public MateriaPrimaResponse EntityToResponse(MateriaPrima materiaPrima)
@@ -82,6 +84,7 @@ namespace ProducaoAPI.Services
             await ValidarRequest(true, request);
             var materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
             await _materiaPrimaRepository.AdicionarAsync(materiaPrima);
+            await _logServices.CriarLogAdicionar(typeof(MateriaPrima), materiaPrima.Id);
             return materiaPrima;
         }
 
@@ -89,6 +92,14 @@ namespace ProducaoAPI.Services
         {
             var materiaPrima = await _materiaPrimaRepository.BuscarMateriaPrimaPorIdAsync(id);
             await ValidarRequest(false, request, materiaPrima.Nome);
+
+            await _logServices.CriarLogAtualizar(
+                typeof(MateriaPrima),
+                typeof(MateriaPrimaRequest),
+                materiaPrima,
+                request,
+                materiaPrima.Id
+            );
 
             materiaPrima.Nome = request.Nome;
             materiaPrima.Fornecedor = request.Fornecedor;
@@ -104,6 +115,7 @@ namespace ProducaoAPI.Services
             var materiaPrima = await BuscarMateriaPorIdAsync(id);
             materiaPrima.Ativo = false;
             await _materiaPrimaRepository.AtualizarAsync(materiaPrima);
+            await _logServices.CriarLogInativar(typeof(MateriaPrima), materiaPrima.Id);
             return materiaPrima;
         }
 

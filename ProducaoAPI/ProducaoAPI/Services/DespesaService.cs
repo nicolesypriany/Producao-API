@@ -10,10 +10,12 @@ namespace ProducaoAPI.Services
     public class DespesaService : IDespesaService
     {
         private readonly IDespesaRepository _despesaRepository;
+        private readonly ILogServices _logServices;
 
-        public DespesaService(IDespesaRepository despesaRepository)
+        public DespesaService(IDespesaRepository despesaRepository, ILogServices logServices)
         {
             _despesaRepository = despesaRepository;
+            _logServices = logServices;
         }
 
         public DespesaResponse EntityToResponse(Despesa despesa)
@@ -45,6 +47,7 @@ namespace ProducaoAPI.Services
             );
 
             await _despesaRepository.AdicionarAsync(despesa);
+            await _logServices.CriarLogAdicionar(typeof(Despesa), despesa.Id);
             return despesa;
         }
 
@@ -52,6 +55,14 @@ namespace ProducaoAPI.Services
         {
             var despesa = await _despesaRepository.BuscarDespesaPorIdAsync(id);
             await ValidarRequest(false, request, despesa.Nome);
+
+            await _logServices.CriarLogAtualizar(
+                typeof(Despesa),
+                typeof(DespesaRequest),
+                despesa,
+                request,
+                despesa.Id
+            );
 
             despesa.Nome = request.Nome;
             despesa.Descricao = request.Descricao;
@@ -66,6 +77,7 @@ namespace ProducaoAPI.Services
             var despesa = await _despesaRepository.BuscarDespesaPorIdAsync(id);
             despesa.Ativo = false;
             await _despesaRepository.AtualizarAsync(despesa);
+            await _logServices.CriarLogInativar(typeof(Despesa), despesa.Id);
             return despesa;
         }
 
