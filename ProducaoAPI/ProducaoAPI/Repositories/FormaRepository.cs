@@ -18,7 +18,6 @@ namespace ProducaoAPI.Repositories
         {
             var formas = await _context.Formas
                 .Where(m => m.Ativo == true)
-                .Include(f => f.Maquinas)
                 .Include(f => f.Produto)
                 .ToListAsync();
 
@@ -29,7 +28,6 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<Forma>> ListarTodasFormas()
         {
             var formas = await _context.Formas
-                .Include(f => f.Maquinas)
                 .Include(f => f.Produto)
                 .ToListAsync();
 
@@ -40,7 +38,6 @@ namespace ProducaoAPI.Repositories
         public async Task<Forma> BuscarFormaPorIdAsync(int id)
         {
             var forma = await _context.Formas
-                .Include(f => f.Maquinas)
                 .Include(f => f.Produto)
                 .FirstOrDefaultAsync(f => f.Id == id);
 
