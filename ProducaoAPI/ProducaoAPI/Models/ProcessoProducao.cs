@@ -23,12 +23,12 @@
         public int ProdutoId { get; set; }
         public Produto Produto { get; set; }
         public int Ciclos { get; set; }
-        public decimal QuantidadeProduzida { get; set; }
+        public decimal? QuantidadeProduzida { get; set; }
         public ICollection<ProcessoProducaoMateriaPrima> ProducaoMateriasPrimas { get; set; }
-        public decimal CustoUnitario { get; set; }
-        public decimal CustoTotal { get; set; }
+        public decimal? CustoUnitario { get; set; }
+        public decimal? CustoTotal { get; set; }
         public DateTime DataCriacao { get; set; }
-        public DateTime DataEdicao { get; set; }
+        public DateTime? DataEdicao { get; set; }
         public bool Ativo { get; set; }
     }
 }

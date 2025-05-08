@@ -4,6 +4,6 @@ public record ProducaoPorProdutoEPeriodoResponse(
     int ProdutoId,
     DateTime DataInicio,
     DateTime DataFim,
-    decimal CustoMedio,
+    decimal? CustoMedio,
     ICollection<ProcessoProducaoResponse> Producoes
 );

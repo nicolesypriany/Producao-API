@@ -106,6 +106,21 @@ namespace ProducaoAPI.Controllers
             return Ok(await _processoProducaoService.EntityToResponse(producao));
         }
 
+        /// <summary>
+        /// Calcular todas as produções
+        /// </summary>
+        [Authorize(Roles = "Administrador,Gerente")]
+        [HttpPost("CalcularProducoes")]
+        public async Task<ActionResult> CalcularProducoes()
+        {
+            var producoes = await _processoProducaoService.ListarProducoesAtivas();
+            foreach(var producao in producoes)
+            {
+                await _processoProducaoService.CalcularProducao(producao.Id);
+            }
+            return Ok();
+        }
+
         [HttpGet("GerarRelatórioTXT")]
         public async Task<IActionResult> GerarRelatorioTXT()
         {

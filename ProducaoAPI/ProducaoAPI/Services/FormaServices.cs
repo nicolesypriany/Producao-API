@@ -27,15 +27,7 @@ namespace ProducaoAPI.Services
         {
             var produto = await _produtoService.BuscarProdutoPorIdAsync(forma.ProdutoId);
             var produtoResponse = await _produtoService.EntityToResponse(produto);
-            if (forma.Maquinas.IsNullOrEmpty())
-            {
-                List<MaquinaResponse> maquinas = [];
-                return new FormaResponse(forma.Id, forma.Nome, produtoResponse, forma.PecasPorCiclo, maquinas, forma.Ativo);
-            } else
-            {
-                var maquinas = _maquinaService.EntityListToResponseList(forma.Maquinas);
-                return new FormaResponse(forma.Id, forma.Nome, produtoResponse, forma.PecasPorCiclo, maquinas, forma.Ativo);
-            }
+            return new FormaResponse(forma.Id, forma.Nome, produtoResponse, forma.PecasPorCiclo, forma.Ativo);
         }
 
         public async Task<ICollection<FormaResponse>> EntityListToResponseList(IEnumerable<Forma> formas)

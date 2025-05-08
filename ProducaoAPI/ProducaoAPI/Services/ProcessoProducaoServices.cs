@@ -19,8 +19,10 @@ namespace ProducaoAPI.Services
         private readonly IProducaoMateriaPrimaRepository _producaoMateriaPrimaRepository;
         private readonly IProducaoMateriaPrimaService _producaoMateriaPrimaService;
         private readonly IMaquinaRepository _maquinaRepository;
+        private readonly ILogServices _logServices;
 
-        public ProcessoProducaoServices(IProcessoProducaoRepository producaoRepository, IMateriaPrimaRepository materiaPrimaRepository, IFormaRepository formaRepository, IProdutoRepository produtoRepository, IProducaoMateriaPrimaRepository producaoMateriaPrimaRepository, IProducaoMateriaPrimaService producaoMateriaPrimaService, IMaquinaRepository maquinaRepository)
+
+        public ProcessoProducaoServices(IProcessoProducaoRepository producaoRepository, IMateriaPrimaRepository materiaPrimaRepository, IFormaRepository formaRepository, IProdutoRepository produtoRepository, IProducaoMateriaPrimaRepository producaoMateriaPrimaRepository, IProducaoMateriaPrimaService producaoMateriaPrimaService, IMaquinaRepository maquinaRepository, ILogServices logServices)
         {
             _producaoRepository = producaoRepository;
             _materiaPrimaRepository = materiaPrimaRepository;
@@ -29,6 +31,7 @@ namespace ProducaoAPI.Services
             _producaoMateriaPrimaRepository = producaoMateriaPrimaRepository;
             _producaoMateriaPrimaService = producaoMateriaPrimaService;
             _maquinaRepository = maquinaRepository;
+            _logServices = logServices;
         }
 
         public async Task<ProcessoProducaoResponse> EntityToResponse(ProcessoProducao producao)
@@ -106,6 +109,7 @@ namespace ProducaoAPI.Services
             var forma = await _formaRepository.BuscarFormaPorIdAsync(request.FormaId);
             var producao = new ProcessoProducao(request.Data, request.MaquinaId, request.FormaId, forma.ProdutoId, request.Ciclos);
             await _producaoRepository.AdicionarAsync(producao);
+            await _logServices.CriarLogAdicionar(typeof(ProcessoProducao), producao.Id);
 
             var producaoMateriasPrimas = await CriarProducoesMateriasPrimas(request.MateriasPrimas, producao.Id);
             foreach (var producaMateriaPrima in producaoMateriasPrimas)
@@ -124,6 +128,14 @@ namespace ProducaoAPI.Services
             var producao = await BuscarProducaoPorIdAsync(id);
             await _producaoMateriaPrimaService.VerificarProducoesMateriasPrimasExistentes(id, request.MateriasPrimas);
 
+            await _logServices.CriarLogAtualizar(
+                typeof(ProcessoProducao),
+                typeof(ProcessoProducaoRequest),
+                producao,
+                request,
+                producao.Id
+            );
+
             producao.Data = request.Data;
             producao.MaquinaId = request.MaquinaId;
             producao.FormaId = request.FormaId;
@@ -141,6 +153,7 @@ namespace ProducaoAPI.Services
             var producao = await BuscarProducaoPorIdAsync(id);
             producao.Ativo = false;
             await _producaoRepository.AtualizarAsync(producao);
+            await _logServices.CriarLogInativar(typeof(ProcessoProducao), producao.Id);
             return producao;
         }
 
