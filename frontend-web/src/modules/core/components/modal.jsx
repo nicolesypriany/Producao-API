@@ -1,18 +1,71 @@
-import { Button, Modal } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import {
+  Button,
+  Group,
+  Modal,
+  ModalStack,
+  Text,
+  useModalsStack,
+} from "@mantine/core";
 
-const RegisterModal = ({ children, title }) => {
-  const [opened, { open, close }] = useDisclosure(false);
+const RegisterModal = ({ children, title, registerType, resetFormValues }) => {
+  const stack = useModalsStack(["register-item", "cancel-confirm-action"]);
+  const confirmTitle = `Deseja cancelar o cadastro ${registerType}?`;
+
   return (
-    <>
-      <Modal opened={opened} onClose={close} title={title} centered>
+    <ModalStack>
+      <Modal centered title={title} {...stack.register("register-item")}>
         {children}
+        <Group mt="lg" justify="flex-end">
+          <Button
+            w="30%"
+            variant="filled"
+            onClick={() => stack.open("cancel-confirm-action")}
+          >
+            Cancelar
+          </Button>
+          <Button type="submit" w="30%" variant="filled">
+            Salvar
+          </Button>
+        </Group>
       </Modal>
 
-      <Button variant="filled" w="18%" size="sm" onClick={open}>
-        {title}
+      <Modal
+        centered
+        title={confirmTitle}
+        {...stack.register("cancel-confirm-action")}
+      >
+        Tem certeza que deseja cancelar o cadastro de {registerType}? Todas as
+        informações serão perdidas.
+        <Group mt="lg" justify="flex-end">
+          <Button
+            w="30%"
+            variant="filled"
+            onClick={() => stack.close("cancel-confirm-action")}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="filled"
+            w="30%"
+            onClick={() => {
+              stack.closeAll();
+              resetFormValues();
+            }}
+          >
+            Confirmar
+          </Button>
+        </Group>
+      </Modal>
+
+      <Button
+        w="18%"
+        size="sm"
+        variant="filled"
+        onClick={() => stack.open("register-item")}
+      >
+        <Text truncate>{title}</Text>
       </Button>
-    </>
+    </ModalStack>
   );
 };
 
