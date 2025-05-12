@@ -110,7 +110,7 @@ namespace ProducaoAPI.Controllers
         /// Calcular todas as produções
         /// </summary>
         [Authorize(Roles = "Administrador,Gerente")]
-        [HttpPost("CalcularProducoes")]
+        [HttpGet("CalcularProducoes")]
         public async Task<ActionResult> CalcularProducoes()
         {
             var producoes = await _processoProducaoService.ListarProducoesAtivas();

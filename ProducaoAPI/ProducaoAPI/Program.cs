@@ -67,12 +67,17 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpContextAccessor();
 
-// Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost", policy =>
+    options.AddPolicy("RestrictedCors", policy =>
     {
-        policy.WithOrigins("http://localhost:3001", "http://localhost:5500") // The URL of your frontend
+        policy.WithOrigins(
+                "https://producao.pro",
+                "https://168.231.90.71:5001",
+                "http://localhost:3000",
+                "http://localhost:5000",
+                "http://168.231.90.71:5000"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -104,21 +109,19 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "RestrictedCors");
+
+app.UseHsts();
 app.UseHttpsRedirection();
-
-app.UseCors("AllowLocalhost");
-
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("AllowLocalhost");
 
 app.MapControllers();
 

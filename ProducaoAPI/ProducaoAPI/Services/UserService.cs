@@ -61,7 +61,7 @@ namespace ProducaoAPI.Services
 
         public string GenerateToken(int id, string email, string nomeUsuario, string cargo)
         {
-            var expiration = DateTime.UtcNow.AddMinutes(30);
+            var expiration = DateTime.UtcNow.AddMinutes(60);
             var claims = new[]
             {
                 new Claim("id", id.ToString()),

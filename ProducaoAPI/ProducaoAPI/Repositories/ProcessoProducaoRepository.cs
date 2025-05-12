@@ -109,7 +109,7 @@ namespace ProducaoAPI.Repositories
         public async Task<IEnumerable<ProcessoProducao>> ListarProducoesPorMes(DateTime dataInicio, DateTime dataFim)
         {
             var producoes = await _context.Producoes
-                .Where(p => p.Data >= dataInicio && dataInicio <= dataFim)
+                .Where(p => p.Data >= dataInicio && p.Data <= dataFim)
                 .Include(p => p.Maquina)
                 .Include(p => p.Forma)
                 .ThenInclude(p => p.Produto)
