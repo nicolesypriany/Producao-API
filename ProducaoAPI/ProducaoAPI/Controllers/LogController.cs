@@ -21,6 +21,7 @@ namespace ProducaoAPI.Controllers
         ///<summary>
         ///Obter logs
         ///</summary>
+        /// <param name="request">Objeto com os dados dos logs buscados.O "objeto" pode ser 'Maquina', 'Forma', 'Produto', 'MateriaPrima' e 'ProcessoProducao'</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma despesa encontrada</response>

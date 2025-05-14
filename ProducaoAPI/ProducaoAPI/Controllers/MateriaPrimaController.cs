@@ -34,6 +34,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Obter matéria-prima por ID
         /// </summary>
+        ///<param name="id">ID da matéria-prima buscada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
@@ -48,6 +49,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Criar uma nova matéria-prima
         /// </summary>
+        ///<param name="request">Objeto com os dados da matéria-prima a ser criada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="400">Dados inválidos</response>
@@ -63,6 +65,8 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Atualizar uma matéria-prima
         /// </summary>
+        ///<param name="id">ID da matéria-prima a ser atualizada.</param>
+        ///<param name="request">Objeto com os dados atualizados da matéria-prima.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
@@ -79,6 +83,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Inativar uma matéria-prima
         /// </summary>
+        ///<param name="id">ID da matéria-prima a ser inativada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma matéria-prima encontrada</response>
@@ -94,6 +99,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Cadastrar uma matéria-prima por importação do XML de uma nota fiscal
         /// </summary>
+        ///<param name="arquivoXML">Arquivo XML para importação da matéria-prima.</param>
         [Authorize(Roles = "Administrador,Gerente")]
         [HttpPost("ImportarXML")]
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrimaPorXML(IFormFile arquivoXML)

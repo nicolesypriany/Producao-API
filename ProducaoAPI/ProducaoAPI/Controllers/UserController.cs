@@ -19,6 +19,7 @@ namespace ProducaoAPI.Controllers
         ///<summary>
         ///Registrar um novo usuário
         ///</summary>
+        ///<param name="request">Objeto com os dados do usuário a ser criado.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="500">Erro de servidor</response>
@@ -32,6 +33,7 @@ namespace ProducaoAPI.Controllers
         ///<summary>
         ///Efetuar login no sistema
         ///</summary>
+        ///<param name="request">Objeto com os dados do usuário.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="404">Usuário não encontrado</response>

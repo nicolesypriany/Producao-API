@@ -51,28 +51,62 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "Produção API",
-        Description = $"Uma ASP.NET Core Web API para gerenciamento de produções.",
+        Description = "Uma ASP.NET Core Web API para gerenciamento de produções. Para se autenticar, Faça login através do endpoint /User/Login. Copie o Token que será retornado, clique em Authorize e no campo Value preencha com Bearer e o seu token, exemplo: 'Bearer MEU_TOKEN",
         Contact = new OpenApiContact
         {
-            Name = "Respositório",
+            Name = "Repositório",
             Url = new Uri("https://github.com/nicolesypriany/Producao")
         },
     });
 
-    // Habilitando descrições por XML
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = @"Insira o token JWT no campo abaixo.  
+Exemplo: **Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...**",
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
 
 builder.Services.AddDbContext<ProducaoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+
     options.AddPolicy("RestrictedCors", policy =>
     {
         policy.WithOrigins(
                 "https://producao.pro",
+                "https://www.producao.pro",
                 "https://168.231.90.71:5001",
                 "http://localhost:3000",
                 "http://localhost:5000",
@@ -107,13 +141,21 @@ builder.Services.AddAuthentication(opt =>
 
 var app = builder.Build();
 
+app.UsePathBase("/api");
+
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.RouteTemplate = "swagger/{documentName}/swagger.json";
+});
+
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Produção API");
+    c.RoutePrefix = "swagger";
+});
+
 
 app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "RestrictedCors");
 

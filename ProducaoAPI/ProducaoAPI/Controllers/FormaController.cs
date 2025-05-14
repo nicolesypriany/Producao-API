@@ -35,6 +35,7 @@ namespace ProducaoAPI.Controllers
         ///<summary>
         ///Obter forma por ID
         ///</summary>
+        ///<param name="id">ID da forma buscada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>
@@ -49,6 +50,7 @@ namespace ProducaoAPI.Controllers
         ///<summary>
         ///Criar uma nova forma
         ///</summary>
+        ///<param name="request">Objeto com os dados da forma a ser criada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
@@ -66,6 +68,8 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Atualizar uma forma
         /// </summary>
+        ///<param name="id">ID da forma a ser atualizada.</param>
+        ///<param name="request">Objeto com os dados atualizados da forma.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
@@ -82,6 +86,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Inativar uma forma
         /// </summary>
+        ///<param name="id">ID da forma a ser inativada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma forma encontrada</response>

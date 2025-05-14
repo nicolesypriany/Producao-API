@@ -37,6 +37,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Obter produção por ID
         /// </summary>
+        ///<param name="id">ID da produção buscada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma produção encontrada</response>
@@ -51,6 +52,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Criar uma nova produção
         /// </summary>
+        ///<param name="request">Objeto com os dados da produção a ser criada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
@@ -66,6 +68,8 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Atualizar uma produção
         /// </summary>
+        ///<param name="id">ID da matéria-prima a ser atualizada.</param>
+        ///<param name="request">Objeto com os dados atualizados da matéria-prima.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
@@ -82,6 +86,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Inativar uma produção
         /// </summary>
+        ///<param name="id">ID da produção a ser inativada.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhuma produção encontrada</response>
@@ -121,12 +126,24 @@ namespace ProducaoAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Gerar relatório das Produções em arquivo TXT
+        /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet("GerarRelatórioTXT")]
         public async Task<IActionResult> GerarRelatorioTXT()
         {
             return await _processoProducaoService.GerarRelatorioTXT();
         }
 
+        /// <summary>
+        /// Gerar relatório das Produções em arquivo Excel
+        /// </summary>
+        ///<response code="200">Sucesso</response>
+        ///<response code="401">Usuário não autorizado</response>
+        ///<response code="500">Erro de servidor</response>
         [HttpGet("GerarRelatórioXLSX")]
         public async Task<IActionResult> GerarRelatorioXLSX()
         {

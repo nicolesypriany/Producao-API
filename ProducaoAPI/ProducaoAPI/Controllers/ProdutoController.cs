@@ -34,6 +34,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Obter produto por ID
         /// </summary>
+        ///<param name="id">ID do produto buscado.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum produto encontrado</response>
@@ -48,6 +49,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Criar um novo produto
         /// </summary>
+        ///<param name="request">Objeto com os dados do produto a ser criado.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
@@ -63,6 +65,8 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Atualizar um produto
         /// </summary>
+        ///<param name="id">ID do produto a ser atualizado.</param>
+        ///<param name="request">Objeto com os dados atualizados do produto.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="400">Dados inválidos</response>
         ///<response code="401">Usuário não autorizado</response>
@@ -79,6 +83,7 @@ namespace ProducaoAPI.Controllers
         /// <summary>
         /// Inativar um produto
         /// </summary>
+        ///<param name="id">ID do produto a ser inativado.</param>
         ///<response code="200">Sucesso</response>
         ///<response code="401">Usuário não autorizado</response>
         ///<response code="404">Nenhum produto encontrado</response>
