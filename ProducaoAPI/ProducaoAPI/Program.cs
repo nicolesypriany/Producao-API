@@ -141,7 +141,7 @@ builder.Services.AddAuthentication(opt =>
 
 var app = builder.Build();
 
-app.UsePathBase("/api");
+//app.UsePathBase("/api");
 
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -152,15 +152,21 @@ app.UseSwagger(c =>
 
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Produção API");
+    c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Produção API");
     c.RoutePrefix = "swagger";
 });
 
 
+//if (!app.Environment.IsDevelopment())
+//{
+//    app.UsePathBase("/api");
+//    app.UseHttpsRedirection();
+//}
+
 app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "RestrictedCors");
 
 app.UseHsts();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

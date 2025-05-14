@@ -197,17 +197,17 @@ namespace ProducaoAPI.Services
                 worksheet.Cells[1, 7].Value = "Custo Total";
                 worksheet.Cells[1, 8].Value = "Custo Unitário";
 
-                var materiasPrimas = await _materiaPrimaRepository.ListarMateriasPrimasAtivas();
+                //var materiasPrimas = await _materiaPrimaRepository.ListarMateriasPrimasAtivas();
 
-                var i = 9;
-                foreach(var materia in materiasPrimas)
-                {
-                    worksheet.Cells[1, i].Value = materia.Nome;
-                    worksheet.Cells[1, i+1].Value = "Unidade";
-                    worksheet.Cells[1, i+2].Value = "Preço";
-                    worksheet.Cells[1, i+3].Value = "Total";
-                    i+=4;
-                }
+                //var i = 9;
+                //foreach(var materia in materiasPrimas)
+                //{
+                //    worksheet.Cells[1, i].Value = materia.Nome;
+                //    worksheet.Cells[1, i+1].Value = "Unidade";
+                //    worksheet.Cells[1, i+2].Value = "Preço";
+                //    worksheet.Cells[1, i+3].Value = "Total";
+                //    i+=4;
+                //}
 
                 var row = 2;
                 foreach (var producao in producoes)
@@ -225,21 +225,21 @@ namespace ProducaoAPI.Services
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "0.00";
                     worksheet.Cells[row, 8].Value = producao.CustoUnitario;
                     
-                    i = 9;
-                    foreach (var materia in producao.ProducaoMateriasPrimas)
-                    {
-                        if(materia.MateriaPrima.Nome == worksheet.Cells[1, i].Value.ToString())
-                        {
-                            worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
-                            worksheet.Cells[row, i].Value = materia.Quantidade;
-                            worksheet.Cells[row, i + 1].Value = materia.MateriaPrima.Unidade;
-                            worksheet.Cells[row, i + 2].Style.Numberformat.Format = "0.00";
-                            worksheet.Cells[row, i + 2].Value = materia.MateriaPrima.Preco;
-                            worksheet.Cells[row, i + 3].Style.Numberformat.Format = "0.00";
-                            worksheet.Cells[row, i + 3].Value = materia.Quantidade * materia.MateriaPrima.Preco;
-                            i+=4;
-                        }
-                    }
+                    //i = 9;
+                    //foreach (var materia in producao.ProducaoMateriasPrimas)
+                    //{
+                    //    if(materia.MateriaPrima.Nome == worksheet.Cells[1, i].Value.ToString())
+                    //    {
+                    //        worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
+                    //        worksheet.Cells[row, i].Value = materia.Quantidade;
+                    //        worksheet.Cells[row, i + 1].Value = materia.MateriaPrima.Unidade;
+                    //        worksheet.Cells[row, i + 2].Style.Numberformat.Format = "0.00";
+                    //        worksheet.Cells[row, i + 2].Value = materia.MateriaPrima.Preco;
+                    //        worksheet.Cells[row, i + 3].Style.Numberformat.Format = "0.00";
+                    //        worksheet.Cells[row, i + 3].Value = materia.Quantidade * materia.MateriaPrima.Preco;
+                    //        i+=4;
+                    //    }
+                    //}
                     row++;
                 }
 
