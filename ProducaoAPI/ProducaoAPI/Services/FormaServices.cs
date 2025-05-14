@@ -114,10 +114,5 @@ namespace ProducaoAPI.Services
         {
             await _produtoService.BuscarProdutoPorIdAsync(id);
         }
-
-        private async Task ValidarMaquinas(ICollection<FormaMaquinaRequest> maquinas)
-        {
-            foreach (var maquina in maquinas) await _maquinaService.BuscarMaquinaPorIdAsync(maquina.Id);
-        }
     }
 }

@@ -107,7 +107,6 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var novaMateriaPrima = await _materiaPrimaService.CriarMateriaPrimaPorXML(arquivoXML);
-                //var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(novaMateriaPrima.Id);
                 return Ok(_materiaPrimaService.EntityToResponse(novaMateriaPrima));
             }
             catch (Exception ex)

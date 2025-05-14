@@ -59,10 +59,8 @@ namespace ProducaoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> CadastrarForma(FormaRequest request)
         {
-            var forma = await _formaServices.AdicionarAsync(request);
-            //return Ok(_formaServices.EntityToResponse(forma));
+            await _formaServices.AdicionarAsync(request);
             return Ok();
-
         }
 
         /// <summary>

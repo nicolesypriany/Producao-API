@@ -15,11 +15,9 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
-// Add services to the container.
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IMaquinaRepository, MaquinaRepository>();
 builder.Services.AddScoped<IFormaRepository, FormaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
@@ -42,7 +40,6 @@ builder.Services.AddScoped<IDespesaService, DespesaService>();
 builder.Services.AddScoped<ICustoService, CustoService>();
 builder.Services.AddScoped<ILogServices, LogServices>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
@@ -141,7 +138,7 @@ builder.Services.AddAuthentication(opt =>
 
 var app = builder.Build();
 
-//app.UsePathBase("/api");
+app.UsePathBase("/api");
 
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -152,21 +149,14 @@ app.UseSwagger(c =>
 
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Produção API");
+    c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Produção API");
     c.RoutePrefix = "swagger";
 });
-
-
-//if (!app.Environment.IsDevelopment())
-//{
-//    app.UsePathBase("/api");
-//    app.UseHttpsRedirection();
-//}
 
 app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "RestrictedCors");
 
 app.UseHsts();
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
