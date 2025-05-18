@@ -2,12 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProducaoAPI;
 using ProducaoAPI.Data;
 using ProducaoAPI.Exceptions;
-using ProducaoAPI.Repositories;
-using ProducaoAPI.Repositories.Interfaces;
-using ProducaoAPI.Services;
-using ProducaoAPI.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
@@ -18,27 +15,7 @@ JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-builder.Services.AddScoped<IMaquinaRepository, MaquinaRepository>();
-builder.Services.AddScoped<IFormaRepository, FormaRepository>();
-builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
-builder.Services.AddScoped<IMateriaPrimaRepository, MateriaPrimaRepository>();
-builder.Services.AddScoped<IProcessoProducaoRepository, ProcessoProducaoRepository>();
-builder.Services.AddScoped<IProducaoMateriaPrimaRepository, ProducaoMateriaPrimaRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
-builder.Services.AddScoped<ILogRepository, LogRepository>();
-
-builder.Services.AddScoped<IFormaService, FormaServices>();
-builder.Services.AddScoped<IMaquinaService, MaquinaServices>();
-builder.Services.AddScoped<IMateriaPrimaService, MateriaPrimaServices>();
-builder.Services.AddScoped<IProdutoService, ProdutoServices>();
-builder.Services.AddScoped<IProcessoProducaoService, ProcessoProducaoServices>();
-builder.Services.AddScoped<IProducaoMateriaPrimaService, ProducaoMateriaPrimaServices>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IFreteService, FreteServices>();
-builder.Services.AddScoped<IDespesaService, DespesaService>();
-builder.Services.AddScoped<ICustoService, CustoService>();
-builder.Services.AddScoped<ILogServices, LogServices>();
+builder.Services.AddCoreDependencies();
 
 builder.Services.AddEndpointsApiExplorer();
 
