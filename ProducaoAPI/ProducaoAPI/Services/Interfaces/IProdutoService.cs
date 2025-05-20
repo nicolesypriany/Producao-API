@@ -12,7 +12,5 @@ namespace ProducaoAPI.Services.Interfaces
         Task<Produto> AdicionarAsync(ProdutoRequest request);
         Task<Produto> AtualizarAsync(int id, ProdutoRequest request);
         Task<Produto> InativarProduto(int id);
-        Task<ProdutoResponse> EntityToResponse(Produto produto);
-        Task<ICollection<ProdutoResponse>> EntityListToResponseList(IEnumerable<Produto> produto);
     }
 }

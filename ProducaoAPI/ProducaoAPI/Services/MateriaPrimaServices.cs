@@ -1,7 +1,7 @@
-﻿using ProducaoAPI.Models;
+﻿using ProducaoAPI.Extensions;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
-using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
 using ProducaoAPI.Validations;
 using System.Xml;
@@ -17,16 +17,6 @@ namespace ProducaoAPI.Services
         {
             _materiaPrimaRepository = materiaPrimaRepository;
             _logServices = logServices;
-        }
-
-        public MateriaPrimaResponse EntityToResponse(MateriaPrima materiaPrima)
-        {
-            return new MateriaPrimaResponse(materiaPrima.Id, materiaPrima.Nome, materiaPrima.Fornecedor, materiaPrima.Unidade, materiaPrima.Preco, materiaPrima.Ativo);
-        }
-
-        public ICollection<MateriaPrimaResponse> EntityListToResponseList(IEnumerable<MateriaPrima> materiaPrima)
-        {
-            return materiaPrima.Select(m => EntityToResponse(m)).ToList();
         }
 
         public async Task<MateriaPrima> CriarMateriaPrimaPorXML(IFormFile arquivoXML)
@@ -82,7 +72,7 @@ namespace ProducaoAPI.Services
         public async Task<MateriaPrima> AdicionarAsync(MateriaPrimaRequest request)
         {
             await ValidarRequest(true, request);
-            var materiaPrima = new MateriaPrima(request.Nome, request.Fornecedor, request.Unidade, request.Preco);
+            var materiaPrima = request.MapToMateriaPrima();
             await _materiaPrimaRepository.AdicionarAsync(materiaPrima);
             await _logServices.CriarLogAdicionar(typeof(MateriaPrima), materiaPrima.Id);
             return materiaPrima;

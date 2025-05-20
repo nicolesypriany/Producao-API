@@ -1,4 +1,5 @@
-﻿using ProducaoAPI.Models;
+﻿using ProducaoAPI.Extensions;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
@@ -18,16 +19,6 @@ namespace ProducaoAPI.Services
             _logServices = logServices;
         }
 
-        public MaquinaResponse EntityToResponse(Maquina maquina)
-        {
-            return new MaquinaResponse(maquina.Id, maquina.Nome, maquina.Marca, maquina.Ativo);
-        }
-
-        public ICollection<MaquinaResponse> EntityListToResponseList(IEnumerable<Maquina> maquinas)
-        {
-            return maquinas.Select(m => EntityToResponse(m)).ToList();
-        }
-
         public Task<IEnumerable<Maquina>> ListarMaquinasAtivas() => _maquinaRepository.ListarMaquinasAtivas();
 
         public Task<IEnumerable<Maquina>> ListarTodasMaquinas() => _maquinaRepository.ListarTodasMaquinas();
@@ -37,7 +28,7 @@ namespace ProducaoAPI.Services
         public async Task<Maquina> AdicionarAsync(MaquinaRequest request)
         {
             await ValidarRequest(true, request);
-            var maquina = new Maquina(request.Nome, request.Marca);
+            var maquina = request.MapToMaquina();
             await _maquinaRepository.AdicionarAsync(maquina);
             await _logServices.CriarLogAdicionar(typeof(Maquina), maquina.Id);
             return maquina;

@@ -1,7 +1,7 @@
-﻿using ProducaoAPI.Models;
+﻿using ProducaoAPI.Extensions;
+using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
-using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
 using ProducaoAPI.Validations;
 
@@ -18,22 +18,6 @@ namespace ProducaoAPI.Services
             _logServices = logServices;
         }
 
-        public async Task<ProdutoResponse> EntityToResponse(Produto produto)
-        {
-            return new ProdutoResponse(produto.Id, produto.Nome, produto.Medidas, produto.Unidade, produto.PecasPorUnidade, produto.Ativo);
-        }
-
-        public async Task<ICollection<ProdutoResponse>> EntityListToResponseList(IEnumerable<Produto> produto)
-        {
-            var responseList = new List<ProdutoResponse>();
-            foreach (var p in produto)
-            {
-                var response = await EntityToResponse(p);
-                responseList.Add(response);
-            }
-            return responseList;
-        }
-
         public Task<IEnumerable<Produto>> ListarProdutosAtivos() => _produtoRepository.ListarProdutosAtivos();
 
         public Task<IEnumerable<Produto>> ListarTodosProdutos() => _produtoRepository.ListarTodosProdutos();
@@ -43,7 +27,7 @@ namespace ProducaoAPI.Services
         public async Task<Produto> AdicionarAsync(ProdutoRequest request)
         {
             await ValidarRequest(true, request);
-            var produto = new Produto(request.Nome, request.Medidas, request.Unidade, request.PecasPorUnidade);
+            var produto = request.MapToProduto();
             await _produtoRepository.AdicionarAsync(produto);
             await _logServices.CriarLogAdicionar(typeof(Produto), produto.Id);
             return produto;

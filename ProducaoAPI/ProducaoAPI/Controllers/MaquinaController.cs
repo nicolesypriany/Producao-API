@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProducaoAPI.Extensions;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -29,7 +30,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<IEnumerable<MaquinaResponse>>> ListarMaquinas()
         {
             var maquinas = await _maquinaService.ListarMaquinasAtivas();
-            return Ok(_maquinaService.EntityListToResponseList(maquinas));
+            return Ok(maquinas.MapListToResponse());
         }
 
         /// <summary>
@@ -44,8 +45,9 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MaquinaResponse>> BuscarMaquinaPorId(int id)
         {
             var maquina = await _maquinaService.BuscarMaquinaPorIdAsync(id);
-            return Ok(_maquinaService.EntityToResponse(maquina));
+            return Ok(maquina.MapToResponse());
         }
+
 
         /// <summary>
         /// Criar uma nova máquina
@@ -60,7 +62,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MaquinaResponse>> CadastrarMaquina(MaquinaRequest request)
         {
             var maquina = await _maquinaService.AdicionarAsync(request);
-            return Ok(_maquinaService.EntityToResponse(maquina));
+            return Ok(maquina.MapToResponse());
         }
 
         /// <summary>
@@ -78,7 +80,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MaquinaResponse>> AtualizarMaquina(int id, MaquinaRequest request)
         {
             var maquina = await _maquinaService.AtualizarAsync(id, request);
-            return Ok(_maquinaService.EntityToResponse(maquina));
+            return Ok(maquina.MapToResponse());
         }
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MaquinaResponse>> InativarMaquina(int id)
         {
             var maquina = await _maquinaService.InativarMaquina(id);
-            return Ok(_maquinaService.EntityToResponse(maquina));
+            return Ok(maquina.MapToResponse());
         }
     }
 }

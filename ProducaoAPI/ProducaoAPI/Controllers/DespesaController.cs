@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProducaoAPI.Extensions;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -29,7 +30,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<IEnumerable<DespesaResponse>>> ListarDespesas()
         {
             var despesas = await _despesaServices.ListarDespesasAtivas();
-            return Ok(_despesaServices.EntityListToResponseList(despesas));
+            return Ok(despesas.MapListToResponse());
         }
 
         ///<summary>
@@ -44,7 +45,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<DespesaResponse>> BuscarDespesaPorId(int id)
         {
             var despesa = await _despesaServices.BuscarDespesaPorIdAsync(id);
-            return Ok(_despesaServices.EntityToResponse(despesa));
+            return Ok(despesa.MapToResponse());
         }
 
         ///<summary>
@@ -78,7 +79,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<DespesaResponse>> AtualizarDespesa(int id, DespesaRequest request)
         {
             var despesa = await _despesaServices.AtualizarAsync(id, request);
-            return Ok(_despesaServices.EntityToResponse(despesa));
+            return Ok(despesa.MapToResponse());
         }
 
         /// <summary>
@@ -94,7 +95,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<DespesaResponse>> InativarDespesa(int id)
         {
             var despesa = await _despesaServices.InativarDespesa(id);
-            return Ok(_despesaServices.EntityToResponse(despesa));
+            return Ok(despesa.MapToResponse());
         }
     }
 }

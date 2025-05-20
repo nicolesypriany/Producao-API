@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using ProducaoAPI.Extensions;
 using ProducaoAPI.Models;
 using ProducaoAPI.Repositories.Interfaces;
 using ProducaoAPI.Requests;
@@ -26,7 +26,7 @@ namespace ProducaoAPI.Services
         public async Task<FormaResponse> EntityToResponse(Forma forma)
         {
             var produto = await _produtoService.BuscarProdutoPorIdAsync(forma.ProdutoId);
-            var produtoResponse = await _produtoService.EntityToResponse(produto);
+            var produtoResponse = produto.MapToResponse();
             return new FormaResponse(forma.Id, forma.Nome, produtoResponse, forma.PecasPorCiclo, forma.Ativo);
         }
 

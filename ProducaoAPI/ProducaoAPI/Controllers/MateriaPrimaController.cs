@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProducaoAPI.Extensions;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -28,7 +29,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<IEnumerable<MateriaPrimaResponse>>> ListarMateriasPrimas()
         {
             var materiasPrimas = await _materiaPrimaService.ListarMateriasPrimasAtivas();
-            return Ok(_materiaPrimaService.EntityListToResponseList(materiasPrimas));
+            return Ok(materiasPrimas.MapListToResponse());
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MateriaPrimaResponse>> BuscarMateriaPrimaPorId(int id)
         {
             var materiaPrima = await _materiaPrimaService.BuscarMateriaPorIdAsync(id);
-            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
+            return Ok(materiaPrima.MapToResponse());
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MateriaPrimaResponse>> CadastrarMateriaPrima(MateriaPrimaRequest request)
         {
             var materiaPrima = await _materiaPrimaService.AdicionarAsync(request);
-            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
+            return Ok(materiaPrima.MapToResponse());
         }
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MateriaPrimaResponse>> AtualizarMateriaPrima(int id, MateriaPrimaRequest request)
         {
             var materiaPrima = await _materiaPrimaService.AtualizarAsync(id, request);
-            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
+            return Ok(materiaPrima.MapToResponse());
         }
 
         /// <summary>
@@ -93,7 +94,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<MateriaPrimaResponse>> InativarProduto(int id)
         {
             var materiaPrima = await _materiaPrimaService.InativarMateriaPrima(id);
-            return Ok(_materiaPrimaService.EntityToResponse(materiaPrima));
+            return Ok(materiaPrima.MapToResponse());
         }
 
         /// <summary>
@@ -107,7 +108,7 @@ namespace ProducaoAPI.Controllers
             try
             {
                 var novaMateriaPrima = await _materiaPrimaService.CriarMateriaPrimaPorXML(arquivoXML);
-                return Ok(_materiaPrimaService.EntityToResponse(novaMateriaPrima));
+                return Ok(novaMateriaPrima.MapToResponse());
             }
             catch (Exception ex)
             {

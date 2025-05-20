@@ -18,21 +18,6 @@ namespace ProducaoAPI.Services
             _logServices = logServices;
         }
 
-        public DespesaResponse EntityToResponse(Despesa despesa)
-        {
-            return new DespesaResponse(
-                despesa.Id,
-                despesa.Nome,
-                despesa.Descricao,
-                despesa.Valor
-            );
-        }
-
-        public ICollection<DespesaResponse> EntityListToResponseList(IEnumerable<Despesa> despesas)
-        {
-            return despesas.Select(d => EntityToResponse(d)).ToList();
-        }
-
         public async Task<IEnumerable<Despesa>> ListarDespesasAtivas() => await _despesaRepository.ListarDespesasAtivas();
 
         public async Task<Despesa> BuscarDespesaPorIdAsync(int id) => await _despesaRepository.BuscarDespesaPorIdAsync(id);

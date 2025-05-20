@@ -1,4 +1,5 @@
 ﻿using ProducaoAPI.Exceptions;
+using ProducaoAPI.Extensions;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -60,7 +61,7 @@ namespace ProducaoAPI.Services
 
             var custoTotalMensal = custoDoMes + totalDespesas;
 
-            var despesasResponseList = _despesaService.EntityListToResponseList(despesas);
+            var despesasResponseList = despesas.MapListToResponse();
             var producoesResponseList = await _processoProducaoService.EntityListToResponseList(producoesDoMes);
 
             return new CustoMensalResponse(

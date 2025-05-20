@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProducaoAPI.Extensions;
 using ProducaoAPI.Requests;
 using ProducaoAPI.Responses;
 using ProducaoAPI.Services.Interfaces;
@@ -28,7 +29,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProdutoResponse>>> ListarProdutos()
         {
             var produtos = await _produtoServices.ListarProdutosAtivos();
-            return Ok(await _produtoServices.EntityListToResponseList(produtos));
+            return Ok(produtos.MapListToResponse());
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProdutoResponse>> BuscarProdutoPorId(int id)
         {
             var produto = await _produtoServices.BuscarProdutoPorIdAsync(id);
-            return Ok(await _produtoServices.EntityToResponse(produto));
+            return Ok(produto.MapToResponse());
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProdutoResponse>> CadastrarProduto(ProdutoRequest request)
         {
             var produto = await _produtoServices.AdicionarAsync(request);
-            return Ok(_produtoServices.EntityToResponse(produto));
+            return Ok(produto.MapToResponse());
         }
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProdutoResponse>> AtualizarProduto(int id, ProdutoRequest request)
         {
             var produto = await _produtoServices.AtualizarAsync(id, request);
-            return Ok(_produtoServices.EntityToResponse(produto));
+            return Ok(produto.MapToResponse());
         }
 
         /// <summary>
@@ -93,7 +94,7 @@ namespace ProducaoAPI.Controllers
         public async Task<ActionResult<ProdutoResponse>> InativarProduto(int id)
         {
             var produto = await _produtoServices.InativarProduto(id);
-            return Ok(_produtoServices.EntityToResponse(produto));
+            return Ok(produto.MapToResponse());
         }
     }
 }
